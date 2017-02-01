@@ -1,0 +1,12 @@
+#posts a {
+	color: #000000;
+}
+
+#posts li {
+}
+#posts li {
+	border-bottom: 1px dashed #CCCCCC;
+}
+#posts a:hover {
+	font-weight: bold;
+}

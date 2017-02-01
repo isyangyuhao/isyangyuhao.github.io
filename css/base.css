@@ -1,0 +1,18 @@
+* {
+    margin: 0;
+    padding: 0;
+    border:0;
+}
+body {
+  height: 100%;
+  widht: 100%;
+}
+header a::after {
+  display: none !important;
+}
+header h1 {
+	font-size: 20px !important;
+}
+header h1 a {
+	margin-left: 10px !important;
+}
