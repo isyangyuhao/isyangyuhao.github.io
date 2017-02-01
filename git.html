@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Sidebar | Amaze UI Example</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+  <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+  <!--Link Web Font-->
+  <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+  <!--Link Base Style-->
+  <link rel="stylesheet" type="text/css" href="css/base.css">
+  <link rel="stylesheet" type="text/css" href="css/page.css"/>
+  <style>
+    @media only screen and (min-width: 641px) {
+      .am-offcanvas {
+        display: block;
+        position: static;
+        background: none;
+      }
+
+      .am-offcanvas-bar {
+        position: static;
+        width: auto;
+        background: none;
+        -webkit-transform: translate3d(0, 0, 0);
+        -ms-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+      }
+      .am-offcanvas-bar:after {
+        content: none;
+      }
+
+    }
+
+    @media only screen and (max-width: 640px) {
+    	
+    	  small {
+      	display: none;
+      }
+    	
+      .am-offcanvas-bar .am-nav>li>a {
+        color:#ccc;
+        border-radius: 0;
+        border-top: 1px solid rgba(0,0,0,.3);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.05)
+      }
+
+      .am-offcanvas-bar .am-nav>li>a:hover {
+        background: #404040;
+        color: #fff
+      }
+
+      .am-offcanvas-bar .am-nav>li.am-nav-header {
+        color: #777;
+        background: #404040;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+        text-shadow: 0 1px 0 rgba(0,0,0,.5);
+        border-top: 1px solid rgba(0,0,0,.3);
+        font-weight: 400;
+        font-size: 75%
+      }
+
+      .am-offcanvas-bar .am-nav>li.am-active>a {
+        background: #1a1a1a;
+        color: #fff;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,.3)
+      }
+
+      .am-offcanvas-bar .am-nav>li+li {
+        margin-top: 0;
+      }
+    }
+
+    .my-head {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .my-button {
+      position: fixed;
+      top: 0;
+      right: 0;
+      border-radius: 0;
+    }
+    .my-sidebar {
+      padding-right: 0;
+      border-right: 1px solid #eeeeee;
+    }
+
+    .my-footer {
+      border-top: 1px solid #eeeeee;
+      padding: 10px 0;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!--导航栏 [[-->
+  <header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489"> 
+      <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+  </header>
+  <!--导航栏 ]]-->
+  <div class="am-g am-g-fixed">
+  <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+    <div class="am-g">
+      <div class="am-u-sm-11 am-u-sm-centered">
+        <div class="am-cf am-article">
+         
+         <!--文章[[-->
+         <h2>第一部分 Git基础知识</h2>
+         <h3>1.1概述</h3>
+         <ul>
+         	<li>在实际项目开发过程中，不可能是由多个人共同负责一个项目，需要进行团队合作开发，需要将代码进行同步更新</li>
+         	<li>CVS: 最开始使用CVS进行版本控制，但是CVS设计并不完善，除了需要保存真实数据外还需要保存一些非必须的数据文件</li>
+         	<li>版本控制发展历程: 
+         		<img src="photo/git/git1.png" class="am-img-responsive">
+         		<ul>
+         			<li>本地版本控制系统: 复制整个项目工作目录来保存不同的版本，在本地使用简单数据库记录文件的修改，简单易用但是不易跟踪数据和恢复数据</li>
+         			<li>集中版本控制系统: 服务器保存文件修改历史，客户端通过网络连接服务器，取出最新文件或者将本地提交更新到服务器，版本库只保存在服务器中</li>
+         			<li>分布式版本控制系统: 版本库不仅仅保存在服务器中，每个客户端都有一份完整的拷贝，主服务器出现故障通过任一客户端都可以进行版本的恢复</li>
+         		</ul>
+         	</li>
+         	<li>git特点: 
+         		<ul>
+         			<li>快照存储，而不是比较各个版本的差异进行差异存储
+         				<img src="photo/git/git2.png" class="am-img-responsive">
+         			</li>
+         			<li>断网同样可以照常工作</li>
+         			<li>分支切换的速度非常快</li>
+         		</ul>
+         	</li>
+         </ul>
+         <h3>1.2 在Windows环境下安装Git</h3>
+         <ul>
+         	<li>Cygwin模拟环境: 模拟了Unix系统调用API，在Window下可以运行Linux工具和shell命令</li>
+         	<li>Wine模拟环境: 模拟了Windows的系统调用API，可以在Linux下运行Windows应用程序</li>
+         	<li>Msysgit: Git的Windows版本，将git和cygwin一起打包，集成了Git所需要的运行环境和组件，直接安装即可</li>
+         </ul>
+         <h3>1.3 在Linux环境下安装Git</h3>
+         <ul>
+         	<li>自动安装命令
+         		<ul>
+         			<li>Ubuntu\Debian环境下安装git: <code>apt-get install git(git-core)</code></li>
+         			<li>	Fedora\RedHat环境下安装git: <code>yum install git</code></li>
+         			<li>	Mac环境下安装git: <code>sudo brew install git</code></li>
+         		</ul>
+         	</li>
+         	<li>源码包安装
+         		<ul>
+         			<li>最新git源码下载地址: <a href="http://github.com/git/git/releases">http://github.com/git/git/releases</a></li>
+         			<li>安装git之前需要安装其他依赖的包</li>
+         			<li>安装libiconv编码转化库</li>
+         			<li>	源码下载、配置、编译、安装</li>
+         		</ul>
+         	</li>
+         </ul>
+         <h3>1.4 仓库的创建和配置</h3>
+         <ul>
+         	<li>创建一个仓库: <code>git init</code>
+         		<ul>
+         			<li>新建一个工作区文件夹，在shell中进入到当前工作区后使用创建仓库命令后会在当前工作区生成隐藏文件夹".git"</li>
+         			<li>	.git文件夹成为版本库，版本库中存放着版本信息以及一系列配置内容</li>
+         		</ul>
+         	</li>
+         	<li>git配置
+         		<ul>
+         			<li>配置姓名: <code>git config --global user.name "isyangyuhao"</code></li>
+         			<li>配置邮箱: <code>git config --global user.email "isyangyuhao@gmail.com"</code></li>
+         			<li>配置差异颜色显示: <code>git config --global color.ui true</code></li>
+         			<li>设置命令别名: <code>git config --global alias.alias_name name</code></li>
+         		</ul>
+         	</li>
+         	<li>配置命令自动补全
+         		<ul>
+         			<li>下载配置脚本: <a href="http://github.com/markgandolfo/git-bash-completion.git">http://github.com/markgandolfo/git-bash-completion.git</a></li>
+         			<li>	拷贝到用户目录文件并生效: <code>$echo source ~/git-completion.bash >> ~/.bashrc</code></li>
+         		</ul>
+         	</li>
+         	<li>配置参数选项
+         		<ul>
+         			<li><code>--global</code> 修改全局配置文件，去配置~/gitconfig</li>
+         			<li><code>--system</code> 修改所有用户的配置文件，去配置/etc/gitconfig</li>
+         			<li>无参数: 修改本仓库配置文件，去配置.git/config</li>
+         		</ul>
+         	</li>
+         </ul>
+         <!--文章]]-->
+         
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+    <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+      <div class="am-offcanvas-bar">
+      	         <h1>其他 > Git</h1>
+
+        <ul class="am-nav">
+        	<!--导航[[-->
+          <li class="am-nav-header">Git基础知识</li>
+          <li><a href="#">概述</a></li>
+          <li><a href="#">安装Git</a></li>
+          <li><a href="#">仓库的创建与配置</a></li>
+          <li><a href="#">基本流程与操作</a></li>
+          <li><a href="#">基本概念</a></li>
+          <li class="am-nav-header">常用操作</li>
+          <li><a href="#">文件管理</a></li>
+          <li><a href="#">提交管理</a></li>
+          <li><a href="#">分支管理</a></li>
+          <li><a href="#">标签管理</a></li>
+          <li class="am-nav-header">远程仓库</li>
+          <li><a href="#">协议</a></li>
+          <li><a href="#">使用GitHub</a></li>
+          <li><a href="#">远程仓库操作</a></li>
+        </ul>
+        <!--导航]]-->
+      </div>
+    </div>
+  </div>
+  <a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button" 
+  	data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>
+</div>
+
+  <!--页脚[[-->
+  <br><br><br>
+  <div class="am-g">
+  	<div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+  	  <br>
+  	  <span class="am-fl">© 2017 yangyuhao</span>
+  	  <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+  	</div>
+  </div>
+  <br><br><br>
+  <!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+	//加载进度条
+	var progress = $.AMUI.progress;
+	$(window).load(function() {
+		progress.done();
+	})
+	$(document).ready(function() {
+		progress.start();
+	})
+</script>
+</body>
+</html>

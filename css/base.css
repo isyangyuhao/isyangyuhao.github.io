@@ -16,3 +16,13 @@ header h1 {
 header h1 a {
 	margin-left: 10px !important;
 }
+#footer {
+	border-top: 1px solid #CCCCCC;
+	color: #777;
+	font-size: 14px;
+}
+#footer a {
+	color: #777;
+	text-decoration: underline;
+}
+

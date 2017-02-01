@@ -1,0 +1,21 @@
+#sidebar {
+	font-size: 14px;
+}
+#sidebar li {
+	margin-top: 0;
+}
+#sidebar li a {
+	color: #777;
+}
+.am-nav-header {
+	border-left: 3px solid #CECECE;
+}
+#pageContent {
+	border-left: 1px solid #EEEEEE;
+}
+#pageDesc {
+	border-right: 0;
+}
+.am-article li {
+	font-size: 14px;
+}
