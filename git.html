@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
   <meta charset="UTF-8">
-  <title>Sidebar | Amaze UI Example</title>
+  <title>杨宇昊的学习笔记-git</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="format-detection" content="telephone=no">
@@ -15,90 +15,6 @@
   <!--Link Base Style-->
   <link rel="stylesheet" type="text/css" href="css/base.css">
   <link rel="stylesheet" type="text/css" href="css/page.css"/>
-  <style>
-    @media only screen and (min-width: 641px) {
-      .am-offcanvas {
-        display: block;
-        position: static;
-        background: none;
-      }
-
-      .am-offcanvas-bar {
-        position: static;
-        width: auto;
-        background: none;
-        -webkit-transform: translate3d(0, 0, 0);
-        -ms-transform: translate3d(0, 0, 0);
-        transform: translate3d(0, 0, 0);
-      }
-      .am-offcanvas-bar:after {
-        content: none;
-      }
-
-    }
-
-    @media only screen and (max-width: 640px) {
-    	
-    	  small {
-      	display: none;
-      }
-    	
-      .am-offcanvas-bar .am-nav>li>a {
-        color:#ccc;
-        border-radius: 0;
-        border-top: 1px solid rgba(0,0,0,.3);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.05)
-      }
-
-      .am-offcanvas-bar .am-nav>li>a:hover {
-        background: #404040;
-        color: #fff
-      }
-
-      .am-offcanvas-bar .am-nav>li.am-nav-header {
-        color: #777;
-        background: #404040;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
-        text-shadow: 0 1px 0 rgba(0,0,0,.5);
-        border-top: 1px solid rgba(0,0,0,.3);
-        font-weight: 400;
-        font-size: 75%
-      }
-
-      .am-offcanvas-bar .am-nav>li.am-active>a {
-        background: #1a1a1a;
-        color: #fff;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,.3)
-      }
-
-      .am-offcanvas-bar .am-nav>li+li {
-        margin-top: 0;
-      }
-    }
-
-    .my-head {
-      margin-top: 40px;
-      text-align: center;
-    }
-
-    .my-button {
-      position: fixed;
-      top: 0;
-      right: 0;
-      border-radius: 0;
-    }
-    .my-sidebar {
-      padding-right: 0;
-      border-right: 1px solid #eeeeee;
-    }
-
-    .my-footer {
-      border-top: 1px solid #eeeeee;
-      padding: 10px 0;
-      margin-top: 10px;
-      text-align: center;
-    }
-  </style>
 </head>
 <body>
   <!--导航栏 [[-->
@@ -112,12 +28,12 @@
   <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
     <div class="am-g">
       <div class="am-u-sm-11 am-u-sm-centered">
-        <div class="am-cf am-article">
+        <div class="am-cf am-article am-scrollable-horizontal">
          
          <!--文章[[-->
          <h2>第一部分 Git基础知识</h2>
-         <h3>1.1概述</h3>
-         <ul>
+         <h3 id="page1">1.1概述</h3>
+         <ol>
          	<li>在实际项目开发过程中，不可能是由多个人共同负责一个项目，需要进行团队合作开发，需要将代码进行同步更新</li>
          	<li>CVS: 最开始使用CVS进行版本控制，但是CVS设计并不完善，除了需要保存真实数据外还需要保存一些非必须的数据文件</li>
          	<li>版本控制发展历程: 
@@ -137,15 +53,15 @@
          			<li>分支切换的速度非常快</li>
          		</ul>
          	</li>
-         </ul>
-         <h3>1.2 在Windows环境下安装Git</h3>
-         <ul>
+         </ol>
+         <h3 id="page2">1.2 在Windows环境下安装Git</h3>
+         <ol>
          	<li>Cygwin模拟环境: 模拟了Unix系统调用API，在Window下可以运行Linux工具和shell命令</li>
          	<li>Wine模拟环境: 模拟了Windows的系统调用API，可以在Linux下运行Windows应用程序</li>
          	<li>Msysgit: Git的Windows版本，将git和cygwin一起打包，集成了Git所需要的运行环境和组件，直接安装即可</li>
-         </ul>
-         <h3>1.3 在Linux环境下安装Git</h3>
-         <ul>
+         </ol>
+         <h3 id="page3">1.3 在Linux环境下安装Git</h3>
+         <ol>
          	<li>自动安装命令
          		<ul>
          			<li>Ubuntu\Debian环境下安装git: <code>apt-get install git(git-core)</code></li>
@@ -161,9 +77,9 @@
          			<li>	源码下载、配置、编译、安装</li>
          		</ul>
          	</li>
-         </ul>
-         <h3>1.4 仓库的创建和配置</h3>
-         <ul>
+         </ol>
+         <h3 id="page4">1.4 仓库的创建和配置</h3>
+         <ol>
          	<li>创建一个仓库: <code>git init</code>
          		<ul>
          			<li>新建一个工作区文件夹，在shell中进入到当前工作区后使用创建仓库命令后会在当前工作区生成隐藏文件夹".git"</li>
@@ -191,7 +107,761 @@
          			<li>无参数: 修改本仓库配置文件，去配置.git/config</li>
          		</ul>
          	</li>
-         </ul>
+         </ol>
+         <h3 id="page5">1.5 基本流程与操作</h3>
+         <img src="photo/git/git3.png" class="am-img-responsive">
+         <ol>
+         	<li>在工作区中修改某些文件
+         		<ul>
+         			<li>查看当前状态信息 <code>git status</code></li>
+         			<li>查看当前区域与暂存区差异 <code>git diff</code></li>
+         		</ul>
+         	</li>
+         	<li>对修改的文件做快照,提交到暂存区 <code>git add file_name</code></li>
+         	<li>	将保存在暂存区的文件快照提交到版本库: <code>git commit -m "commit_info"</code>
+         		<ul>
+         			<li>	在工作区直接提交到版本库(不推荐): <code>git commit -a -m "commit_info"</code></li>
+         		</ul>
+         	</li>
+         	<li>	查看提交历史: <code>git log [-p] [--oneline]</code>
+         		<ul>
+         			<li>查看具体更改历史信息: <code>git show commit_hash</code></li>
+         		</ul>
+         	</li>
+         	<li>
+         		克隆远程仓库: <code>git clone repo_url</code><br>
+				通过克隆远程仓库可以将网络上的仓库克隆到本地进行操作，所有文件和操作记录可以共享
+         	</li>
+         	<li>操作分支
+         		<ul>
+         			<li>查看当期分支: <code>git branch</code></li>
+         			<li>创建分支: <code>git branch new_branch_name</code></li>
+         			<li>切换分支: <code>git checkout new_branch_name</code></li>
+         		</ul>
+         	</li>
+         	<li>操作标签
+         		<ul>
+         			<li>创建标签: <code>git tag tag_name</code></li>
+         			<li>查看标签: <code>git tag</code></li>
+         			<li>删除标签: <code>git tag -d tag_name</code></li>
+         		</ul>
+         	</li>
+         </ol>
+         <h3 id="page6">1.6 基本概念</h3>
+         <ol>
+         	<li>专业术语中英文对照表
+			  <table class="am-table am-table-bordered am-table-striped am-text-nowrap am-table-compact">
+			    <tr>
+				    	<td>repository</td>
+				    	<td>仓库,版本库</td>
+				    	<td>merge</td>
+				    	<td>分支合并</td>
+				    	<td>snapshot</td>
+				    	<td>快照</td>
+			    </tr>
+			    <tr>
+				    	<td>ref</td>
+				    	<td>引用</td>
+				    	<td>rebase</td>
+				    	<td>分支衍合</td>
+				    	<td>staging</td>
+				    	<td>暂存区</td>
+			    </tr>
+				<tr>
+				    	<td>bare</td>
+				    	<td>裸仓库</td>
+				    	<td>cherry-pick</td>
+				    	<td>条件分支</td>
+				    	<td>SHA1</td>
+				    	<td>哈希值</td>
+			    </tr>
+			    <tr>
+				    	<td>SVN</td>
+				    	<td>版本控制系统</td>
+				    	<td>squash</td>
+				    	<td>压合分支</td>
+				    	<td>commit</td>
+				    	<td>提交</td>
+			    </tr>
+			    <tr>
+				    	<td>GIT</td>
+				    	<td>分布式RCS</td>
+				    	<td>checkout</td>
+				    	<td>检出</td>
+				    	<td>branch</td>
+				    	<td>分支</td>
+			    </tr>
+			    <tr>
+				    	<td>SSH</td>
+				    	<td>安全传输协议</td>
+				    	<td>revert</td>
+				    	<td>反转提交</td>
+				    	<td>tag</td>
+				    	<td>标签</td>
+			    </tr>
+				<tr>
+				    	<td>HEAD</td>
+				    	<td>当前分支</td>
+				    	<td>stash</td>
+				    	<td>储藏</td>
+				    	<td>index</td>
+				    	<td>索引</td>
+			    </tr>
+			    <tr>
+				    	<td>pull</td>
+				    	<td>拉取代码</td>
+				    	<td>master</td>
+				    	<td>主分支</td>
+				    	<td>origin</td>
+				    	<td>远程仓库</td>
+			    </tr>
+			    <tr>
+				    	<td>push</td>
+				    	<td>推送代码</td>
+				    	<td>Gerrit</td>
+				    	<td>代码审核</td>
+				    	<td> - </td>
+				    	<td> - </td>
+			    </tr>
+			  </table>
+         	</li>
+         	<li>工作目录、暂存区、版本库
+         		<ul>
+         			<li>Git本质: 内容寻址文件系统</li>
+         			<li>版本库中的文件状态: modified(已修改), staged(已暂存), committed(已提交)</li>
+         			<li>工作区中的文件状态: untracked(未被追踪状态), tracked(被追踪状态)</li>
+         			<li>索引
+         				<ul>
+         					<li>定义: 索引存储了一个tree对象的所有二进制文件,里边有很多条目,分别指向不同的blob和tree的哈希值</li>
+         					<li>索引存放在暂存区,文件修改的内容并没有保存到其中</li>
+         					<li>索引是一个包含文件索引的目录树: 
+         						<ul>
+         							<li>记录了文件名和文件状态信息(时间戳，文件长度等)</li>
+         							<li>文件的内容并没有保存其中</li>
+         							<li>文件索引建立了文件和对象库中对象之间的关联</li>
+         						</ul>
+         					</li>
+         				</ul>
+         			</li>
+         			<li>版本库目录
+         				<table class="am-table am-table-compact">
+         					<thead>
+     							<th>版本库子目录</th>
+     							<th>功能描述</th>
+         					</thead>
+         					<tbody>
+         						<tr>
+         							<td>branches</td>
+         							<td>项目分支信息</td>
+         						</tr>
+         						<tr>
+         							<td>hooks</td>
+         							<td>默认的hooks脚本，由特定事件触发</td>
+         						</tr>
+         						<tr>
+         							<td>info</td>
+         							<td>内有exclude文件，指定git需要忽略的文件</td>
+         						</tr>
+         						<tr>
+         							<td>logs</td>
+         							<td>历史记录，删除commit对象等</td>
+         						</tr>
+         						<tr>
+         							<td>objects</td>
+         							<td>Git数据对象: commit, tree, blob, tag</td>
+         						</tr>
+         						<tr>
+         							<td>refs</td>
+         							<td>Git引用: 指向(远程)分支，标签的指针</td>
+         						</tr>
+         						<tr>
+         							<td>HEAD</td>
+         							<td>指向当前分支的末端</td>
+         						</tr>
+         						<tr>
+         							<td>index</td>
+         							<td>Staging area暂存区</td>
+         						</tr>
+         						<tr>
+         							<td>COMMIT_EDITMS</td>
+         							<td>最后一次提交的注释</td>
+         						</tr>
+         						<tr>
+         							<td>description</td>
+         							<td>Git项目描述信息</td>
+         						</tr>
+         					</tbody>
+         				</table>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>git对象模型
+         		<ul>
+         			<li>对象
+         				<ul>
+         					<li>对象类型：blob，tree，commit，tag</li>
+         					<li>对象大小：对象数据内容的大小</li>
+         					<li>文件名：通过SHA1算法生成文件名</li>
+         				</ul>
+         			</li>
+         			<li>SHA1对象数据
+         				<ul>
+         					<li>使用40个字符的字符串来表示对象名，目录(2)+名称(38)</li>
+         					<li>字符串由对象内容做SHA-1哈希计算得到</li>
+         					<li>通过比较SHA-1值来比较两个文件的内容，通过这种方式比较速度非常快</li>
+         				</ul>
+         			</li>
+         			<li>不同类型的对象用途
+            				<ul>
+         					<li>blob：存储文件数据，通常是一个文件</li>
+         					<li>tree：类似于一个目录，用于管理tree和blob</li>
+         					<li>commit：指向一个tree，标记某个特定时间点状态</li>
+         					<li>tag：用来标记某一个提交(commit)</li>
+         				</ul>
+         			</li>
+         			<li>blob
+         				<ul>
+         					<li>对象内容全部是二进制格式数据文件，对象名由哈希计算产生</li>
+         					<li>查看glob文件内容: <code>git show SHA1</code>  <code>git cat-file -p SHA1</code></li>
+         				</ul>
+         			</li>
+         			<li>tree
+         				<img src="photo/git/git4.png" class="am-img-responsive">
+         				<ul>
+         					<li>tree对象包括mode、对象类型、SHA1值、名字；是一串指向blob或其他tree对象的指针，表示目录树的内容、内容间的层次目录关系</li>
+         					<li>查看tree对象内容: <code>git ls-tree SHA1</code> <code>git cat-file master^{tree}</code>  <code>git cat-file -p SHA1</code></li>
+         				</ul>
+         			</li>
+         			<li>commit
+         				<img src="photo/git/git5.png" class="am-img-responsive">
+         				<ul>
+         					<li>commit用来指向一个tree对象</li>
+         					<li>commit对象的组成: 一个tree对象,父对象(一个项目必须有根提交),作者(修改人名字,日期),提交者(实际提交的人名字,日期)</li>
+         					<li>一个提交本身并没有包含任何信息说明做了哪些修改，所有的修改都是通过父提交比较得来的</li>
+         					<li>提交commit对象：使用<code>git commit</code>命令提交，将存储在暂存区的index全部提交，提交的父对象为当前分支HEAD</li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>引用
+         		<ul>
+         			<li>引用的本质: 引用就是commit的指针,分支和标签都是对提交的引用</li>
+         			<li>引用的存放路径: .git/ref</li>
+         			<li>tag
+         				<ul>
+         					<li>	标签对象由对象名、对象类型、标签名、标签创建者名构成，指向一个commit的SHA1</li>
+         					<li>标签与分支比较: 都指向一个commit; 标签可以看做常量指针,不能改变; 分支可以看做变量指针,可以改变</li>
+         					<li>查看标签信息: <code>git cat-file -p tag_name</code></li>
+         					<li>tag分类
+         						<ul>
+         							<li>轻量级tag: 只是一个commit的引用,不是tag对象</li>
+         							<li>重量级tag: 是一个tag对象，包含了对象名、类型、标签名、创建者、描述信息、commit引用等更加详细的信息;
+         								创建命令: <code>git tag -a -m "tag_desc" tag_name</code>
+         							</li>
+         						</ul>
+         					</li>
+         					<li>版本库引用视图
+         						<img src="photo/git/git6.png" class="am-img-responsive">
+         					</li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         </ol>
+         <h2>第二部分 常用操作</h2>
+         <h3 id="page7">2.1 文件管理</h3>
+         <img src="photo/git/git7.png" class="am-img-responsive">
+         <ol>
+         	<li>文件添加
+         		<ul>
+         			<li>作用: 对于已经追踪的文件，将修改从工作区保存到暂存区；对于未追踪的文件，将其加入追踪范围</li>
+         			<li>添加某个文件: <code>git add file_name</code></li>
+         			<li>添加所有文件: <code>git add .</code></li>
+         		</ul>
+         	</li>
+         	<li>文件提交
+         		<ul>
+         			<li>作用: 将暂存区的所有内容提交到版本库</li>
+         			<li>单步提交: <code>git commit -m "commit_info"</code></li>
+         			<li>一次性提交: <code>git commit -a</code></li>
+         			<li>修改最后一次提交(通过该方法提交的记录会合并到最后一次提交对象当中): <code>git commit --amend</code></li>
+         			<li>注意: 如果修改唯有保存到暂存区，是不会被提交到版本库中的，除非使用一次向提交</li>
+         		</ul>
+         	</li>
+         	<li>文件删除
+         		<ul>
+         			<li>从工作目录中删除,在暂存区保留: <code>rm file_name</code></li>
+         			<li>从工作目录和暂存区同时删除: <code>git rm -f file_name</code>
+         				<ul>
+         					<li>使用这种方式删除可以避免出现在未跟踪清单中</li>
+         					<li>使用这种方式删除后提交，文件将不会再被版本库跟踪，但是版本库中仍然有这些文件的快照</li>
+         				</ul>
+         			</li>
+         			<li>从暂存区删除，工作目录保留: <code>git rm -cached file_name</code>
+         				<br>	可以将库文件、可执行文件、日志、临时文件等不需要提交的文件从暂存区删除
+         			</li>
+         			<li>从版本库中删除: 版本回退到错误提交前的版本
+         				<ul>
+         					<li>撤销提交到暂存区: <code>git reset --soft SHA1</code></li>
+         					<li>撤销提交到工作区: <code>git reset --mixed SHA1</code></li>
+         					<li>将工作区、暂存区和版本库恢复到指定版本(不推荐): <code>git reset --hard SHA1</code></li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>文件重命名
+         		<ul>
+         			<li>文件重命名操作: <code>git mv old_file_name new_file_name</code></li>
+         			<li>执行文件重命名后实际的操作: 
+         				<ul>
+         					<li>文件移动: <code>mv old_file_name new_file_name</code></li>
+         					<li>删除旧文件: <code>git rm old_file_name</code></li>
+         					<li>添加新文件: <code>git add new_file_name</code></li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>忽略指定格式的文件
+         		<ul>
+         			<li>有一些文件不需要提交到版本库中: 可执行文件、日志文件、临时文件、库文件等</li>
+         			<li>通过在仓库根目录创建".gitignore"文件来进行忽略文件的配置</li>
+         			<li>忽略文件模式: glob模式匹配
+         				<ul>
+         					<li>以#开头的行为注释</li>
+         					<li>忽略所有bin格式的文件: *.bin</li>
+         					<li>忽略所有a或b为后缀的文件: *[ab]</li>
+         					<li>不忽略某个文件: !main.bin</li>
+         					<li>忽略临时文件: *~</li>
+         					<li>忽略根目录下的某个文件: /text.txt</li>
+         					<li>忽略某个目录下的所有文件: lib/, execute/*.exe</li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>撤销提交
+         		<ul>
+         			<li>撤销工作区的修改: <code>git checkout -- file_name</code>
+         				<ul>
+         					<li>让文件回到最近一次commit或add的状态</li>
+         					<li>若文件还没有添加到暂存区，撤销后和版本库一样</li>
+         					<li>若文件已添加到暂存区，回到暂存区版本状态</li>
+         				</ul>
+         			</li>
+         			<li>撤销暂存区的修改: <code>git reset HEAD file_name</code>
+         				<br>将暂存区的修改撤销掉，重新放回工作区
+         			</li>
+         			<li>撤销版本库的提交: <code>git reset --hard SHA1(HEAD^)</code>
+         				<br>回退版本，并刷新到工作区，先前提交的对象还在版本库中存在着
+         			</li>
+         		</ul>
+         	</li>
+         	<li>差异比较
+         		<ul>
+         			<li>比较工作区和暂存区差异: <code>git diff</code> (查看尚未暂存的文件有哪些新的修改)</li>
+         			<li>比较暂存区和版本库差异: <code>git diff --cached [HEAD]</code> <code>git diff ---staged SHA</code> (查看已暂存文件和上次提交的快照之间的差异)</li>
+         			<li>比较工作区和版本库差异: <code>git diff HEAD(SHA1)</code> (查看未暂存文件和最新提交文件快照的区别)</li>
+         			<li>比较两个版本之间差异: <code>git diff SHA1 SHA2</code></li>
+         		</ul>
+         	</li>
+         	<li>压缩仓库
+         		<ul>
+         			<li>压缩版本库: 在日常使用中git快照会占用磁盘空间,使用<code>git gc</code>命令压缩存储单元,节省磁盘空间</li>
+         			<li>快照的存储: 对于未修改的内容做快照处理并保存;对为修改的文件做引用处理</li>
+         		</ul>
+         	</li>
+         </ol>
+         <h3 id="page8">2.2 提交管理</h3>
+         <ol>
+         	<li>查看提交历史
+         		<ul>
+         			<li>显示每个版本的修改差异: <code>git log -p [-look_number] [--oneline look_number]</code></li>
+         			<li>查看每个用户对应的操作记录:  <code>git shortlog</code></li>
+         			<li>图形化显示: <code>git log --graph</code></li>
+         			<li>查看某个文件每一行的提交记录: <code>git blame file_name</code></li>
+         			<li>查看某个文件2行到4行的提交记录: <code>git blame file_name -L 2,4</code></li>
+         			<li>查看某个文件提交修改历史: <code>git log -C file_name</code></li>
+         		</ul>
+         	</li>
+         	<li>git log命令参数
+         		<ul>
+         			<li>展开版本之间的内容变化: <code>-p</code></li>
+         			<li>显示最近n次的更新: <code>-n</code></li>
+         			<li>指定位置开始的第n个提交: <code>git log HEAD~m n</code></li>
+         			<li>两个版本之间的提交: <code>git log HEAD~n..HEAD</code></li>
+         			<li>仅显示行数变化: <code>--stat</code></li>
+         			<li>显示新增、增改、删除文件清单: <code>--name-status</code></li>
+         			<li>仅显示指定作者相关的提交: <code>--author=author_name</code></li>
+         			<li>仅显示指定提交者相关修改: <code>--committer=committer_name</code></li>
+         			<li>指定日志的起点: <code>git log SHA1</code></li>
+         		</ul>
+         	</li>
+         	<li>提交查找
+         		<ul>
+         			<li>关键字查找
+         				<ul>
+         					<li>查找所有包含"content_value"字符串的文件: <code>git grep content_value</code></li>
+         					<li>显示关键字所在文件的行号: <code>git grep -n content_value</code></li>
+         					<li>不显示内容，只显示文件名: <code>git --name -only content_value</code></li>
+         					<li>查看每个文件匹配的个数: <code>git grep -c content_value</code></li>
+         				</ul>
+         			</li>
+         			<li>组合查找
+         				<ul>
+         					<li>查找"content1 content2": <code>git grep -e content1 --and -e content2</code></li>
+         					<li>查找"content1"或"content2": <code>git grep --e content1 --or -e content2</code></li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>修改提交
+         		<ul>
+         			<li>增补提交: 修改最后一次提交，修改提交信息或者内容 <code>git commit --amend</code></li>
+         			<li>反转提交
+         				<ul>
+         					<li>将原来的提交撤销掉: <code>git revert SHA1</code></li>
+         					<li>反转多个提交: 要先反转最后提交防止冲突，此时原操作的逆操作都在暂存区，然后需要重新手动提交
+         						<br><code>git revert -n HEAD</code> <code>git revert -n SHA1</code> <code>git commit -m "revert HEADand SHA1"</code>
+         					</li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>置位
+         		<ul>
+         			<li>复位: 版本会退到工作区 <code>git reset [--mixed] SHA1</code></li>
+         			<li>软复位: 回退版本到暂存区 <code>git reset --soft SHA1</code></li>
+         			<li>硬复位: 从版本库和工作目录中同时删除提价内容 <code>git reset --hard SHA1</code></li>
+         		</ul>
+         	</li>
+         	<li>提交排序: <code>git rebase -i SHA1 SHA2</code>
+         		<br>	进入人机交互模式，手动修改提交的顺序记录，同时修改统一文件的记录修改顺序后会出现错误
+         	</li>
+         	<li>合并提交: <code>git rebase -i SHA1 SHA2</code>
+         		<ul>
+         			<li>进入人机交互模式，将需要压缩的提交历史将头信息pick改为s即可，提交后跳转到重新编辑提交信息界面</li>
+         			<li>e.g.
+						<pre>
+pick 258eba0 修改了.gitignor*
+s 00685dc alter readme</pre>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>分解提交: <code>git rebase -i SHA1</code>
+         		<ul>
+         			<li>进入人机交互模式，将需要分解的历史头信息pick改为edit</li>
+         			<li>检出到工作区，重新修改，多次提交，第一次提交需要使用<code>git commit --amend</code></li>
+         			<li>分解提交完成后使用<code>git rebase --continue</code>退出分解提交模式</li>
+         		</ul>
+         	</li>
+         	<li>恢复隐藏的历史
+         		<ul>
+         			<li>悬垂对象：删除的提交对象其实并没有真正的删除，被称为悬垂对象，仍在保存在仓库中，通过<code>git reflog</code>命令查看当前状态</li>
+         			<li>回退版本：直接回退到第N次改变之前的版本 <code>git reset --hard HEAD@{N}</code>
+         				<br>通过<code>git reflog</code>可以查看历史改变的N和信息
+         			</li>
+         		</ul>
+         	</li>
+         </ol>
+         <h3 id="page9">2.3 分支管理</h3>
+         <ol>
+         	<li>分支的本质: 指向一个commit的指针
+         		 <img src="photo/git/git8.png" class="am-img-responsive">
+         	</li>
+         	<li>分支的功能: 增加新功能，实验性修改，多人写作开发，Bug修复等</li>
+         	<li>分支的基本使用
+         		<ul>
+         			<li>创建分支
+         				<ul>
+         					<li>从当前节点创建分支: <code>git branch new_branch</code></li>
+         					<li>从当前节点创建分支并切换到新分支: <code>git checkout -b new_branch</code></li>
+         					<li>从指定节点创建分支: <code>git checkout -b new_branch old_branch</code></li>
+         				</ul>
+         			</li>
+         			<li>查看分支: <code>git branch</code></li>
+         			<li>切换分支: <code>git checkout branch_name</code>
+         				<br>	分支切换可以看做是提交的逆操作,检出之前一定要保证工作区和暂存区的清洁
+         			</li>
+         			<li>重命名分支: <code>git branch -m old_branch_name new_branch_name</code></li>
+         			<li>删除分支
+         				<ul>
+         					<li>	对于已经合并的分支: <code>git branch -d branch_name</code></li>
+         					<li>对于未合并的分支，强制删除: <code>git branch -D branch_name</code></li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>分支合并: <code>git merge branch_name</code>
+         		<ul>
+         			<li>快进式提交
+         				<img src="photo/git/git9.png" class="am-img-responsive">
+         			</li>
+         			<li>合并式提交
+         				<img src="photo/git/git10.png" class="am-img-responsive">
+         			</li>
+         			<li>合并冲突
+         				<ul>
+         					<li>手动解决</li>
+         					<li>图形化工具解决: 
+         						<ul>
+         							<li><code>git config --global di ff.tool vimdiff</code></li>
+         							<li><code>git config --global difftool.prompt false</code></li>
+         							<li>分支合并产生冲突后，使用<code>git mergetool</code>解决冲突</li>
+         							<li>使用<code>:xa</code>退出，git会一次打开下一个冲突文件</li>
+         							<li>解决完冲突后提交，这时候会生成一个新的commit</li>
+         						</ul>
+         					</li>
+         				</ul>
+         			</li>
+         			<li>压合分支: <code>git merge --squash branch_name</code>
+         				<br>	将一个分支上的所有历史合并为一个提交，然后合并到另一个分支上，一般bug或者新功能都可以使用这种方式合并
+         			</li>
+         			<li>挑选合并
+         				<ul>
+         					<li>挑选一个提交，添加到当前的分支末梢: <code>git cherry-pink SHA</code></li>
+         					<li>挑选多个提交，添加到当前分支末梢: <code>git cherry-pink -n SHA1</code> <code>git cherry-pink -n SHA2 ...</code> <code> git commit</code>
+         						<br>这里将会看到合并并更新到版本库，而是在暂存区保存，可以继续cherry-pick，最后一次性提交即可
+         					</li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>分支衍合 <code>git rebase branch_name</code>
+         		<ul>
+         			<li>	将当前分支衍合到指定分支的最末端，衍合会改变提交的历史</li>
+         			<li>不要衍合已经push到公共仓库(远程仓库)的更新</li>
+         			<li>衍合和合并的区别
+         				<ul>
+         					<li>顺序区别：合并的顺序按照时间顺序依次合并；衍合则是将其他分支提交现行合并到本分支</li>
+         					<li>应用场景：合并适用于新功能的开发以及Bug修复；衍合适用于pull/push冲突解决以及基于主分支开发</li>
+         				</ul>
+         				<img src="photo/git/git11.png" class="am-img-responsive">
+         			</li>
+         		</ul>
+         	</li>
+         	<li>分支修改储藏
+         		<ul>
+         			<li>保存当前分支数据
+         				<ul>
+         					<li>在当前分支工作被打断，进度并不适合提交的时候通过修改储藏可以保存当前分支工作目录和暂存区的数据</li>
+         					<li>使用 <code> git stash</code> 命令将数据压入栈中，即可切换到其他分支完成任务</li>
+         				</ul>
+         			</li>
+         			<li>恢复当前分支数据
+         				<ul>
+         					<li>其他分支工作完成后，在切换回被打断的分支</li>
+         					<li>不弾栈将数据恢复: <code>git stash apply</code></li>
+         					<li>将数据恢复并弾栈: <code>git statsh pop</code></li>
+         				</ul>
+         			</li>
+         			<li>储藏队列
+         				<ul>
+         					<li>查看储藏队列: <code>git stash list</code></li>
+         					<li>清空储藏队列: <code>git stash clear</code></li>
+         					<li>恢复第n次储藏: <code>git stash apply stash@{n}</code></li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>恢复已删除分支的提交
+         		<ul>
+         			<li>分支删除的本质：分支指针删除，但commit对象还存在，commit脱离了链表变成了悬空对象</li>
+         			<li>具体步骤: 
+         				<ul>
+         					<li>找回提交的悬空对象: <code>git fsck --lost-found</code></li>
+         					<li>查看修改: <code>git show SHA</code></li>
+         					<li>衍合提交或和并提交: <code>git merge SHA</code></li>
+         				</ul>
+         			</li>
+         			<li>只能找到提交,被删除的分支无法找到</li>
+         		</ul>
+         	</li>
+         	<li>no branch状态
+         		<ul>
+         			<li>造成no branch原因：与远程存在冲突，push/pull后可能会切换到此状态；可以看做是一个匿名的branch</li>
+         			<li>解决方案
+         				<ul>
+         					<li>如果改动较小
+         						<ul>
+         							<li>查看提交ID: <code>git log</code></li>
+         							<li>切换到要合并的分支上: <code>git checkout branch_name</code></li>
+         							<li>直接将该提交合并到当前分支: <code>git merge SHA</code></li>
+         						</ul>
+         					</li>
+         					<li>如果改动较大
+         						<ul>
+         							<li>新建一个分支: <code>git checkout -b branch_name SHA</code></li>
+         							<li>在对该分支进行提交和合并处理: <code>git merge temp</code></li>
+         						</ul>
+         					</li>
+         					<li>如果脱离了no branch状态
+         						<ul>
+         							<li>找回丢失的commit_sha: <code>git reflog | git fsck --lost-found</code></li>
+         							<li>检出提交并备份到新分支上: <br><code>git checkout SHA; git checkout -b branch_name</code></li>
+         							<li>或者直接合并到master分支: <code>git checkout master; git merge SHA</code></li>
+         							<li>此时SHA可以看做一个匿名的branch</li>
+         						</ul>
+         					</li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         </ol>
+         <h3 id="page10">2.4 标签管理</h3>
+         <ol>
+         	<li>标签概述: 标签是一个引用，标签对象可以指向任何对象，通常情况下，标签指向的是一个commit</li>
+         	<li>标签用途: 使用标签可以方便的标记里程碑,标签可以作为发布软件的版本标识</li>
+         	<li>标签的基本操作: 
+         		<ul>
+         			<li>创建标签
+         				<ul>
+         					<li>在当前分支末端创建轻量级标签: <code>git tag v1.0</code></li>
+         					<li>给指定的commit对象上创建标签: <code>git tag v1.0 SHA</code></li>
+         					<li>创建重量级标签: <code>git tag -a v1.0 -m "version 1.0" SHA</code></li>
+         				</ul>
+         			</li>
+         			<li>查看标签: <code>git show v1.0</code></li>
+         			<li>使用标签检出其标记的版本库状态: <code>git checkout v1.0</code></li>
+         			<li>删除标签: <code>git tag -d v1.0</code></li>
+         		</ul>
+         	</li>
+         	<li>标签的远程操作
+         		<ul>
+         			<li>推送本地标签到远程仓库: <code>git push origin v1.0</code></li>
+         			<li>推送所有标签: <code>git push origin --tags</code></li>
+         			<li>删除远程标签
+         				<ul>
+         					<li>先删除本地标签: <code>git tag -d v1.0</code></li>
+         					<li>在删除远程标签: <code>git push origin :refs/tags/v1.0</code></li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         </ol>
+         <h2>第三部分 远程仓库</h2>
+         <h3 id="page11">3.1 协议</h3>
+         <ol>
+         	<li>常用协议
+         		<ul>
+         			<li>SSH协议
+         				<ul>
+         					<li>同时支持读和写的网络协议，Git默认使用的网络协议</li>
+         					<li>优点：安全性高，数据传输都是加密和授权的</li>
+         					<li>缺点：不能匿名访问，读取也需要授权，不利于开源项目</li>
+         				</ul>
+         			</li>
+         			<li>Git协议
+         				<ul>
+         					<li>Git自带的网络协议，适用与不需要对读进行授权的大型项目</li>
+         					<li>优点：传输速度最快</li>
+         					<li>缺点：授权机制不灵活，要么不能推送，要么都能推送</li>
+         				</ul>
+         			</li>
+         			<li>Http/Https协议
+         				<ul>
+         					<li>优点：容易架设，适用于提供只读的仓库、防火前穿透强</li>
+         					<li>缺点：传输速度慢，开销大</li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>服务器授权访问机制 (SSH key)
+         		<ul>
+         			<li>SSH公钥生成
+         				<ul>
+         					<li>查看用户当前目录是否存在"~/.ssh"</li>
+         					<li>如果不存在，使用命令生成SSH Key: <code>ssh-keygen -t rsa -C "isyangyuhao@gmail.com"</code></li>
+         					<li>私钥保存在用户目录下，SSH连接服务器时使用</li>
+         					<li>公钥放到服务器，服务器不同配置管理不同：在服务器添加一个git用户，将公钥加入到~/.ssh/authorized_keys文件</li>
+         				</ul>
+         			</li>
+         			<li>多台主机提交
+         				<ul>
+         					<li>分别在多台电脑生成多对密钥</li>
+         					<li>在将公钥分别添加到服务器上即可</li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         </ol>
+         <h3 id="page12">3.2 使用GitHub</h3>
+         <ol>
+         	<li>添加账户SSH-Key
+         		<img src="photo/git/git12.png" class="am-img-responsive">
+         	</li>
+         	<li>本地验证SSH-Key添加成功
+         		<br>在本地输入<code>ssh -T git@github.com</code> 验证，验证成功后GitHub中的灰色钥匙将会变为绿色
+         	</li>
+         	<li>创建仓库
+         		<img src="photo/git/git13.png" class="am-img-responsive">
+         		<img src="photo/git/git14.png" class="am-img-responsive">
+         	</li>
+         	<li>克隆仓库到本地
+         		<img src="photo/git/git15.png" class="am-img-responsive">
+         		<ul>
+         			<li>HTTPS协议克隆的仓库为只读,SSH协议克隆的仓库为可读可写</li>
+         			<li>为其他用户赋予SSH权限: 将用户电脑中生成的SSH-Key加入GitHub仓库的Deploy-Keys
+         				<img src="photo/git/git16.png" class="am-img-responsive">
+         			</li>
+         		</ul>
+         	</li>
+         </ol>
+         <h3 id="page13">3.3 远程仓库操作</h3>
+         <img src="photo/git/git17.png" class="am-img-responsive">
+         <ol>
+         	<li>远程仓库基本操作
+         		<ul>
+         			<li>从远程仓库克隆: <code>git clone repo_addr</code></li>
+         			<li>添加远程仓库: <code>git remote add origin https://github.com/isyangyuhao/xxxxxxxx.git</code></li>
+         			<li>从远程仓库拉取数据
+         				<ul>
+         					<li>从远程仓库克隆后，本地仓库的master分支会自动关联并拉去远程仓库master分支的内容</li>
+         					<li>将远程仓库拉取到本地版本库,不进行合并: <code>git fetch</code>
+         						<ul>
+         							<li>使用<code>git fetch</code>命令拉取文件后会将远程仓库分支存放到本地版本库中</li>
+         							<li>使用<code>git branch -a</code>命令即可查看拉取下来的远程仓库分支</li>
+         							<li>使用分支衍合<code>git rebase origin_branch_name</code>将当前分支衍合到拉取下来的远程仓库的分支</li>
+         						</ul>
+         					</li>
+         					<li>自动拉取某个分支的更新: <code>git pull</code>, 从远程仓库拉去到版本库并自动合并分支，更新到工作区</li>
+         				</ul>
+         			</li>
+         			<li>推送数据到远程仓库(默认是origin的master分支): <code>git push [origin master]</code></li>
+         			<li>查看远程仓库信息: <code>git remote -v / git remote show origin</code></li>
+         			<li>远程仓库删除: <code>git remote rm respority_name</code>
+         				<br>不是删除服务器上的仓库，而是删除当前仓库与远程仓库的连接
+         			</li>
+         			<li>远程仓库重命名: <code>git remote rename old_name new_name</code>
+         				<br>不是修改服务器上的仓库名，而是修改当前本地仓库所连接的远程仓库的别名
+         			</li>
+         		</ul>
+         	</li>
+         	<li>远程分支操作
+         		<ul>
+         			<li>远程分支是对远程仓库状态的索引，用origin/master表示</li>
+         			<li>创建远程分支: 将本地新建的分支推送到远程仓库
+         				<ul>
+         					<li><code>git push origin local_branch_name:origin_branch_name</code></li>
+         					<li>远程仓库没有当前分支，就会创建origin/origin_branch_name分支，并将本地分支与远程分支相关联，以后可以直接push</li>
+         					<li>通过省略写法创建分支，保持远程仓库和本地仓库分支名相同: <code>git push origin branch_name</code></li>
+         				</ul>
+         			</li>
+         			<li>跟踪远程仓库: 基于远程分支建立一个本地关联分支
+         				<ul>
+         					<li><code>git checkout -b local_branch_name origin/branch_name</code></li>
+         					<li><code>git push local_branch</code> 建立关联后，就可以直接pull/push了</li>
+         				</ul>
+         			</li>
+         			<li>删除远程分支: <code>git push origin :branch_name</code>(远程分支)</li>
+         			<li>添加新的远程版本库
+         				<ul>
+         					<li>绑定版本库: <code>git remote add name https://github.com/isyangyuhao/xxxxxxxx.git</code></li>
+         					<li>获取需要的分支: <code>git fetch branch_name</code></li>
+         					<li>对获取的分支进行查看、修改、合并等操作</li>
+         				</ul>
+         			</li>
+         		</ul>
+         	</li>
+         </ol>
          <!--文章]]-->
          
         </div>
@@ -201,25 +871,26 @@
   <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
     <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
       <div class="am-offcanvas-bar">
-      	         <h1>其他 > Git</h1>
-
+      
         <ul class="am-nav">
+        	<h1>Git</h1>
         	<!--导航[[-->
           <li class="am-nav-header">Git基础知识</li>
-          <li><a href="#">概述</a></li>
-          <li><a href="#">安装Git</a></li>
-          <li><a href="#">仓库的创建与配置</a></li>
-          <li><a href="#">基本流程与操作</a></li>
-          <li><a href="#">基本概念</a></li>
+          <li><a href="#!" id="btn1">概述</a></li>
+          <li><a href="#!" id="btn2">安装Git</a></li>
+<!--          <li><a href="#!" id="btn3">在Linux环境下安装Git</a></li>-->
+		  <li><a href="#!" id="btn4">仓库的创建与配置</a></li>
+          <li><a href="#!" id="btn5">基本流程与操作</a></li>
+          <li><a href="#!" id="btn6">基本概念</a></li>
           <li class="am-nav-header">常用操作</li>
-          <li><a href="#">文件管理</a></li>
-          <li><a href="#">提交管理</a></li>
-          <li><a href="#">分支管理</a></li>
-          <li><a href="#">标签管理</a></li>
+          <li><a href="#!" id="btn7">文件管理</a></li>
+          <li><a href="#!" id="btn8">提交管理</a></li>
+          <li><a href="#!" id="btn9">分支管理</a></li>
+          <li><a href="#!" id="btn10">标签管理</a></li>
           <li class="am-nav-header">远程仓库</li>
-          <li><a href="#">协议</a></li>
-          <li><a href="#">使用GitHub</a></li>
-          <li><a href="#">远程仓库操作</a></li>
+          <li><a href="#!" id="btn11">协议</a></li>
+          <li><a href="#!" id="btn12">使用GitHub</a></li>
+          <li><a href="#!" id="btn13">远程仓库操作</a></li>
         </ul>
         <!--导航]]-->
       </div>
@@ -260,6 +931,28 @@
 	$(document).ready(function() {
 		progress.start();
 	})
+	//侧边栏平滑滚动
+	$(window).smoothScroll();
+	function navClick($btnObj, $pageObj) {
+		$btnObj.on("click", function() {
+			var $w = $(window);
+			$w.smoothScroll({position: $pageObj.offset().top});
+		})
+	}
+	navClick($("#btn1"), $("#page1"));
+	navClick($("#btn2"), $("#page2"));
+	navClick($("#btn3"), $("#page3"));
+	navClick($("#btn4"), $("#page4"));
+	navClick($("#btn5"), $("#page5"));
+	navClick($("#btn6"), $("#page6"));
+	navClick($("#btn7"), $("#page7"));
+	navClick($("#btn8"), $("#page8"));
+	navClick($("#btn9"), $("#page9"));
+	navClick($("#btn10"), $("#page10"));
+	navClick($("#btn11"), $("#page11"));
+	navClick($("#btn12"), $("#page12"));
+	navClick($("#btn13"), $("#page13"));
+	
 </script>
 </body>
 </html>
