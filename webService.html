@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>杨宇昊的学习笔记-webService</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+  <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+  <!--Link Web Font-->
+  <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+  <!--代码高亮highlight.js-->
+  <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+  <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>  
+  <script>hljs.initHighlightingOnLoad();</script>-->
+  <!--Link Base Style-->
+  <link rel="stylesheet" type="text/css" href="css/base.css">
+  <link rel="stylesheet" type="text/css" href="css/page.css"/>
+</head>
+<body>
+  <!--导航栏 [[-->
+  <header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489"> 
+      <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+  </header>
+  <!--导航栏 ]]-->
+  <div class="am-g am-g-fixed">
+  <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+    <div class="am-g">
+      <div class="am-u-sm-11 am-u-sm-centered">
+        <div class="am-cf am-article am-scrollable-horizontal">
+         
+         <!--文章[[-->
+         <h2>第一部分 基础知识</h2>
+         <h3>1.1 webService概述</h3>
+         <ol>
+         	<li>服务: 部署在服务器中，提供请求相应的程序成为服务</li>
+         	<li>协议: 双方规定的一种通信方式</li>
+         	<li>使用Socket方式进行远程方法调用
+         		<ul>
+         			<li>Server端
+         				<pre class="am-scrollable-horizontal am-hide-sm">
+//业务逻辑
+public class UserService {
+  public String display() {
+    return "test...";
+  }
+}
+
+public class Server {
+  public static void main(String args []) {
+    //服务套接字监听端口8888
+    ServerScoket ss = new ServerScoket(8888);
+    //接收客户端请求
+    Socket s = ss.accept();
+    //调用业务逻辑方法
+    String result = new UserService().display();
+    //响应客户端
+    BufferWriter out = 
+        new BufferWriter(new OutputStreamWriter(s.getOutputStream()));
+    out.write(result);
+    out.flush();
+    out.close();
+    s.close();
+    ss.close();
+  }
+}</pre>
+         			</li>
+         			<li>Client端
+         				<pre class="am-scrollable-horizontal am-hide-sm">
+public class Client {
+  public static void main(String args []) {
+    //为指定IP地址的指定端口发送请求
+    Socket s = new Socket("192.168.15.82", 8888);
+    //获取服务端返回的结果
+    BufferReader br = new 
+        BufferReader(new InputStreamReader(s.getInputStream()));
+    String line = null;
+    while ((line = br.readLine()) != null) {
+      System.out.println(line);
+    }
+    br.close();
+    s.close();
+  }
+}</pre>
+         			</li>
+         			<li>缺点: Socket可以做远程方法调用，但是协议过于底层化，过于麻烦</li>
+         		</ul>
+         	</li>
+         	<li>使用Http协议进行远程方法调用
+         		<ul>
+         			<li>Server端
+         				<pre class="am-scrollable-horizontal am-hide-sm">
+@WebServlet(name="webServlet",value="/webServlet")
+public class WebServlet extends HttpServlet {
+  public void doGet(HttpServletRequest request, HttpServletResponse response) {
+    response.setContentType("text/html");
+    PrintWriter out = response.getWriter();
+    out.print("test...");
+  }
+  public void doPost(HttpServletRequest request,
+      HttpServletResponse response) {
+    this.doGet();
+  }
+}</pre>
+         			</li>
+         			<li>Client端
+         				<pre class="am-scrollable-horizontal am-hide-sm">
+public class Client {
+  public static void main(String args []) {
+    URL url = new URL("http://localhost:8080/http_server/webServlet");
+    URLConnection uc = url.openConnection();
+    HttpURLConnection huc = (HttpURLConnection) uc;
+    huc.setRequestMethod("post");
+    huc.setRequestProperty("Content-Type", "text/html;charset=utf-8");
+    huc.setDoInput(true);
+    huc.setDoOutput(true);
+    OutputStream out = uc.getOutputStream();
+    out.write("".getBytes());
+    int httpResp = huc.getResponseCode();
+    if (httpResp == 200) {
+      BufferReader br = new 
+          BufferReader(new InputStreamReader(huc.getInputStream()));
+      String line = null;
+      while ((line = br.readLine() != null) {
+        System.out.println(line);
+      }
+    }
+  }
+}</pre>
+         			</li>
+         			<li>	缺点: 可以做远程方法调用，双方协议需要通过双方共同确定，操作繁琐</li>
+         		</ul>
+         	</li>
+         	<li>SOAP协议: webservice使用的协议是SOAP协议，这种协议在HTTP协议上做了包装，将传输的文本信息修改为XML
+         		<ul>
+         			<li>e.g.
+         				<img src="photo/webService/webService1.png" class="am-img-responsive">
+         			</li>
+         		</ul>
+         	</li>
+         	<li>Webservice特点: 远程方法调用，异构系统之间的调用</li>
+         </ol>
+         <!--文章]]-->
+         
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+    <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+      <div class="am-offcanvas-bar">
+      
+        <ul class="am-nav">
+        	<h1>webService</h1>
+        	<!--导航[[-->
+          <li class="am-nav-header">基础知识</li>
+          <li><a href="#!" id="btn1">webService概述</a></li>
+          <li><a href="#!" id="btn2">WSDL</a></li>
+		  <li><a href="#!" id="btn3">JDK客户端调用</a></li>
+          <li><a href="#!" id="btn4">JDK服务端发布</a></li>
+          <li class="am-nav-header">CXF</li>
+          <li><a href="#!" id="btn5">cxf概述</a></li>
+          <li><a href="#!" id="btn6">cxf服务端发布</a></li>
+          <li><a href="#!" id="btn7">soap12</a></li>
+          <li><a href="#!" id="btn8">以web形式发布</a></li>
+          <li><a href="#!" id="btn9">spring整合cxf</a></li>
+          <li><a href="#!" id="btn10">jQuery调用WebService</a></li>
+
+        </ul>
+        <!--导航]]-->
+      </div>
+    </div>
+  </div>
+  <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button" 
+  	data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+  <!--页脚[[-->
+  <br><br><br>
+  <div class="am-g">
+  	<div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+  	  <br>
+  	  <span class="am-fl">© 2017 yangyuhao</span>
+  	  <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+  	</div>
+  </div>
+  <br><br><br>
+  <!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+	//加载进度条
+	var progress = $.AMUI.progress;
+	$(window).load(function() {
+		progress.done();
+	})
+	$(document).ready(function() {
+		progress.start();
+	})
+	//侧边栏平滑滚动
+	$(window).smoothScroll();
+	function navClick($btnObj, $pageObj) {
+		$btnObj.on("click", function() {
+			var $w = $(window);
+			$w.smoothScroll({position: $pageObj.offset().top});
+		})
+	}
+	navClick($("#btn1"), $("#page1"));
+	navClick($("#btn2"), $("#page2"));
+	navClick($("#btn3"), $("#page3"));
+	navClick($("#btn4"), $("#page4"));
+	navClick($("#btn5"), $("#page5"));
+	navClick($("#btn6"), $("#page6"));
+	navClick($("#btn7"), $("#page7"));
+	navClick($("#btn8"), $("#page8"));
+	navClick($("#btn9"), $("#page9"));
+	navClick($("#btn10"), $("#page10"));
+	
+</script>
+</body>
+</html>

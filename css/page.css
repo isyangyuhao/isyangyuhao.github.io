@@ -110,3 +110,6 @@
 .am-article li {
 	font-size: 14px;
 }
+pre {
+	font-size: 10px !important;
+}
