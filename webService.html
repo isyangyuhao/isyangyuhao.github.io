@@ -36,7 +36,7 @@
          
          <!--文章[[-->
          <h2>第一部分 基础知识</h2>
-         <h3>1.1 webService概述</h3>
+         <h3 id="page1">1.1 webService概述</h3>
          <ol>
          	<li>服务: 部署在服务器中，提供请求相应的程序成为服务</li>
          	<li>协议: 双方规定的一种通信方式</li>
@@ -145,6 +145,315 @@ public class Client {
          	</li>
          	<li>Webservice特点: 远程方法调用，异构系统之间的调用</li>
          </ol>
+         <h3 id="page2">1.2 WSDL</h3>
+         <ol>
+         	<li>WSDL(Web Services Description Language): 是WebService的描述语言，它包含一系列描述某个web service的定义</li>
+         	<li>读取WSDL文档的方式: 自下而上读取文档</li>
+         	<li>创建WebService服务端
+         		<ul>
+         			<li><pre class="am-scrollable-horizontal am-hide-sm">
+@WebService
+public class PersonService {
+  public String display(String name) {
+    return "name: " + name;
+  }
+}
+public class Publisher {
+  public static void main(String args []) {
+    Endpoint.publish("http://localhost:8080/testWebService",
+        new PersonService());
+  }
+}</pre></li>
+         		</ul>
+         		
+         	</li>
+         	<li>WSDL文档
+         		<img src="photo/webService/webService2.png" class="am-img-responsive">
+         	</li>
+         	<li>约束
+         		<img src="photo/webService/webService3.png" class="am-img-responsive">
+         	</li>
+         	<li>消息体
+          		<img src="photo/webService/webService4.png" class="am-img-responsive">        		
+         	</li>
+         	<li>客户端通过发送请求消息体获得相应消息体
+         		<pre class="am-scrollable-horizontal am-hide-sm">
+public class Client {
+  public static void main(String args []) throws IOException {
+    URL url = new URL("http://localhost:8080/testWebService");
+    URLConnection uc = url.openConnection();
+    HttpURLConnection huc = (HttpURLConnection) uc;
+    huc.setRequestMethod("POST");
+    huc.setRequestProperty("Content-Type", "text/xml;charset=utf-8");
+    huc.setDoInput(true);
+    huc.setDoOutput(true);
+    OutputStream out = uc.getOutputStream();
+    String message = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:q0=\"http://demo.yang.org/\" "
+    + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+    + "<soapenv:Body><q0:display><arg0>yang</arg0></q0:display></soapenv:Body></soapenv:Envelope>";
+    out.write(message.getBytes());
+    int httpResp = huc.getResponseCode();
+    if (httpResp == 200) {
+      BufferedReader br = new 
+          BufferedReader(new InputStreamReader(huc.getInputStream()));
+      String line = null;
+      while ((line = br.readLine()) != null) {
+        System.out.println(line);
+      }
+    }
+  }
+}</pre>
+         	</li>
+         </ol>
+         <h3 id="page3">1.3 JDK客户端调用</h3>
+         <ol>
+         	<li>WebService实际上通过网络根据soap协议传输数据，手动组装消息体过于麻烦</li>
+         	<li>使用wsimport生成客户端代码
+         		<ul>
+         			<li>准备空文件夹存放生成的客户端访问代码,并在终端进入该文件夹根目录</li>
+         			<li>	命令参数: <code>wsimport -s . -p org.yang.demo.stub wsdl_url</code> (-s 生成源代码; -p 生成代码后的包名;)</li>
+         			<li>将生成的所有*.java文件拷贝到客户端工程中</li>
+         		</ul>
+         	</li>
+         	<li>使用客户端代码进行调用
+         		<pre class="am-scrollable-horizontal am-hide-sm">
+//1. 创建服务访问点集合对象
+PersonServiceService pss = new PersonServiceService();
+//2. 获得服务访问点绑定的类,使用get+port节点的name属性值(getPersonServiceProt)
+PersonService ps = pss.getPersonServicePort();
+//3. 调用服务端的方法
+String result = ps.display("yang");
+System.out.println(result);</pre>
+         	</li>
+         </ol>
+         <h3 id="page4">1.4 JDK服务端发布</h3>
+         <ol>
+         	<li>WebService注解
+         		<ul>
+         			<li>使用WebService发布服务类必须在类上边加@WebService注解，否则会报错</li>
+         			<li>被@WebService修饰的类必须存在方法且不可以是静态方法和final方法</li>
+         			<li>e.g.
+         				<pre class="am-scrollable-horizontal am-hide-sm">
+@WebService
+public class PersonService {
+  public String display(String name) {
+    return "name: " + name;
+  }
+}</pre>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>发布
+         		<ul>
+         			<li>使用Endpoint.publish方法进行发布；第一个参数为服务地址，第二个参数为服务类实例化对象</li>
+         			<li>e.g.
+         				<pre class="am-scrollable-horizontal am-hide-sm">
+public static void main(String args []) {
+  Endpoint.publish("http://localhost:8080/testWebService",
+      new PersonService());
+}</pre>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>禁用方法
+         		<ul>
+         			<li>使用@WebMethod(exclude=true)注解修饰的方法将不会被发布</li>
+         			<li>e.g.
+         				<pre class="am-scrollable-horizontal am-hide-sm">
+@WebMethod(exclude=true)
+public String testExclude() {
+	return "test";
+}</pre>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>面向接口的编程中，发布服务依然需要在实现类中加@WebService注解，发布时传入的实例化对象也是实现类对象</li>
+         	<li>在eclipse中配置TCP IP代理
+				<img src="photo/webService/webService5.png" class="am-img-responsive">
+				<img src="photo/webService/webService6.png" class="am-img-responsive">
+         	</li>
+         </ol>
+         <h2>第二部分 CXF</h2>
+         <h3 id="page5">2.1 cxf概述</h3>
+         <ol>
+         	<li>概述: Apache CXF=Celtix+XFire，开始叫Apache CeltiXfire，后来更名为Apache CXF了，
+         		简称CXF;CXF继承了Celtix和XFire两大开源项目的精华，提供了对JAX-WS全面的支持，
+         		并且提供了多种Binding、DataBinding、Transport以及各种Format的支持，并且可以根据实际项目的需要，
+         		采用代码优先（Code First）或者WSDL优先（WSDL First）来轻松地实现Web Services的发布和使用</li>
+         	<li>cxf支持多种协议: SOAP,HTTP,CORBA(公共对象请求代理结构)等</li>
+         	<li>环境搭建
+         		<ul>
+         			<li>检查当前系统环境是否配置JAVA_HOME</li>
+         			<li>解压CXF核心压缩包，放到一个非中文无空格目录下</li>
+         			<li>配置Maven环境变量
+         				<br><code>export CXF_HOME=/Users/yangyuhao/Documents/Resource/apache-cxf-3.1.9</code>
+         				<br><code>export PATH=.$PATH:$CXF_HOME/bin</code>
+         			</li>
+         			<li>输入<code>wsdl2java</code>命令查看是否输出报错</li>
+         		</ul>
+         	</li>
+         </ol>
+         <h3 id="page6">2.2 cxf服务端发布</h3>
+         <ol>
+         	<li>ServerFactoryBean
+         		<ul>
+         			<li>优点: 不需要再服务类加@WebService注解,服务类没有发布方法不会报错,可以提供面向接口编程</li>
+         			<li>缺点: 生成的esdl文档不规范,没有注解的类可以发布但不安全</li>
+         			<li>e.g.
+         				<pre class="am-scrollable-horizontal am-hide-sm">
+public static void publicWSWithServerFactoryBean() {
+  //创建cxf发布的服务对象
+  ServerFactoryBean sfb = new ServerFactoryBean();
+  //设置服务的类
+  sfb.setServiceClass(PersonServer.class);
+  //设置服务地址
+  sfb.setAddress("http://localhost:8999/cxfTest");
+  //设置服务类对象
+  sfb.setServiceBean(new PersonServer());
+  //发布
+  sfb.create();
+}</pre>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>JaxWsServerFactoryBean
+         		<ul>
+         			<li>特点: 不适用@WebService注解虽然不会报错但是无法获取服务类方法,服务类没有发布的方法不会报错,生成的wsdl文档规范</li>
+         			<li>e.g.
+         				<pre class="am-scrollable-horizontal am-hide-sm">
+public static void publishWSWithJaxWsServerFactoryBean() {
+  //创建cxf发布的服务对象
+  JaxWsServerFactoryBean sfb = new JaxWsServerFactoryBean();
+  //设置服务的类
+  sfb.setServiceClass(PersonServer.class);
+  //设置服务地址
+  sfb.setAddress("http://localhost:8999/cxfTest");
+  //设置服务类对象
+  sfb.setServiceBean(new PersonServer());
+  //发布
+  sfb.create();
+}</pre>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>发布带有接口的服务
+         		<ul>
+         			<li>在服务接口类上加@WebService注解</li>
+         			<li>发布时设置服务类为接口类，设置服务对象为接口实现类对象</li>
+         			<li>e.g.
+         				<pre class="am-scrollable-horizontal am-hide-sm">
+public static void publishWSWithJaxWsServerFactoryBean2() {
+  JaxWsServerFactoryBean sfb = new JaxWsServerFactoryBean();
+  //设置服务类为接口
+  sfb.setServiceClass(UserServer.class);
+  sfb.setAddress("http://localhost:8999/cxfTest");
+  //设置服务类实例化对象为接口实现类对象
+  sfb.setServiceBean(new UserServiceImpl());
+  sfb.create();
+}</pre>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>输入输出消息拦截器
+         		<ul>
+         			<li>设置输入输出消息拦截器后在客户端调用服务时，服务端会在控制台打印输入输出日志</li>
+         			<li>e.g.
+         				<pre class="am-scrollable-horizontal am-hide-sm">
+public static void publishWSWithJaxWsServerFactoryBean3() {
+JaxWsServerFactoryBean sfb = new JaxWsServerFactoryBean();
+  sfb.setServiceClass(UserServer.class);
+  sfb.setAddress("http://localhost:8999/cxfTest");
+  sfb.setServiceBean(new UserServiceImpl());
+  //设置输入输出消息拦截器
+  sfb.getInInterceptors().add(new LoggingInInterceptor());
+  sfb.getOutFaultInterceptors().add(new LoggingOutInterceptor());
+  sfb.create();
+}</pre>
+         			</li>
+         		</ul>
+         	</li>
+         </ol>
+         <h3 id="page7">2.3 soap12</h3>
+         <ol>
+         	<li>服务端发布soap12服务
+         		<ul>
+         			<li>默认情况下soap版本为soap11,如果需要使用soap12则需要使用@BindingType注解修改版本</li>
+         			<li>e.g.
+         				<pre class="am-scrollable-horizontal am-hide-sm">
+@WebService
+@BindingType(value=javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING)
+public interface UserServer {
+  public String hello(String name);
+}</pre>
+         			</li>
+         		</ul>
+         	</li>
+         	<li>客户端生成soap12代码
+         		<ul>
+         			<li>wsimport生成soap12代码会出现问题，无法生成服务发布点类和服务类</li>
+         			<li>wsdl2java命令生成客户端代码: <code>wsdl2java -d . -p org.yang.demo.stub http://localhost:8999/cxfTest?wsdl</code></li>
+         			<li>wsdl12java同样可以生成soap11代码</li>
+         		</ul>
+         	</li>
+         	<li>soap11和soap12消息体区别
+         		<img src="photo/webService/webService7.png" class="am-img-responsive">
+         	</li>
+         	<li>兼容关系
+         		<img src="photo/webService/webService8.png" class="am-img-responsive">
+         	</li>
+         </ol>
+         <h3 id="page8">2.4 以web形式发布</h3>
+         <ol>
+         	<li>创建动态web工程</li>
+         	<li>加入需要的jar包</li>
+         	<li>编写服务类</li>
+         	<li>添加cxf-servlet.xml配置文件
+         		<img src="photo/webService/webService9.png" class="am-img-responsive">
+         	</li>
+         	<li>配置web.xml
+         		<img src="photo/webService/webService10.png" class="am-img-responsive">
+         	</li>
+         	<li>启动tomcat服务器</li>
+         </ol>
+         <h3 id="page9">2.5 Spring整合cxf</h3>
+         <ol>
+         	<li>创建动态web工程</li>
+         	<li>加入工程需要的jar包</li>
+         	<li>添加Spring配置文件
+         		<img src="photo/webService/webService11.png" class="am-img-responsive">
+         	</li>
+         	<li>编写服务类: 在接口上使用@WebService注解，在接口实现类使用@Service注解</li>
+         	<li>编写cxf配置文件
+         		<img src="photo/webService/webService12.png" class="am-img-responsive">
+         	</li>
+         	<li>配置web.xml
+         		<img src="photo/webService/webService13.png" class="am-img-responsive">
+         	</li>
+         	<li>启动tomcat服务器</li>
+         </ol>
+         <h3  id="page10">2.6 jQuery调用WebService</h3>
+         <pre class="am-scrollable-horizontal am-hide-sm">
+$.ajax({
+  url: "http://localhost:8080/cxf_spring_server/services/userService?wsdl",
+  type: "post",
+  dataType: "text",
+  contentType: "text/xml;charset=utf-8",
+  data: data //data:请求消息体,
+  success: function(responseText) {
+    //responseText:响应消息体
+    var $obj = ${responseText};
+    var result = $obj.find("return").text();
+    if (result == "success") {
+      alert("success");
+    } else {
+      alert("error");
+    }
+  },
+  error: function() {
+    alert("error");
+  }
+})
+         </pre>
          <!--文章]]-->
          
         </div>
@@ -168,7 +477,7 @@ public class Client {
           <li><a href="#!" id="btn6">cxf服务端发布</a></li>
           <li><a href="#!" id="btn7">soap12</a></li>
           <li><a href="#!" id="btn8">以web形式发布</a></li>
-          <li><a href="#!" id="btn9">spring整合cxf</a></li>
+          <li><a href="#!" id="btn9">Spring整合cxf</a></li>
           <li><a href="#!" id="btn10">jQuery调用WebService</a></li>
 
         </ul>
