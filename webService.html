@@ -38,7 +38,7 @@
          <h2>第一部分 基础知识</h2>
          <h3 id="page1">1.1 webService概述</h3>
          <ol>
-         	<li>服务: 部署在服务器中，提供请求相应的程序成为服务</li>
+         	<li>服务: 部署在服务器中，提供请求响应的程序称为服务</li>
          	<li>协议: 双方规定的一种通信方式</li>
          	<li>使用Socket方式进行远程方法调用
          		<ul>
@@ -69,6 +69,7 @@ public class Server {
     ss.close();
   }
 }</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          			</li>
          			<li>Client端
          				<pre class="am-scrollable-horizontal am-hide-sm">
@@ -87,6 +88,7 @@ public class Client {
     s.close();
   }
 }</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          			</li>
          			<li>缺点: Socket可以做远程方法调用，但是协议过于底层化，过于麻烦</li>
          		</ul>
@@ -107,6 +109,7 @@ public class WebServlet extends HttpServlet {
     this.doGet();
   }
 }</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          			</li>
          			<li>Client端
          				<pre class="am-scrollable-horizontal am-hide-sm">
@@ -132,6 +135,7 @@ public class Client {
     }
   }
 }</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          			</li>
          			<li>	缺点: 可以做远程方法调用，双方协议需要通过双方共同确定，操作繁琐</li>
          		</ul>
@@ -163,7 +167,8 @@ public class Publisher {
     Endpoint.publish("http://localhost:8080/testWebService",
         new PersonService());
   }
-}</pre></li>
+}</pre><pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre></li>
+
          		</ul>
          		
          	</li>
@@ -203,6 +208,7 @@ public class Client {
     }
   }
 }</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          	</li>
          </ol>
          <h3 id="page3">1.3 JDK客户端调用</h3>
@@ -224,6 +230,7 @@ PersonService ps = pss.getPersonServicePort();
 //3. 调用服务端的方法
 String result = ps.display("yang");
 System.out.println(result);</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          	</li>
          </ol>
          <h3 id="page4">1.4 JDK服务端发布</h3>
@@ -240,6 +247,7 @@ public class PersonService {
     return "name: " + name;
   }
 }</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          			</li>
          		</ul>
          	</li>
@@ -252,6 +260,7 @@ public static void main(String args []) {
   Endpoint.publish("http://localhost:8080/testWebService",
       new PersonService());
 }</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          			</li>
          		</ul>
          	</li>
@@ -264,6 +273,7 @@ public static void main(String args []) {
 public String testExclude() {
 	return "test";
 }</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          			</li>
          		</ul>
          	</li>
@@ -313,6 +323,7 @@ public static void publicWSWithServerFactoryBean() {
   //发布
   sfb.create();
 }</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          			</li>
          		</ul>
          	</li>
@@ -333,6 +344,7 @@ public static void publishWSWithJaxWsServerFactoryBean() {
   //发布
   sfb.create();
 }</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          			</li>
          		</ul>
          	</li>
@@ -351,6 +363,7 @@ public static void publishWSWithJaxWsServerFactoryBean2() {
   sfb.setServiceBean(new UserServiceImpl());
   sfb.create();
 }</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          			</li>
          		</ul>
          	</li>
@@ -369,6 +382,7 @@ JaxWsServerFactoryBean sfb = new JaxWsServerFactoryBean();
   sfb.getOutFaultInterceptors().add(new LoggingOutInterceptor());
   sfb.create();
 }</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          			</li>
          		</ul>
          	</li>
@@ -385,6 +399,7 @@ JaxWsServerFactoryBean sfb = new JaxWsServerFactoryBean();
 public interface UserServer {
   public String hello(String name);
 }</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          			</li>
          		</ul>
          	</li>
@@ -452,8 +467,8 @@ $.ajax({
   error: function() {
     alert("error");
   }
-})
-         </pre>
+})</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
          <!--文章]]-->
          
         </div>

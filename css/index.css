@@ -10,3 +10,9 @@
 #posts a:hover {
 	font-weight: bold;
 }
+.none {
+	color: #AAAAAA;
+}
+.none span {
+	color: #AAAAAA;
+}
