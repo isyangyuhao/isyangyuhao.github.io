@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>杨宇昊的学习笔记-javaWeb基础知识</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+  <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+  <!--Link Web Font-->
+  <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+  <!--代码高亮highlight.js-->
+  <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+  <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>  
+  <script>hljs.initHighlightingOnLoad();</script>-->
+  <!--Link Base Style-->
+  <link rel="stylesheet" type="text/css" href="css/base.css">
+  <link rel="stylesheet" type="text/css" href="css/page.css"/>
+  <style type="text/css">
+  	h4 {
+  		font-size: 14px;
+  	}
+  </style>
+</head>
+<body>
+  <!--导航栏 [[-->
+  <header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489"> 
+      <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+  </header>
+  <!--导航栏 ]]-->
+  <div class="am-g am-g-fixed">
+  <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+    <div class="am-g">
+      <div class="am-u-sm-11 am-u-sm-centered">
+        <div class="am-cf am-article am-scrollable-horizontal">
+         
+         <!--文章[[-->
+         <h4>1. javaWeb是由一组Servlet，HTML，类以及其他可以被绑定的资源构成</h4>
+         <h4>2. JavaWeb应用中包含的内容: Serclet,jsp,实用类,静态文档,描述web应用的信息等</h4>
+         <h4>3. 请求与响应关系图</h4>
+         <img src="photo/javaWeb/javaWeb1.png" class="am-img-responsive">
+		 <h4>4. Servlet容器为javaWeb应用提供运行环境，负责管理Servlet和jsp的生命周期，管理他们的共享数据</h4>
+		 <h4>5. Tomcat目录层次结构</h4>
+		 <ul>
+		 	<li>bin -> 存放启动和关闭Tomcat的脚本文件</li>
+		 	<li>conf -> 存放Tomcat服务器各种配置文件</li>
+		 	<li>lib -> 存放Tomcat服务器和所有web应用程序需要访问的jar</li>
+		 	<li>logn -> 存放Tomcat日志文件</li>
+		 	<li>temp -> 存放Tomcat运行时产生的临时文件</li>
+		 	<li>webapps -> 当发布web应用时，通常把web程序的目录及文件放在此目录下</li>
+		 	<li>work -> Tomcat将jsp生成的Servlet源文件和字节码存放在该目录</li>
+		 </ul>
+		 <h4>6. 修改Tomcat端口号</h4>
+		 <pre>
+ &lt;!-- tomcat/conf/server.xml --&gt;
+ &lt;Connector port="8989" protocol="HTTP/1.1" 
+ 		connectionTimeout="20000" 
+ 		redirectPort="8443" /&gt;</pre>
+          <h4>7. Tomcat管理程序</h4>
+         <ul>
+         	<li>在tomcat-user.xml中配置用户权限与信息
+         		<pre>
+ &lt;!-- tomcat/conf/tomcat-users.xml --&gt;
+ &lt;role rolename="manager-gui"/&gt;
+ &lt;user username="tomcat" password="s3cret" roles="manager-gui"/&gt;</pre>
+         	</li>
+         	<li>
+         		点击Manager App(<a href="http://localhost:8989/manager/html">http://localhost:8989/manager/html</a>)按钮进入Tomcat管理程序
+         	</li>
+         </ul>
+         <h4>8. Web程序结构</h4>
+         <img src="photo/javaWeb/javaWeb2.png" class="am-img-responsive">
+         <h4>9. 配置Tomcat虚拟目录</h4>
+         <ul>
+         	<li>在tomcat/conf/catalina/localhost目录下创建name.xml
+         <pre>
+&lt;?xml version='1.0' encoding='utf-8'?&gt;
+&lt;Context path="/path_name" docBase="base_path_name" reloadable="true"/&gt;</pre>
+         	</li>
+         	<li>通过localhost:8989/name/...可以进行虚拟目录访问</li>
+         	<li>reloadable: 重载开关,当修改docBase下的class文件时,服务器是否会重载web应用</li>
+         	<li>通过name.xml中的name进行域名访问时,与path文件路径名没有关系</li>
+         </ul>
+         <h4>10. 使用eclipseEE开发JavaWeb应用</h4>
+         <ul>
+         	<li>将开发者选项切换到javaEE</li>
+         	<li>在window -> Show View -> Package Explorer</li>
+         	<li>创建Tomcat服务器</li>
+         	<li>新建Dynamic Web Project</li>
+         	<li>开发javaWeb</li>
+         	<li>run on server</li>
+         </ul>
+         <!--文章]]-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+    <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+      <div class="am-offcanvas-bar">
+      
+        <ul class="am-nav">
+        	<h1>javaWeb基础知识</h1>
+        	<!--导航[[-->
+          <li class="am-nav-header">更多javaWeb内容</li>
+          <li><a href="#!" >Servlet</a></li>
+          <li><a href="#!">JSP</a></li>
+          <li><a href="#!" >会话与状态管理</a></li>
+          <li><a href="#!" >JavaBean,EL表达式,标签</a></li>
+          <li><a href="#!" >过滤器与监听器</a></li>
+          <li><a href="#!" >文件上传下载与资源国际化</a></li>
+
+        </ul>
+        <!--导航]]-->
+      </div>
+    </div>
+  </div>
+  <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button" 
+  	data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+  <!--页脚[[-->
+  <br><br><br>
+  <div class="am-g">
+  	<div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+  	  <br>
+  	  <span class="am-fl">© 2017 yangyuhao</span>
+  	  <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+  	</div>
+  </div>
+  <br><br><br>
+  <!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+	//加载进度条
+	var progress = $.AMUI.progress;
+	$(window).load(function() {
+		progress.done();
+	})
+	$(document).ready(function() {
+		progress.start();
+	})
+	//侧边栏平滑滚动
+	$(window).smoothScroll();
+	function navClick($btnObj, $pageObj) {
+		$btnObj.on("click", function() {
+			var $w = $(window);
+			$w.smoothScroll({position: $pageObj.offset().top});
+		})
+	}
+	navClick($("#btn1"), $("#page1"));
+	navClick($("#btn2"), $("#page2"));
+	navClick($("#btn3"), $("#page3"));
+	navClick($("#btn4"), $("#page4"));
+	navClick($("#btn5"), $("#page5"));
+	navClick($("#btn6"), $("#page6"));
+	navClick($("#btn7"), $("#page7"));
+	navClick($("#btn8"), $("#page8"));
+	navClick($("#btn9"), $("#page9"));
+	navClick($("#btn10"), $("#page10"));
+	
+</script>
+</body>
+</html>
