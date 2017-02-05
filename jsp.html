@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>杨宇昊的学习笔记-JSP</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+  <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+  <!--Link Web Font-->
+  <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+  <!--代码高亮highlight.js-->
+  <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+  <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>  
+  <script>hljs.initHighlightingOnLoad();</script>-->
+  <!--Link Base Style-->
+  <link rel="stylesheet" type="text/css" href="css/base.css">
+  <link rel="stylesheet" type="text/css" href="css/page.css"/>
+  <style type="text/css">
+  </style>
+</head>
+<body>
+  <!--导航栏 [[-->
+  <header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489"> 
+      <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+  </header>
+  <!--导航栏 ]]-->
+  <div class="am-g am-g-fixed">
+  <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+    <div class="am-g">
+      <div class="am-u-sm-11 am-u-sm-centered">
+        <div class="am-cf am-article am-scrollable-horizontal">
+         
+         <!--文章[[-->
+       	 <h2>第一部分 JSP与Servlet</h2>
+       	 <h3 id="page1">1.1 概述</h3>
+       	 <ol>
+       	 	<li>jsp是简化Servlet的一种技术，将html和java代码语句混合在同一个文件中编写，只对网页中动态产生的内容采用java代码进行编写，而对固定部分使用静态html页面的方式编写</li>
+       	 	<li>创建jsp步骤: 新建.jsp文件 -&gt; 在&lt;% %&gt;中书写java代码</li>
+       	 	<li>jsp可以放置在出WEB-INF以外的任何路径</li>
+       	 	<li>jsp运行原理 : jsp本质上是一个servlet，web容器接收到jsp后通过jsp引擎编译成servlet文件，再将servlet文件通过servlet容器编译为.class文件</li>
+       	 	<li>为jsp在web.xml中配置Servlet<br>
+				<pre>
+&lt;servlet&gt;
+  &lt;servlet-name&gt;testJsp&lt;/servlet-name&gt;
+  &lt;jsp-file&gt;/index.jsp&lt;/jsp-file&gt;
+  &lt;init-param&gt;
+  &lt;param-name>password&lt;/param-name&gt;
+  &lt;param-value&gt;1234&lt;/param-value&gt;
+  &lt;/init-param&gt;
+&lt;/servlet&gt;
+&lt;servlet-mapping&gt;
+  &lt;servlet-name>testJsp&gt;/servlet-name&gt;
+  &lt;url-pattern>/testJsp&gt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;</pre>
+       	 </li>
+       	 <li>jsp语法
+       	 	<ul>
+       	 		<li>jsp模板元素:jsp中的静态html部分成为模板元素</li>
+       	 		<li>jsp表达式:  <% out.print(test) %>  和  <%= test %>功能相同，实现原理也相同，都是向页面输出</li>
+       	 		<li>jsp声明: jsp声明将java代码封装到<%! %>之中，它里边的方法被插进_jspServlic()方法的外面，在jsp中几乎不去使用</li>
+       	 		<li>jsp注释: <%-- jsp注释 --%> <!-- html注释 --> ， 区别:html注释不可以阻挡java代码的执行</li>
+       	 	</ul>
+       	 </li>
+       	 </ol>
+       	 <h3 id="page2">1.2 jsp隐含变量(可以不用声明直接使用)</h3>
+       	 <ol>
+       	 	<li>request ： HttpServletRequest的一个对象</li>
+       	 	<li>response : HttpServletResponse的一个对象，在jsp中几乎不会调用</li>
+       	 	<li>pageContext：页面的上下文，是PageContext的一个对象，可以通过pageContext获取其他的8个隐含对象，也可以获得当前页面的其他信息，自定义标签时需要使用到pageContext<br>
+       	 		e.g. <code>username = pageContext.getRequest().getParameter("username");</code>
+       	 	</li>
+       	 	<li>session：代表客户端与服务器的一次会话，是HttpSession的一个对象</li>
+       	 	<li>application：代表当前web应用，是ServletContext一个对象，可以获取当前web应用初始化参数<br>
+       	 		e.g. <code>String username = application.getInitParameter("username");</code>
+       	 	</li>
+       	 	<li>config： 当前jsp对应Servlet的ServletConfig对象，平常几乎不适用，若需要访问当前jsp配置的Servlet初始化参数，需要通过映射的地址才可以</li>
+       	 	<li>out ： JspWriter对象，调用out.println()方法可以直接把字符串打印到浏览器上</li>
+       	 	<li>page：指向当前jsp对应的Servlet对象的引用，类型为Object，只能调用Object的方法，平常几乎不适用</li>
+       	 	<li>exception：在声明了错误页面后可以使用  --->   <%@ page isErrorPage="true" %></li>
+       	 	<ul>
+       	 		<li style="text-decoration: underline;">属性作用域范围: pageContext &lt; request &lt; session &lt;application</li>
+       	 	</ul>
+       	 </ol>
+       	 <h3 id="page3">1.3 域对象</h3>
+       	 <ol>
+       	 	<li>域对象
+       	 		<ul>
+       	 			<li>域对象可以调用与属性相关的方法</li>
+       	 			<li>域对象包括: pageContext，request， session， application</li>
+       	 		</ul>
+       	 	</li>
+       	 	<li>相关API
+       	 		<ul>
+       	 			<li><code>Object getAttribute(String name);  //获取指定属性</code></li>
+       	 			<li><code>Enumeration getAttributeNames();  //获取所有属性的名字组成的Enumeration对象</code></li>
+       	 			<li><code>removeAttribute(String name);  //移除指定属性</code></li>
+       	 			<li><code>void setAttribute(String name, Object o);  //设置指定属性</code></li>
+       	 		</ul>
+       	 	</li>
+       	 	<li>域对象作用域
+       	 		<ul>
+       	 			<li>pageContext: 属性的作用范围仅限于当前jsp页面，在Servlet中无法获取属性值</li>
+       	 			<li>request: 属性的作用范围仅限于同一个请求，在Servlet中无法获取属性值</li>
+       	 			<li>session: 属性的作用范围仅限于一次会话(浏览器打开-关闭称之为一次会话，会话不失效的前提下)，在Servlet中可以获取属性值</li>
+       	 			<li>application: 属性的作用范围限于当前web应用，在Servlet中可以获取属性和值</li>
+       	 		</ul>
+       	 	</li>
+       	 </ol>
+       	 <h3 id="page4">1.4 请求的转发与重定向</h3>
+       	 <ol>
+       	 	<li style="text-decoration: underline;">本质区别: 请求值发送一次请求,重定向发送两次请求</li>
+       	 	<li>转发
+       	 		<ul>
+       	 			<li>地址栏是初次发送请求的地址</li>
+       	 			<li>最终的Servlet中，request和中转的request是同一个request</li>
+       	 			<li>只能转发给当前web资源</li>
+       	 			<li>"/"代表当前web应用的根目录</li>
+       	 			<li>实现步骤
+       	 			<pre class="am-scrollable-horizontal am-hide-sm">
+String path = "testServlet";
+//调用HttpServletRequest的getRequestDispatcher(path)方法获取RequestDispatcher对象
+RequestDispatcher requestDispatcher = 
+    request.getRequestDispatcher("/" + path);
+//使用RequestDispatcher对象的forward(request, response)方法进行转发
+requestDispatcher.forward(request, response);</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
+       	 			</li>
+       	 			<li style="text-decoration: underline;">	对于Tomcat服务器中，WEB-INF下的文件不能通过浏览器直接访问，只有通过请求的转发的方式才可以进行访问</li>
+       	 		</ul>
+       	 	</li>
+       	 	<li>重定向
+       	 		<ul>
+       	 			<li>HttpServletResponse状态码
+       	 				<table class="am-table am-table-compact">
+       	 					<tr>
+       	 						<td>1xx</td>
+       	 						<td>信息状态码: 表示该请求已经接受，正在被处理</td>
+       	 					</tr>
+       	 					<tr>
+       	 						<td>2xx</td>
+       	 						<td>正确状态码: 表示该请求已经正确接收并处理，没有发生错误，200表示一切正确</td>
+       	 					</tr>
+       	 					<tr>
+       	 						<td>3xx</td>
+       	 						<td>重定向状态码: 客户端需要重定向到新的资源,301表示永久重定向,302表示临时重定向</td>
+       	 					</tr>
+       	 					<tr>
+       	 						<td>4xx</td>
+       	 						<td>请求错误码: 401表示没有权限访问,404表示资源不存在,405表示访问方式错误</td>
+       	 					</tr>
+       	 					<tr>
+       	 						<td>5xx</td>
+       	 						<td>服务器错误码: 500表示程序出现异常而中途停止运行`</td>
+       	 					</tr>
+       	 				</table>
+       	 			</li>
+       	 			<li>地址栏为最后相应的地址</li>
+       	 			<li>最终的Servlet中，request和中转的request不是同一个request</li>
+       	 			<li>可以重定向到任何资源</li>
+       	 			<li>"/"代表当前web站点的根目录</li>
+       	 			<li>实现步骤: 调用response的<code>sendRedirect(path)</code>方法</li>
+       	 		</ul>
+       	 	</li>
+       	 </ol>
+       	 <h2>第二部分 JSP应用</h2>
+       	 <h3 id="page5">2.1 jsp指令</h3>
+       	 <ol>
+       	 	<li>jsp指令
+       	 		<ul>
+       	 			<li>指令是为jsp引擎设计的，并不产生任何输出，而是告诉引擎如何处理jsp页面的其余部分</li>
+       	 			<li>jsp指令的基本语法格式 <%@ 指令 属性名="值"%></li>
+       	 		</ul>
+       	 	</li>
+       	 	<li>page指令: 用于定义jsp页面的各种属性，无论出现在哪里都作用于整个jsp页面
+       	 		<ul>
+       	 			<li>
+       	 				<pre class="am-scrollable-horizontal am-hide-sm">
+<%@ page
+  [language="java"] -> 当前页面可以使用的合法语言
+  [extends="package.class"] -> 当前jsp被翻译Servlet后可以继承的类
+  [import="{package.class | package.* | …}"] -> 导入所使用的包
+  [session="true|false"] ->  当前页面是否可以使用session
+  [buffer="none | 8kb | sizekb"] -> buffer 属性指定 out 变量(类型为 JspWriter )使用的缓冲区的大小
+  [autoFlush="true | false"]-> 当缓冲区满后：true->清空缓冲区 / false->抛出异常
+  [isThreadSafe="true | false"] -> 控制jsp生成的servlet是否允许并行访问
+  [info="text"] -> 定义一个通过getServletInfo()方法获取的字符串
+  [errorPage="relative_url"] -> 指定当前页面发生错误后转发的url地址，/代表当前web应用的根目录
+  [isErrorPage="true | false"] -> 制定当前当前页面为发生错误后转发的页面，定义后可以使用exception对象获取错误信息，若指定isErrorPage为true，并使用exception方法，不建议直接访问该页面
+  [contentType="mimeType[;charset=charactorSet]" | "text/html; charset=ISO-8859-1"] -> 指定jsp相应类型，实际上调用的是response.setContentType()方法，一般来说该属性值为text/html
+  [pageEncoding="characterSet | ISO-8859-1"] -> 指定当前jsp页面的字符编码
+  [isELlgnored="true | false"] -> 指定当前jsp页面是否可以使用EL表达式，通常取值为true
+%></pre>
+       	 			</li>
+       	 		</ul>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
+       	 	</li>
+       	 	<li>处理发生错误的页面
+       	 		<ul>
+       	 			<li>方法1: 通过jsp指令处理错误页面
+       	 				<ul>
+       	 					<li>在可能发生错误的页面中定义 : <code><%@ page errorPage="/WEB-INF/error.jsp" %></code></li>
+       	 					<li>在WEB-INF中定义对应的错误页面</li>
+       	 					<li>在错误页面中定义：<code><%@ page isErrorPage="true"%></code>，并在jsp代码片段中调用<code>exception.getMessage()</code>获取错误信息</li>
+       	 				</ul>
+       	 			</li>
+       	 			<li>方法2: 通过配置web.xml处理错误页面
+       	 				<ul>
+       	 					<li>在web.xml中配置错误页面处理信息
+       	 						<pre>
+&lt;error-page&gt;
+  &lt;!-- 发生指定错误代码的时候转发到错误处理页面 --&gt;
+  &lt;error-code&gt;500&lt;/error-code&gt;
+  &lt;!-- 制定相应错误页面的位置--&gt;
+  &lt;location&gt;/WEB-INF/error.jsp&lt;/location&gt;
+  &lt;/error-page&gt;
+  &lt;error-page&gt;
+  &lt;!-- 发生指定异常的时候转发到错误处理页面 --&gt;
+  &lt;exception-type>java.lang.ArithmeticException&lt;/exception-type&gt;
+  &lt;location&gt;/WEB-INF/error.jsp&lt;/location&gt;
+&lt;/error-page&gt;</pre>
+       	 					</li>
+       	 					<li>在WEB-INF中定义对应的错误页面</li>
+       	 					<li>在错误页面中定义：<code><%@ page isErrorPage="true"%></code>，并在jsp代码片段中调用<code>exception.getMessage()</code>获取错误信息</li>
+       	 				</ul>
+       	 			</li>
+       	 		</ul>
+       	 	</li>
+       	 	<li>include指令
+       	 		<ul>
+       	 			<li>include指令用于通知jsp引擎在翻译当前jsp的时候将其他文件的内容合并入当前jsp转换成的Servlet中，也称之为静态引入，可以共享变量</li>
+       	 			<li>语法: <code><%@ include file="testIncludeB.jsp" %></code></li>
+       	 			<li>file属性必须指定需要引入的文件的相对路径</li>
+       	 		</ul>
+       	 	</li>
+       	 </ol>
+       	 <h3 id="page6">2.2 jsp标签</h3>
+       	 <ol>
+       	 	<li>include标签
+       	 		<ul>
+       	 			<li>动态包含jsp文件，会生成两个Servlet，通过一个包含方法包含进来，无法共享变量</li>
+       	 			<li>e.g. <code>&lt;jsp:include page="nav.jsp"&gt;</code></li>
+       	 		</ul>
+       	 	</li>
+       	 	<li>forward标签
+       	 		<ul>
+       	 			<li>对页面进行转发</li>
+       	 			<li>	等价于<%request.getRequestDispatcher("testIncludeB.jsp").forward(request, response); %></li>
+       	 			<li>时会使用jsp:param子标签传递参数，通常jsp:include也可以使用jsp:param自标签，使用request.getParam()可以获取传来的参数
+       	 				<br>e.g.
+       	 				<pre>
+&lt;jsp:forward page="testIncludeB.jsp"&gt;
+  &lt;jsp:param value="this is testIncludeA.jsp send value" name="test"/&gt;
+&lt;/jsp:forward&gt;</pre>
+       	 			</li>
+       	 		</ul>
+       	 	</li>
+       	 </ol>
+       	 <h3 id="page7">2.3 解决中文乱码</h3>
+       	 <ol>
+       	 	<li>在页面中输入中文不出现乱码: 
+       	 		<br>		保证contentType="text/html; charset=utf-8"和pageEncoding="utf-8"编码一致且都支持中文
+       	 	</li>
+       	 	<li>
+       	 		获取中文参数值不出现乱码: 
+       	 		<ul>
+       	 			<li>post请求: <code>request.setCharacterEncoding("UTF-8");  //在获取相应参数之前</code></li>
+       	 			<li>get请求: 
+       	 				<pre>
+String val = request.getParameter("username");  //获取参数值
+/将iso-8859-1的字符流转换为utf-8
+String username = new String(val.getBytes("iso-8859-1"), "utf-8");</pre>
+       	 			</li>
+       	 			<li>	在apache中配置:
+       	 			<pre>
+&lt;!--server.xml--&gt;
+&lt;Connector port="8989" protocol="HTTP/1.1"
+    connectionTimeout="20000"
+    redirectPort="8443" 
+    useBodyEncodingForURI="true"
+/&gt;
+       	 			</pre>
+       	 			</li>
+       	 		</ul>
+       	 	</li>
+       	 </ol>
+         <!--文章]]-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+    <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+      <div class="am-offcanvas-bar">
+      
+        <ul class="am-nav">
+        	<h1>JSP</h1>
+        	<!--导航[[-->
+          <li class="am-nav-header">JSP与Servlet</li>
+          <li><a href="#!" id="btn1">概述</a></li>
+          <li><a href="#!" id="btn2">jsp隐含变量</a></li>
+          <li><a href="#!" id="btn3">域对象</a></li>
+          <li><a href="#!" id="btn4">请求的转发与重定向</a></li>
+          <li class="am-nav-header">JSP应用</li>
+          <li><a href="#!" id="btn5">jsp指令</a></li>
+          <li><a href="#!" id="btn6">jsp标签</a></li>
+          <li><a href="#!" id="btn7">解决中文乱码</a></li>
+
+        </ul>
+        <!--导航]]-->
+      </div>
+    </div>
+  </div>
+  <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button" 
+  	data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+  <!--页脚[[-->
+  <br><br><br>
+  <div class="am-g">
+  	<div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+  	  <br>
+  	  <span class="am-fl">© 2017 yangyuhao</span>
+  	  <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+  	</div>
+  </div>
+  <br><br><br>
+  <!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+	//加载进度条
+	var progress = $.AMUI.progress;
+	$(window).load(function() {
+		progress.done();
+	})
+	$(document).ready(function() {
+		progress.start();
+	})
+	//侧边栏平滑滚动
+	$(window).smoothScroll();
+	function navClick($btnObj, $pageObj) {
+		$btnObj.on("click", function() {
+			var $w = $(window);
+			$w.smoothScroll({position: $pageObj.offset().top});
+		})
+	}
+	navClick($("#btn1"), $("#page1"));
+	navClick($("#btn2"), $("#page2"));
+	navClick($("#btn3"), $("#page3"));
+	navClick($("#btn4"), $("#page4"));
+	navClick($("#btn5"), $("#page5"));
+	navClick($("#btn6"), $("#page6"));
+	navClick($("#btn7"), $("#page7"));
+	
+</script>
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>杨宇昊的学习笔记-Servlet</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+  <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+  <!--Link Web Font-->
+  <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+  <!--代码高亮highlight.js-->
+  <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+  <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>  
+  <script>hljs.initHighlightingOnLoad();</script>-->
+  <!--Link Base Style-->
+  <link rel="stylesheet" type="text/css" href="css/base.css">
+  <link rel="stylesheet" type="text/css" href="css/page.css"/>
+  <style type="text/css">
+  </style>
+</head>
+<body>
+  <!--导航栏 [[-->
+  <header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489"> 
+      <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+  </header>
+  <!--导航栏 ]]-->
+  <div class="am-g am-g-fixed">
+  <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+    <div class="am-g">
+      <div class="am-u-sm-11 am-u-sm-centered">
+        <div class="am-cf am-article am-scrollable-horizontal">
+         
+         <!--文章[[-->
+        <h2>第一部分 Servlet的创建与生命周期</h2>
+        <h3 id="page1">1.1 概述</h3>
+        <ol>
+        	<li>	java Servlet是和平台无关的服务端组件，运行在Servlet容器中，负责Servlet和客户通讯以及调用Servlet的方法
+			Servlet和客户端通讯采用“请求/响应”模式</li>
+        	<li>Servlet完成的功能
+        		<ul>
+        			<li>创建并返回基于客户请求的动态HTML页面</li>
+        			<li>创建可嵌入到现有HTML的部分HTML片段</li>
+        			<li>与其他服务器资源(数据库/基于java的应用程序…)进行通讯</li>
+        		</ul>
+        	</li>
+        	<li>Servlet容器相应客户请求过程
+        		<img src="photo/servlet/servlet1.png" class="am-img-responsive">
+        	</li>
+        	<li>Servlet容器
+        		<ul>
+        			<li>可以创建Servlet,并调用Servlet的相关生命周期方法</li>
+        			<li>JSP,Filter,Listener等都运行在Servlet容器中</li>
+        		</ul>
+        	</li>
+        </ol>
+        <h3 id="page2">1.2 创建步骤</h3>
+        <ol>
+        	<li>创建Servlet接口实现类
+        		<pre>public class TestServlet implements Servlet {}</pre>
+        	</li>
+        	<li>在web.xml中配置和映射Servlet
+        		<pre>
+&lt;!-- 配置和映射Servlet --&gt;
+&lt;servlet&gt;
+  &lt;!-- servlet注册名称 --&gt;
+  &lt;servlet-name>TestServlet&lt;/servlet-name&gt;
+  &lt;!-- servlet的全类名 --&gt;
+  &lt;servlet-class>org.yang.demo.TestServlet&lt;/servlet-class&gt;
+&lt;/servlet&gt;
+&lt;servlet-mapping&gt;
+  &lt;!-- 需要和servlet子节点servlet-name值保持相同 --&gt;
+  &lt;servlet-name&gt;TestServlet&lt;/servlet-name&gt;
+  &lt;!-- 映射具体访问路径:/代表当前web应用的根目录 --&gt;
+  &lt;url-pattern&gt;/test&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;</pre>
+        	</li>
+        	<li>load-on-startup
+        		<pre>
+&lt;servlet&gt;
+  &lt;!-- servlet注册名称 --&gt;
+  &lt;servlet-name>TestServlet&lt;/servlet-name&gt;
+  &lt;!-- servlet的全类名 --&gt;
+  &lt;servlet-class&gt;org.yang.demo.TestServlet&lt;/servlet-class&gt;
+  &lt;!-- 指定Servlet被创建的时机 --&gt;
+  &lt;load-on-startup>1&lt;/load-on-startup&gt;
+&lt;/servlet&gt;</pre>
+        			负数 --->>> 在第一次请求时被创建<br>
+				0或正数 --->>> 当前web应用被Servlet容器加载时创建实例，数字越小创建越早
+        	</li>
+        	<li>servlet-mapper
+        		<ul>
+        			<li>一个Servlet可以映射多个servlet-mapping</li>
+        			<li>通配符的写法
+        				<pre>
+ &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+ &lt;url-pattern&gt;*.html&lt;/url-pattern&gt;</pre>
+        			</li>
+        		</ul>
+        	</li>
+        </ol>
+        <h3 id="page3">1.3 生命周期</h3>
+        <ol>
+        	<li>Servlet生命周期(所有方法都由Servlet容器负责调用)
+        		<ol>
+        			<li>构造器: 只被调用一次，第一次请求Servlet时，创建Servlet的实例，调用构造器，Servlet是单例模式</li>
+        			<li>init: 只被调用一次，在创建好实例后立即调用，用于初始化当前Servlet</li>
+        			<li>service: 被多次调用，每次请求时都会调用service方法，实际用来相应请求的</li>
+        			<li>destory: 只被调用一次，在当前Servlet所在的web应用被卸载时调用，用于释放所占用资源</li>
+        		</ol>
+        	</li>
+        	<li>带注解的生命周期
+        		<ul>
+        			<li>	@PostConstruct<br>使用@PostConstruct修饰无返回值且没有抛出异常声明的方法，在Servlet构造器执行之后init()方法运行之前执行，只执行一次</li>
+        			<li>@PreDestroy<br>使用@PreDestroy修饰无返回值且没有抛出异常声明的方法，在Servlet中destroy()方法运行之后销毁之前执行，只执行一次</li>
+        			<li>完整的声明周期<br>
+        				服务器加载Servlet -> construct() -> @PostConstruct修饰的方法 -> 
+        				init(ServletConfig conf) -> service(HttpServletResquest request, 
+        				HttpServletResponse response) -> destory() -> @PreDestroy修饰的方法 -> 服务器卸载Servlet
+        			</li>
+        		</ul>
+        	</li>
+        </ol>
+        <h3 id="page4">1.4 ServletConfig和ServletContext</h3>
+        <ol>
+        	<li>ServletConfig: 封装了Servlet配置信息，并可以获取ServletContext对象
+        		<ul>
+        			<li>配置Servlet初始化参数
+        				<pre>
+ &lt;servlet>
+   &lt;servlet-name&gt;TestServlet &lt;/servlet-name&gt;
+   &lt;servlet-class&gt;org.yang.demo.TestServlet &lt;/servlet-class&gt;
+   &lt;!-- 配置Servlet初始化参数 --&gt;
+   &lt;!-- init-param必须放在load-on-startup前面 --&gt;
+   &lt;init-param&gt;
+     &lt;!-- 参数名 --&gt;
+     &lt;param-name>user &lt;/param-name&gt;
+     &lt;!-- 参数值 --&gt;
+     &lt;param-value>root &lt;/param-value&gt;
+   &lt;/init-param&gt;
+   &lt;init-param&gt;
+     &lt;param-name>password &lt;/param-name&gt;
+     &lt;param-value>1234 &lt;/param-value&gt;
+   &lt;/init-param&gt;
+ &lt;/servlet&gt;</pre>
+        			</li>
+        			<li>获取初始化参数<br>
+        			<code>servletConfig.getInitParameter("key");  //通过键名获取对应键值</code>
+        			<code>servletConfig.getInitParameterNames();  //返回键名组成的Enumeration</code>
+        			<code>servletConfig.getServletName();  //获取的值为<servlet-name>value</servlet-name></code>
+        			</li>
+        			<pre>
+@Override
+public void init(ServletConfig arg0) throws ServletException {
+  // TODO Auto-generated method stub
+  String user = arg0.getInitParameter("username");
+  String pass = arg0.getInitParameter("password");
+  System.out.println("1^ username is " + user);
+  System.out.println("1^ password is " + pass);
+  Enumeration<String> users = arg0.getInitParameterNames();
+  while (users.hasMoreElements()) {
+    String name = users.nextElement();
+    System.out.println("2^ " + name + " is " + arg0.getInitParameter(name));
+  }
+}</pre>
+        		</ul>
+        	</li>
+        	<li>ServletContext
+        		<ul>
+        			<li>	ServletContext对象有ServletConfig对象获得
+        				<br><code>ServletContext context = servletConfig.getServletContext();</code>
+        			</li>
+        			<li>ServletContext是web应用的大管家，可以获得当前web应用的各个方面的信息</li>
+        			<li>常用操作
+        				<ul>
+        					<li>获取当前web应用初始化参数
+        						<br><code>servletContext.getInitParameter("key");  //通过键名获取对应键值</code>
+        						<br><code>servletContext.getInitParameterNames();  //返回键名组成的Enumeration</code>
+        					</li>
+        					<li>获取当前web应用(webContent)的某一文件相对于服务器上的绝对路径
+        						<br><code>context.getRealPath(String path);</code>
+        					</li>
+        					<li>获取当前web应用的名称
+        						<br><code>context.getContextPath();</code>
+        					</li>
+        					<li>获取web应用某一文件的输入流
+        						<br><code>context.getResourceAsStream(String path);  //path为相对于当前web应用的路径</code>
+        					</li>
+        					<li>域对象相关方法</li>
+        				</ul>
+        			</li>
+        		</ul>
+        	</li>
+        	<li>资源注射
+        		<ul>
+        			<li>在web.xml中配置资源
+        			<pre>
+&lt;env-enrty&gt;
+  &lt;env-enrty-name>username&lt;/env-enrty-name&gt;
+  &lt;env-enrty-value>yang&lt;/env-enrty-value&gt;
+&lt;/env-entry&gt;</pre>
+        			</li>
+        			<li>在Servlet中使用资源
+        				<pre>
+@Resource(name="username");
+private String user;</pre>
+        			</li>
+        			<li>使用JNDI获取资源
+        				<pre>
+Context context = new InitialContext();
+String user = (String) context.lookup("username");</pre>
+        			</li>
+        		</ul>
+        	</li>
+        </ol>
+        <h2>第二部分 Servlet请求处理</h2>
+        <h3 id="page5">2.1 GET和POST请求</h3>
+        <ol>
+        	<li>使用GET方式传递参数
+        		<ul>
+        			<li>在浏览器输入url地址或单击超链接时，浏览器发出HTTP请求消息的请求方式为GET</li>
+        			<li>使用&lt;form&gt;指定method为"get"，则请求方式为GET</li>
+        			<li>使用GET请求方式传递参数的格式为: localhost:8989/test/index.jsp?search=123</li>
+        			<li>使用GET请求传送的数据量在1k以下</li>
+        		</ul>
+        	</li>
+        	<li>使用POST方式传递参数
+        		<ul>
+        			<li>POST主要用于向服务器提交表单数据，&lt;form&gt;制定method为"post"</li>
+        			<li>POST方式将表单各字段元素作为HTTP消息的实体内容发送给WEB服务器,传送数据量比GET大得多</li>
+        		</ul>
+        	</li>
+        </ol>
+        <h3 id="page6">2.2 在Servlet中获取请求参数</h3>
+        <ol>
+        	<li>Servlet中的service()方法用于应答请求，每次请求都会调用servlet方法
+        		<pre>
+public void service(ServletRequest arg0, ServletResponse arg1) throws ServletException, IOException {
+  //ServletRequest : 封装了请求信息，可以从中取到任何请求信息
+  //ServletResponse : 封装了响应信息，如果想给用户相应，则使用该接口方法的实现
+  //这两个接口的实现类都是由服务器得以实现的，并在服务器调用service方式时传入
+}</pre>
+        	</li>
+        	<li>ServletRequest API
+        		<ul>
+        			<li><code>String getParameter(String name);  //根据请求参数名称，返回参数值</code></li>
+        			<li><code>String[] getParameterValues(String name);  //根据请求参数参数名称</code></li>
+        			<li><code>Enumeration getParameterNames();  //返回参数名对应的Enumeration对象</code></li>
+        			<li><code>Map getParameterMap();  //返回请求参数的键值对</code></li>
+        		</ul>
+        	</li>
+        	<li>HttpServletRequest ： ServletRequest的子接口，针对HTTP请求所定义，里面包含的大量的HTTP相关方法
+        	<br><code>HttpServletRequest httpServletRequest = (HttpServletRequest) arg0;</code>
+        		<ul>
+        			<li><code>String requestURI = httpServletRequest.getRequestURI();  //获取请求的URI</code></li>
+        			<li><code>String requestMethod = httpServletRequest.getMethod();  //获取请求的方式</code></li>
+        			<li><code>String queryStr = httpServletRequest.getQueryString();//获取get请求对应字符串</code></li>
+        			<li><code>String servletPath = httpServletRequest.getServletPath();  //获取请求映射路径</code></li>
+        		</ul>
+        	</li>
+        	<li>ServletResponse
+        		<ul>
+        			<li><pre>
+//返回PrintWriter对象，通过print方法将文本输出在浏览器上
+PrintWriter printWriter = arg1.getWriter();
+printWriter.println("hello world");</pre></li>
+        			<li><code>arg1.setContentType("text/html");//设置文档类型属性</code></li>
+        			<li><code>void sendRedirect(String location);//请求重定向<br></code>(此方法在HttpServletResponse中定义)</li>
+        		</ul>
+        	</li>
+        </ol>
+        <h3 id="page7">2.3 GenericServlet</h3>
+        <ol>
+        	<li>自定义Servlet接口实现类
+		<ul>
+			<li>
+				        		<pre class="am-scrollable-horizontal am-hide-sm">
+public abstract class MyGenericServlet implements Servlet, ServletConfig{
+	private ServletConfig servletConfig = null;
+	public void destroy() {}
+	public ServletConfig getServletConfig() {
+		return this.servletConfig;
+	}
+	public String getServletInfo() {
+		return null;
+	}
+	public void init(ServletConfig arg0) throws ServletException {
+		this.servletConfig = arg0;
+		init();
+	}
+	//避免原始init(ServletConfig arg0)被覆盖无法传入ServletConfig导致空指针异常
+	public void init() {}
+	public abstract void service(ServletRequest arg0, ServletResponse arg1) throws ServletException, IOException;
+	//以下为ServletConfig接口实现
+	public String getInitParameter(String arg0) {
+		return servletConfig.getInitParameter(arg0);
+	}
+	public Enumeration<String> getInitParameterNames() {
+		return servletConfig.getInitParameterNames();
+	}
+	public ServletContext getServletContext() {
+		return servletConfig.getServletContext();
+	}
+	public String getServletName() {
+		return servletConfig.getServletName();
+	}
+}</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
+			</li>
+		</ul>
+        	</li>
+        	<li>GenericServlet
+        		<ul>
+        			<li>GenericServlet是一个Servlet，是一个实现Servlet和ServletConfig接口的抽象类，其中service为抽象方法</li>
+        			<li>使用GenericServlet可以使Servlet开发更加简洁</li>
+        			<li>具体表现
+        				<ul>
+        					<li>在GenericServlet中生命ServletConfig类型的成员变量，并在init(ServletConfig arg0)中初始化</li>
+        					<li>定义一个init()方法，在init(ServletConfig arg0)中进行调用，子类可以直接覆盖init()实现对Servlet的初始化</li>
+        					<li>不建议直接覆盖init(ServletConfig arg0)，如果忘记编写super(ServletConfig)并使用了ServletConfig相关的方法则会出现空指针异常</li>
+        					<li>新建的无参数init()方法并非Servlet生命周期方法，init(ServletConfig arg0)是Servlet生命周期方法</li>
+        				</ul>
+        			</li>
+        		</ul>
+        	</li>
+        </ol>
+        <h3 id="page8">2.4 HttpServlet</h3>
+        <ol>
+        	<li>自定义HttpServlet类
+        		<ul>
+        			<li>
+        				<pre class="am-scrollable-horizontal am-hide-sm">
+public class MyHttpServlet extends MyGenericServlet {
+  @Override
+  public void service(ServletRequest arg0, ServletResponse arg1) throws ServletException, IOException {
+    if (arg0 instanceof HttpServletRequest) {
+      HttpServletRequest request = (HttpServletRequest) arg0;
+      if (arg1 instanceof HttpServletResponse) {
+        HttpServletResponse response = (HttpServletResponse) arg1;
+        service(request, response);
+      }
+    }
+  }
+  public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    //1.获取请求方式
+    String method = request.getMethod();
+    //2.根据请求方式再创建对应的处理方法
+    if ("GET".equals(method)) {
+      doGET(request, response);
+    }
+    if ("POST".equals(method)) {
+      doPOST(request, response);
+    }
+  }
+  public void doPOST(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {}
+  public void doGET(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {}
+}</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
+        			</li>
+        		</ul>
+        	</li>
+        	<li>HttpServlet
+        		<ul>
+        			<li>是一个Servlet，继承于GenericServlet，针对于HTTP协议所定制</li>
+        			<li>在service()方法中直接把ServletRequest和ServletResponse转为HttpServletRequest和HttpServletResponse</li>
+        			<li>调用重载的service方法<br>
+        			<code>public void service(HttpServletRequest request,<br>HttpServletResponse response)</code>
+        			<br>根据请求方式创建了doXXX()方法，xxx为具体响应方式(doGet/doPost…)</li>
+        			<li>实际开发中，直接继承HttpServlet，并根据响应请求复写doXXX方法</li>
+        			<li>优点: 直接使用HttpServletRequest和HttpServletResponse，不需要进行转换 </li>
+        		</ul>
+        	</li>
+        </ol>
+         <!--文章]]-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+    <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+      <div class="am-offcanvas-bar">
+      
+        <ul class="am-nav">
+        	<h1>Servlet</h1>
+        	<!--导航[[-->
+          <li class="am-nav-header">Servlet的创建与生命周期</li>
+          <li><a href="#!" id="btn1">概述</a></li>
+          <li><a href="#!" id="btn2">创建步骤</a></li>
+          <li><a href="#!" id="btn3">生命周期</a></li>
+          <li><a href="#!" id="btn4">ServletConfig和ServletContext</a></li>
+          <li class="am-nav-header">Servlet请求处理</li>
+          <li><a href="#!" id="btn5">GET和POST请求</a></li>
+          <li><a href="#!" id="btn6">在Servlet中获取请求参数</a></li>
+          <li><a href="#!" id="btn7">GenericServlet</a></li>
+          <li><a href="#!" id="btn8">HttpServlet</a></li>
+
+        </ul>
+        <!--导航]]-->
+      </div>
+    </div>
+  </div>
+  <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button" 
+  	data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+  <!--页脚[[-->
+  <br><br><br>
+  <div class="am-g">
+  	<div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+  	  <br>
+  	  <span class="am-fl">© 2017 yangyuhao</span>
+  	  <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+  	</div>
+  </div>
+  <br><br><br>
+  <!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+	//加载进度条
+	var progress = $.AMUI.progress;
+	$(window).load(function() {
+		progress.done();
+	})
+	$(document).ready(function() {
+		progress.start();
+	})
+	//侧边栏平滑滚动
+	$(window).smoothScroll();
+	function navClick($btnObj, $pageObj) {
+		$btnObj.on("click", function() {
+			var $w = $(window);
+			$w.smoothScroll({position: $pageObj.offset().top});
+		})
+	}
+	navClick($("#btn1"), $("#page1"));
+	navClick($("#btn2"), $("#page2"));
+	navClick($("#btn3"), $("#page3"));
+	navClick($("#btn4"), $("#page4"));
+	navClick($("#btn5"), $("#page5"));
+	navClick($("#btn6"), $("#page6"));
+	navClick($("#btn7"), $("#page7"));
+	navClick($("#btn8"), $("#page8"));
+	
+</script>
+</body>
+</html>
