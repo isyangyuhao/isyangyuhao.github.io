@@ -273,7 +273,7 @@ requestDispatcher.forward(request, response);</pre>
        	 			<li>get请求: 
        	 				<pre>
 String val = request.getParameter("username");  //获取参数值
-/将iso-8859-1的字符流转换为utf-8
+//将iso-8859-1的字符流转换为utf-8
 String username = new String(val.getBytes("iso-8859-1"), "utf-8");</pre>
        	 			</li>
        	 			<li>	在apache中配置:

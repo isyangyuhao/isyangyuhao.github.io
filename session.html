@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>杨宇昊的学习笔记-会话与状态管理</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+  <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+  <!--Link Web Font-->
+  <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+  <!--代码高亮highlight.js-->
+  <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+  <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>  
+  <script>hljs.initHighlightingOnLoad();</script>-->
+  <!--Link Base Style-->
+  <link rel="stylesheet" type="text/css" href="css/base.css">
+  <link rel="stylesheet" type="text/css" href="css/page.css"/>
+  <style type="text/css">
+  </style>
+</head>
+<body>
+  <!--导航栏 [[-->
+  <header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489"> 
+      <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+  </header>
+  <!--导航栏 ]]-->
+  <div class="am-g am-g-fixed">
+  <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+    <div class="am-g">
+      <div class="am-u-sm-11 am-u-sm-centered">
+        <div class="am-cf am-article am-scrollable-horizontal">
+         
+         <!--文章[[-->
+       	 <h2>第一部分 Cookie</h2>
+       	 <h3 id="page1">1.1 概述</h3>
+       	 <ol>
+       	 	<li>HTTP协议是一种无状态的协议，web服务器本身不能识别出哪些请求是同一个浏览器发出的，浏览器的每一次请求时孤立的</li>
+       	 	<li>会话与会话状态
+       	 		<ul>
+       	 			<li>web应用中的会话是指一个客户端浏览器与web服务器之间连续发生的一系列请求和相应过程</li>
+       	 			<li>web应用的会话状态是指web服务器与浏览器在会话过程中产生的状态信息，借助会话状态，web服务器能够把属于同一会话的一系列请求和相应过程关联起来</li>
+       	 			<li>web服务器端程序要能从大量的请求中区分哪些请求属于同一会话，需要浏览器对发出的每一个请求都进行标识，属于同一个会话中的请求消息都附带相同的标识号(SessionID)</li>
+       	 			<li>在Servlet规范中，常用Cookie和Session来完成会话跟踪</li>
+       	 		</ul>
+       	 	</li>
+       	 </ol>
+       	 <h3 id="page2">1.2 Cookie机制</h3>
+       	 <ol>
+			<li>
+				Cookie机制
+				<ul>
+		       	 	<li>Cookie机制采用的是在客户端保持HTTP状态信息的方案</li>
+		       	 	<li>Cookie是在浏览器访问web服务器的某个资源时，有web服务器在HTTP响应消息头重附带传送给浏览器一个小文本文件</li>
+		       	 	<li>一旦web服务器保存了某个Cookie，那么它在以后每次访问该web服务器时，都会在HTTP请求头中将这个Cookie回传给web服务器</li>
+		       	 	<li>一个Cookie只能标识一种信息，他至少含有一个标识该信息的名称(name)和设置值(value)</li>
+		       	 	<li>一个web站点可以给一个浏览器发送多个Cookie，一个web浏览器也可以存储多个web站点提供的Cookie</li>
+		       	 	<li>浏览器一般允许存放300个Cookie，每个站点最多存放20个Cookie，每个Cookie的大小限制为4KB</li>
+		       	 	<li>Cookie与浏览器和服务器的关系
+		       	 		<img src="photo/session/session1.png" class="am-img-responsive">
+		       	 	</li>
+				</ul>
+			</li>
+			<li>
+				Cookie的发送
+				<ul>
+					<li>创建Cookie对象</li>
+					<li>设置最大时效</li>
+					<li>将Cookie放入HTTP相应报头
+						<ul>
+							<li>如果创建了一个Cookie，并将他发送到浏览器，默认情况下他是一个会话级别的cookie，
+								存储在浏览器的内存中，用户退出浏览器后会被删除。若希望浏览器将该cookie存储在磁盘上，
+								则需要使用maxAge，并给出一个以秒为单位的时间，将最大失效设为0则是命令浏览器删除该cookie,
+								若设置为负数表示该cookie永远不会被储存</li>
+							<li>	发送cookie需要使用它HttpServletResponse的addCookie方法，
+								将cookie插入到一个Set-Cookie报头，由于这个方法并不修改任何之前的Set-Cookie报头，
+								而是创建新报头，因此将这个方法称为addCookie而不是setCookie</li>
+						</ul>
+					</li>
+					<li>e.g.
+						<pre>
+//创建一个Cookie对象
+Cookie cookie = new Cookie("name", "value");
+//设置最大时效
+cookie.setMaxAge(60);
+//调用response的一个方法将Cookie传给客户端
+response.addCookie(cookie);</pre>
+					</li>
+				</ul>
+			</li>
+			<li>Cookie的获取
+				<ul>
+					<li>通过<code>request.getCookie()</code>方法获取Cookie的实例数组</li>
+					<li>遍历得到的cookie对象数组，通过<code>getName()</code>方法获取cookie名称，<code>getValue()</code>方法获取cookie的值</li>
+					<li>e.g.
+						<pre>
+Cookie [] cookies = request.getCookies();
+  if (cookies != null && cookies.length > 0) {
+    for (Cookie cookie : cookies) {
+      String name = cookie.getName();
+      String value = cookie.getValue();
+    }
+}</pre>
+					</li>
+				</ul>
+			</li>
+			<li>
+				Cookie作用范围
+				<ul>
+					<li>Cookie作用范围仅在当前目录和当前目录的子目录，不能作用于上一级目录</li>
+					<li>修改Cookie作用范围：setPath(String url);  </li>
+					<li>setPath(String url)中url传入'/'代表站点根目录,传入getContextPath()设置为当前web应用地址</li>
+				</ul>
+			</li>
+       	 </ol>
+       	 <h3	 id="page3">1.3 持久化Cookie应用</h3>
+       	 <ol>
+       	 	<li>利用Cookie实现自动登录
+       	 		<ul>
+       	 			<li>
+       	 				<pre class="am-scrollable-horizontal am-hide-sm">
+//若可以获取请求参数name，则打印出欢迎信息。将登陆信息记录到cookie之中，并设置cookie的最长时效为30s
+String name = request.getParameter("name");
+if (name != null && !name.trim().equals("")) {
+  out.print("Hello : " + name);
+  Cookie cookie = new Cookie("name", name);
+  cookie.setMaxAge(30);
+  response.addCookie(cookie);
+} else {
+  //如果没有从获取到表单提交的值，则获取浏览器中的cookie，从中找到名为name的cookie
+  Cookie [] cookies = request.getCookies();
+  if (cookies != null && cookies.length > 0) {
+    for (Cookie cookie : cookies) {
+      if ("name".equals(cookie.getName())) {
+        String val = cookie.getValue();
+        name = val;
+      }
+    }
+  }
+  //如果找到了名为name的cookie，则显示欢迎信息，否则重定向会登陆界面
+  if (name != null && !name.trim().equals("")) {
+    out.print("Hello : " + name);
+  } else {
+    response.sendRedirect("login.jsp");
+  }
+}</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
+       	 			</li>
+       	 		</ul>
+       	 	</li>
+       	 	<li>利用Cookie显示最近浏览的商品
+       	 		<ul>
+       	 			<li>books.jsp(显示所有图书超链接和最近浏览的图书名)
+       	 				<pre class="am-scrollable-horizontal am-hide-sm">
+  &lt;h4&gt;Books Page&lt;/h4&gt;
+  &lt;a href="book.jsp?book=book1"&gt;Book1&lt;/a&gt;
+  &lt;a href="book.jsp?book=book2"&gt;Book2&lt;/a&gt;
+  &lt;a href="book.jsp?book=book3"&gt;Book3&lt;/a&gt;
+  &lt;a href="book.jsp?book=book4"&gt;Book4&lt;/a&gt;
+  &lt;a href="book.jsp?book=book5"&gt;Book5&lt;/a&gt;
+  &lt;a href="book.jsp?book=book6"&gt;Book6&lt;/a&gt;
+  &lt;a href="book.jsp?book=book7"&gt;Book7&lt;/a&gt;
+  &lt;a href="book.jsp?book=book8"&gt;Book8&lt;/a&gt;
+  &lt;a href="book.jsp?book=book9"&gt;Book9&lt;/a&gt;
+  &lt;a href="book.jsp?book=book10"&gt;Book10&lt;/a&gt;
+&lt;%
+//显示最近浏览的5本书
+//获取所有的cookie
+Cookie [] cookies = request.getCookies();
+//从中筛选出book的cookie，如果cookieName为BOOK_开头则符合条件并显示对应value
+if (cookies != null && cookies.length > 0) {
+  for (Cookie c : cookies) {
+    String cookieName = c.getName();
+    if (cookieName.startsWith("BOOK_")) {
+      out.print(c.getValue() + "   ");
+    }
+  }
+}
+%&gt;</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
+       	 			</li>
+       	 			<li>book.jsp(图书详细介绍)
+       	 				<pre class="am-scrollable-horizontal am-hide-sm">
+&lt;h4>Book Detail Page&lt;/h4&gt;
+Book : &lt;%= request.getParameter("book") %&gt;
+&lt;a href="books.jsp">Return&lt;/a&gt;
+&lt;%
+//把书的信息以Cookie方式回传给浏览器,删除符合条件的Cookie
+String book = request.getParameter("book");
+/*
+  1. 确定要被删除的Cookie，BOOK_ 开头的cookie数量大于等于5时，
+  若从books.jsp页面传入的book不再BOOK_的cookie之中则删除较早的那个cookie，
+  否则则删除该cookie
+*/
+Cookie [] cookies = request.getCookies();
+//保存所有以BOOK_开头的cookie
+List&lt;Cookie&gt; bookCookies = new ArrayList&lt;Cookie&gt;();
+//保存和books.jsp传入book匹配的那个cookie
+Cookie tmpCookie = null;
+if (cookies != null && cookies.length > 0) {
+  for (Cookie c : cookies) {
+    String cookieName = c.getName();
+    if (cookieName.startsWith("BOOK_")) {
+      bookCookies.add(c);
+      if (c.getValue().equals(book)) {
+        tmpCookie = c;
+      }
+    }
+  }
+}
+if (bookCookies.size() >= 5 && tmpCookie == null) {
+  tmpCookie = bookCookies.get(0);
+}
+if (tmpCookie != null) {
+  //将最大失效设置为0代表删除此cookie
+  tmpCookie.setMaxAge(0);
+  response.addCookie(tmpCookie);
+}
+//2. 把从books.jsp传入的book作为一个cookie返回
+Cookie cookie = new Cookie("BOOK_" + book, book);
+response.addCookie(cookie);
+%&gt;</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
+       	 			</li>
+       	 		</ul>
+       	 	</li>
+       	 </ol>
+       	 <h2>第二部分 Session</h2>
+       	 <h3 id="page4">2.1 Session机制</h3>
+       	 <ol>
+       	 	<li>Session机制
+       	 		<ul>
+       	 			<li>用来在客户端与服务器端之间保持状态的解决方案，有时候Session也指这种解决方案的存储结构</li>
+       	 			<li>session机制采用在服务器端保持HTTP状态信息的方案</li>
+       	 			<li>请求Session处理过程
+       	 				<img src="photo/session/session2.png" class="am-img-responsive">
+       	 			</li>
+       	 			<li>保存sessionId的方式
+       	 				<ul>
+       	 					<li>使用cookie保存，在交互过程中浏览器自动的按照规则把标识发送给服务器</li>
+       	 					<li>URL重写，将sessionId附加在url路径的后边</li>
+       	 				</ul>
+       	 			</li>
+       	 		</ul>
+       	 	</li>
+       	 	<li>Session cookie
+       	 		<ul>
+       	 			<li>session通过sessionId来区分不同的用户，
+       	 				session是以cookie或url重写为基础的，默认使用cookie实现的，
+       	 				系统会创造一个名字为JSESSIONID的输出cookie，称为session cookie，
+       	 				用来区别于persistent cookies(通常使用的cookie)，session cookie存储在浏览器内存中，
+       	 				并没有写到硬盘上，通常看不到JSESSIONID</li>
+       	 			<li>持久化session cookie
+       	 				<pre>
+Cookie cookie = new Cookie("JSESSIONID", session.getId());
+cookie.setMaxAge(30);
+response.addCookie(cookie);</pre>
+       	 			</li>
+       	 		</ul>
+       	 	</li>
+       	 	<li>利用URL重写实现Session追踪: <code>&lt;a href="<%= response.encodeURL("index.jsp")%>"&gt;重新登录&lt;/a&gt;</code></li>
+       	 </ol>
+       	 <h3 id="page5">2.2 HttpSession生命周期</h3>
+       	 <ol>
+       	 	<li>HttpSession对象的创建
+       	 		<ul>
+       	 			<li>对于JSP
+       	 				<ul>
+       	 					<li>若当前jsp是客户端访问的当前web应用的第一个资源，且jsp的page指令的session属性值不为false则会创建HttpSession对象</li>
+       	 					<li>若当前jsp客户端访问的不是当前web应用的第一个资源，且其他页面已经创建了HttpSession对象，则服务器不会为当前页面创建HttpSession对象，而是会把相关联的对象返回给当前jsp页面</li>
+       	 				</ul>
+       	 			</li>
+       	 			<li>对于Servlet
+       	 				<br>若当前Servlet是客户端访问的第一个web应用的资源，则只有调用了<code>request.getSession()</code>或<code>request.getSession(true)</code>才会创建HttpSession对象
+       	 			</li>
+       	 			<li>page指令中的session=false
+       	 				<br>	当前jsp页面禁用session隐含变量，可以使用其他的显式HttpSession对象
+       	 			</li>
+       	 			<li>在Servlet中获取HttpSession对象的方法: <code>request.getSession(boolean create)</code>
+       	 				<ul>
+       	 					<li>request.getSession(true)：若存在会话则返回该会话，否则新建一个会话</li>
+       	 					<li>request.getSession(false)：若存在会话则返回该会话，否则返回NULL</li>
+       	 				</ul>
+       	 			</li>
+       	 		</ul>
+       	 	</li>
+       	 	<li>HttpSession对象的销毁
+       	 		<ul>
+       	 			<li>调用HttpSession的<code>invalidate()</code>方法</li>
+       	 			<li>HttpSession对象失效
+       	 				<ul>
+       	 					<li>设置HttpSession对象的过期时间
+       	 						<ul>
+       	 							<li><code>session.setMaxInactiveInterval(int time);  //单位为秒</code></li>
+       	 							<li>在web.xml中设置HttpSession的过期时间(单位为分钟)
+       	 							<pre>
+&lt;session-config&gt;
+  &lt;session-timeout&gt;30&lt;/session-timeout&gt;
+&lt;/session-config&gt;</pre>
+       	 							</li>
+       	 						</ul>
+       	 					</li>
+       	 					<li>获取HttpSession对象的过期时间: <code>session.getMaxInactiveInterval();</code></li>
+       	 					<li>服务进程被停止(当前web应用被卸载)</li>
+       	 				</ul>
+       	 			</li>
+       	 		</ul>
+       	 	</li>
+       	 </ol>
+       	 <h3 id="page6">2.3 路径</h3>
+       	 <ol>
+       	 	<li>在开发中最好使用绝对路径：使用绝对路径一定不会出错，使用相对路径可能会出错</li>
+       	 	<li>在由Servlet转发到jsp页面时，此时浏览器地址栏显示的是servlet路径，而若jsp页面的超链接还是相对于该jsp页面的地址则可能会出现路径混乱的问题</li>
+       	 	<li>使用绝对路径可以避免问题的发生
+       	 		<ul>
+       	 			<li>在javaWeb中的绝对路径：相对于当前web应用的根路径
+       	 				<br> e.g. <a href="http://localhost:8989/contextPath/index.jsp">http://localhost:8989/contextPath/index.jsp</a> 
+       	 			</li>
+       	 			<li>使用绝对路径的书写方法: 若"/"代表站站点根目录，在其前边加上contextPath
+       	 				<ul>
+       	 					<li>&lt;a href="/TestServlet"&gt;"/a&gt; =&gt; <br> &lt;a href="&lt;%= request.getContextPath()%>/TestServlet"&gt;go&lt;/a&gt;</li>
+       	 					<li>response.sendRedirect("a.jsp") =&gt; <br> response.sendRedirect(request.getContextPath() + "/a.jsp")</li>
+       	 				</ul>
+       	 			</li>
+       	 		</ul>
+       	 	</li>
+       	 	<li>"/"表示的含义
+       	 		<ul>
+       	 			<li>	表示当前web应用的根路径(http://localhost:8989/contextPath/) -> 由Servlet容器解析
+       	 				<ul>
+       	 					<li>请求转发时 : request.getRequestDispathcher("/path/b.jsp").forward(requset, response);</li>
+       	 					<li>Servlet映射路径 : <url-pattern>/TestServlet</url-pattern></li>
+       	 					<li>定制标签中的/</li>
+       	 				</ul>
+       	 			</li>
+       	 			<li>表示web站点根路径(http://localhost:8989/) -> 由浏览器解析
+       	 				<ul>
+       	 					<li>超链接 : &lt;a href="/TestServlet"&gt;go to&lt;"/a&gt;</li>
+       	 					<li>表单中的action : &lt;form action="/login.jsp"&gt;</li>
+       	 					<li>请求重定向 : response.sendRedirect("/a.jsp");</li>
+       	 				</ul>
+       	 			</li>
+       	 		</ul>
+       	 	</li>
+       	 </ol>
+       	 <h3 id="page7">2.4 表单重复提交</h3>
+       	 <ol>
+       	 	<li>现象的发生: 
+       	 		<ul>
+       	 			<li>在表单提交到一个Servlet，
+       	 				而Servlet通过请求转发的方式响应了一个jsp/html页面，
+       	 				此时地址栏依然保留了Servlet的路径，在响应页面点击"刷新"时重复提交</li>
+       	 			<li>在相应页面没有到达时，重复点击提交按钮从而重复提交</li>
+       	 			<li>点击返回后再点击提交出现重复提交现象</li>
+       	 		</ul>
+       	 	</li>
+       	 	<li>不是重复提交的情况
+       	 		<ul>
+       	 			<li>返回提交页面后刷新表单再次提交</li>
+       	 		</ul>
+       	 	</li>
+       	 	<li>避免表单重复提交
+       	 		<ul>
+       	 			<li>在表单中做一个标记，提交到Servlet时，
+       	 				检查标记是否存在且是否和预定义的标记一致，
+       	 				若一致则受理请求并销毁标记，若不一致或没有标记，则直接相应提示信息：重复提交</li>
+       	 			<li>步骤
+       	 				<ul>
+       	 					<li>在原表单中，生成一个随机值token : <code>String tokenValue = new Date().getTime() + "";</code></li>
+       	 					<li>原表单中，将token值放入session当中 : <code>session.setAttribute("token", tokenValue);</code></li>
+       	 					<li>	在原表单中，将token放入隐藏于 : <code>&lt;input type="hidden" name="token" value="<%=tokenValue%>"></code></li>
+       	 					<li>在目标Servlet中，获取session和隐藏域中的值，若一致授予请求且把session域中的token值清除，若不一致则响应重复提交</li>
+       	 				</ul>
+       	 			</li>
+       	 			<li>e.g. 
+       	 			<pre class="am-scrollable-horizontal am-hide-sm">
+&lt;form action="<%= request.getContextPath() %>/tokenServlet" method="post">
+<%
+  String tokenValue = new Date().getTime() + "";
+  session.setAttribute("token", tokenValue);
+%>
+&lt;input type="hidden" name="token" value="<%=tokenValue%>">
+name : &lt;input type="text" name="name">
+&lt;input type="submit" value="提交">
+&lt;/form>
+  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    HttpSession session = request.getSession();
+    Object token = session.getAttribute("token");
+    String tokenValue = request.getParameter("token");
+    if (token != null && token.equals(tokenValue)) {
+      session.removeAttribute("token");
+    } else {
+      response.sendRedirect(request.getContextPath() + "/token/token.jsp");
+      return ;
+    }
+    String name = request.getParameter("name");
+    System.out.println("name : " + name);
+    request.getRequestDispatcher("/token/success.jsp").forward(request, response);
+}</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
+       	 			</li>
+       	 		</ul>
+       	 	</li>
+       	 </ol>
+         <!--文章]]-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+    <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+      <div class="am-offcanvas-bar">
+      
+        <ul class="am-nav">
+        	<h1>会话与状态管理</h1>
+        	<!--导航[[-->
+          <li class="am-nav-header">Cookie</li>
+          <li><a href="#!" id="btn1">概述</a></li>
+          <li><a href="#!" id="btn2">Cookie机制</a></li>
+          <li><a href="#!" id="btn3">持久化Cookie应用</a></li>
+          <li class="am-nav-header">Session</li>
+          <li><a href="#!" id="btn4">Session机制</a></li>
+          <li><a href="#!" id="btn5">Session生命周期</a></li>
+          <li><a href="#!" id="btn6">路径</a></li>
+          <li><a href="#!" id="btn7">表单重复提交</a></li>
+
+        </ul>
+        <!--导航]]-->
+      </div>
+    </div>
+  </div>
+  <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button" 
+  	data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+  <!--页脚[[-->
+  <br><br><br>
+  <div class="am-g">
+  	<div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+  	  <br>
+  	  <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+  	  <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+  	</div>
+  </div>
+  <br><br><br>
+  <!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+	//加载进度条
+	var progress = $.AMUI.progress;
+	$(window).load(function() {
+		progress.done();
+	})
+	$(document).ready(function() {
+		progress.start();
+	})
+	//侧边栏平滑滚动
+	$(window).smoothScroll();
+	function navClick($btnObj, $pageObj) {
+		$btnObj.on("click", function() {
+			var $w = $(window);
+			$w.smoothScroll({position: $pageObj.offset().top});
+		})
+	}
+	navClick($("#btn1"), $("#page1"));
+	navClick($("#btn2"), $("#page2"));
+	navClick($("#btn3"), $("#page3"));
+	navClick($("#btn4"), $("#page4"));
+	navClick($("#btn5"), $("#page5"));
+	navClick($("#btn6"), $("#page6"));
+	navClick($("#btn7"), $("#page7"));
+	
+</script>
+</body>
+</html>
