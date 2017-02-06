@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>杨宇昊的学习笔记-javaBean,el,标签</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+  <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+  <!--Link Web Font-->
+  <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+  <!--代码高亮highlight.js-->
+  <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+  <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>  
+  <script>hljs.initHighlightingOnLoad();</script>-->
+  <!--Link Base Style-->
+  <link rel="stylesheet" type="text/css" href="css/base.css">
+  <link rel="stylesheet" type="text/css" href="css/page.css"/>
+  <style type="text/css">
+  </style>
+</head>
+<body>
+  <!--导航栏 [[-->
+  <header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489"> 
+      <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+  </header>
+  <!--导航栏 ]]-->
+  <div class="am-g am-g-fixed">
+  <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+    <div class="am-g">
+      <div class="am-u-sm-11 am-u-sm-centered">
+        <div class="am-cf am-article am-scrollable-horizontal">
+         
+         <!--文章[[-->
+		 <h2>第一部分 JavaBean</h2>
+		 <h3>1.1 JavaBean的要求</h3>
+		 <ol>
+		 	<li>用作javaBean的类必须具有一个公共的，无参数的构造方法</li>
+		 	<li>javaBean的属性是以方法定义的形式出现的</li>
+		 	<li>对属性赋值的方法成为属性修改器setter方法，对读取属性值的方法成为属性访问器getter方法</li>
+		 	<li>属性修改器必须以小写set前缀开始，紧挨属性名且属性名第一个字母必须大写</li>
+		 	<li>属性访问其必须以小写get前缀开始，紧挨属性名且属性名第一个字母必须大写</li>
+		 	<li>属性名的首字母必须小写</li>
+		 </ol>
+		 <h3>1.2 在页面上使用JavaBean</h3>
+		 <ol>
+		 	<li>&lt;jsp:useBean&gt;
+		 		<ul>
+		 			<li>作用: 在jsp页面上定义一个javaBean对象</li>
+		 			<li>行为属性
+		 				<table class="am-table am-table-compact">
+							<thead>
+								<th>属性</th>
+								<th>取值范围</th>
+								<th>描述</th>
+							</thead>
+							<tbody>
+								<tr>
+									<td>id</td>
+									<td>合法的java变量名</td>
+									<td>指明javaBean对象的名称,jsp中可以使用改名成引用javaBean对象</td>
+								</tr>
+								<tr>
+									<td>class</td>
+									<td>javaBean类全名</td>
+									<td>指明javaBean类的全名</td>
+								</tr>
+								<tr>
+									<td>scope</td>
+									<td>page, request, session, application</td>
+									<td>指明javaBean对象的作用范围，默认为page</td>
+								</tr>
+							</tbody>
+       	 				</table>
+		 			</li>
+		 		</ul>
+		 	</li>
+		 	<li>&lt;jsp:setProperty&gt;
+		 		<ul>
+		 			<li>作用: 调用对应javaBean对象的属性修改器</li>
+		 			<li>行为属性
+		 				<table class="am-table am-table-compact">
+							<thead>
+								<th>属性名</th>
+								<th>描述</th>
+							</thead>
+							<tbody>
+								<tr>
+									<td>property</td>
+									<td>需要设置的属性名</td>
+								</tr>
+								<tr>
+									<td>name</td>
+									<td>需要设置的javaBean类的对象名</td>
+								</tr>
+								<tr>
+									<td>value</td>
+									<td>需要设置的属性对应值</td>
+								</tr>
+							</tbody>
+						</table>
+		 			</li>
+		 			<li>	接收表单数据：&lt;jsp:setProperty property="*" name="student">
+					表单对应name的值应该与javaBean的属性名相对应，直接使用"*"通过表单传值为javaBean赋值</li>
+		 		</ul>
+		 	</li>
+		 	<li>&lt;jsp:getProperty&gt;
+		 		<ul>
+		 			<li>作用: 调用javaBean对象的属性访问器</li>
+		 			<li>行为属性
+		 				<table class="am-table am-table-compact">
+		 					<thead>
+		 						<th>属性名</th>
+		 						<th>描述</th>
+		 					</thead>
+		 					<tbody>
+		 						<tr>
+		 							<td>property</td>
+		 							<td>需要访问的属性名</td>
+		 						</tr>
+		 						<tr>
+		 							<td>name</td>
+		 							<td>需要访问的javaBean类的对象名</td>
+		 						</tr>
+		 					</tbody>
+		 				</table>
+		 			</li>
+		 		</ul>
+		 	</li>
+		 </ol>
+         <!--文章]]-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+    <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+      <div class="am-offcanvas-bar">
+      
+        <ul class="am-nav">
+        	<h1>JavaBean,EL,标签</h1>
+        	<!--导航[[-->
+          <li class="am-nav-header">JavaBean</li>
+          <li><a href="#!" id="btn1">要求与使用</a></li>
+          <li class="am-nav-header">EL表达式</li>
+          <li><a href="#!" id="btn2">语法,隐含对象,运算符</a></li>
+          <li class="am-nav-header">标签</li>
+          <li><a href="#!" id="btn3">自定义标签</a></li>
+          <li><a href="#!" id="btn3">自定义函数</a></li>
+          <li class="am-nav-header">JSTL</li>
+          <li><a href="#!" id="btn4">标准函数标签库</a></li>
+          <li><a href="#!" id="btn5">表达式操作</a></li>
+          <li><a href="#!" id="btn6">流程控制</a></li>
+          <li><a href="#!" id="btn7">url操作</a></li>
+
+        </ul>
+        <!--导航]]-->
+      </div>
+    </div>
+  </div>
+  <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button" 
+  	data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+  <!--页脚[[-->
+  <br><br><br>
+  <div class="am-g">
+  	<div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+  	  <br>
+  	  <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+  	  <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+  	</div>
+  </div>
+  <br><br><br>
+  <!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+	//加载进度条
+	var progress = $.AMUI.progress;
+	$(window).load(function() {
+		progress.done();
+	})
+	$(document).ready(function() {
+		progress.start();
+	})
+	//侧边栏平滑滚动
+	$(window).smoothScroll();
+	function navClick($btnObj, $pageObj) {
+		$btnObj.on("click", function() {
+			var $w = $(window);
+			$w.smoothScroll({position: $pageObj.offset().top});
+		})
+	}
+	navClick($("#btn1"), $("#page1"));
+	navClick($("#btn2"), $("#page2"));
+	navClick($("#btn3"), $("#page3"));
+	navClick($("#btn4"), $("#page4"));
+	navClick($("#btn5"), $("#page5"));
+	navClick($("#btn6"), $("#page6"));
+	navClick($("#btn7"), $("#page7"));
+	
+</script>
+</body>
+</html>
