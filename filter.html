@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>杨宇昊的学习笔记-过滤器与监听器</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+  <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+  <!--Link Web Font-->
+  <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+  <!--代码高亮highlight.js-->
+  <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+  <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>  
+  <script>hljs.initHighlightingOnLoad();</script>-->
+  <!--Link Base Style-->
+  <link rel="stylesheet" type="text/css" href="css/base.css">
+  <link rel="stylesheet" type="text/css" href="css/page.css"/>
+  <style type="text/css">
+  </style>
+</head>
+<body>
+  <!--导航栏 [[-->
+  <header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489"> 
+      <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+  </header>
+  <!--导航栏 ]]-->
+  <div class="am-g am-g-fixed">
+  <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+    <div class="am-g">
+      <div class="am-u-sm-11 am-u-sm-centered">
+        <div class="am-cf am-article am-scrollable-horizontal">
+         
+         <!--文章[[-->
+		 <h2>第一部分 过滤器Filter</h2>
+		 <h3>1.1 过滤器的使用</h3>
+		 <ol>
+		 	<li>概述
+		 		<ul>
+		 			<li>过滤器的功能: 对Servlet容器调用Servlet的过程进行拦截，从而在Servlet进行响应的前后处理一些特殊的功能</li>
+		 			<li>图解
+		 				<img src="photo/filter/filter1.png" class="am-img-responsive">
+		 			</li>
+		 		</ul>
+		 	</li>
+		 	<li>创建Filter步骤
+		 		<ul>
+		 			<li>创建Filter类：实现Filter接口
+		 				<pre>
+public class TestFilter implements Filter {
+  @Override
+  public void destroy() {}
+  @Override
+  public void doFilter(ServletRequest arg0, ServletResponse arg1, 
+      FilterChain arg2) throws IOException, ServletException {}
+  @Override
+  public void init(FilterConfig arg0) throws ServletException {}
+}</pre>
+		 			</li>
+		 			<li>在web.xml配置Filter：其中url-pattern指定改Filter可以拦截哪些资源
+		 			<pre>
+  &lt;!-- 注册Filter -->
+  &lt;filter>
+      &lt;filter-name>testFilter&lt;/filter-name>
+      &lt;filter-class>org.yang.demo.TestFilter&lt;/filter-class>
+  &lt;/filter>
+  &lt;!-- 映射Filter -->
+  &lt;filter-mapping>
+      &lt;filter-name>testFilter&lt;/filter-name>
+      &lt;url-pattern>/test.jsp&lt;/url-pattern>  
+  &lt;/filter-mapping></pre>
+		 			</li>
+		 		</ul>
+		 	</li>
+		 	<li>Filter相关API
+		 		<ul>
+		 			<li><code>void init(FilterConfig filterConfig)</code>
+		 				<ul>
+		 					<li>创建Filter对象后立即被调用，且只调用一次</li>
+		 					<li>该方法用于对当前Filter进行初始化操作</li>
+		 					<li>Filter是单例的</li>
+		 					<li>FilterConfig类似于ServletConfig，可以在web.xml文件中配置当前Filter的初始化参数</li>
+		 				</ul>
+		 			</li>
+		 			<li><code>void doFilter(ServletRequest request, ServletResponse <br>response, FilterChain chain)</code>
+		 				<ul>
+		 					<li>FilterChan：Filter链，多个Filter可以构成一个Filter链</li>
+		 					<li><code>doFilter(ServletRequest request, ServletResponse response)</code><br>
+		 						将请求传给Filter链下一个Filter，如果当前Filter是Filter链的最后一个，则把请求给目标Servlet(jsp)
+		 					</li>
+		 					<li>	多个Filter拦截的顺序和&lt;filter-mapping>配置的顺序有关，靠前的先被调用</li>
+		 				</ul>
+		 			</li>
+		 			<li><code>void destroy();</code> <br>
+		 				销毁释放当前Filter所占用的方法，在Filter被销毁之前被调用，且调用一次
+		 			</li>
+		 		</ul>
+		 	</li>
+		 	<li>自定义HttpFilter
+		 		<ul>
+		 			<li>
+		 				<pre class="am-scrollable-horizontal am-hide-sm">
+public abstract class HttpFilter implements Filter {
+  //用于保存FilterConfig对象
+  private FilterConfig filterConfig = null;
+  //空的销毁方法
+  @Override
+  public void destroy() {
+  }
+  /**原生的doFilter方法，在方法内部把ServletRequest和ServletResponse
+   * 转换为HttpServletRequest和HttpServletResponse并调用
+   * doFilter(HttpServletRequest request, HttpServletResponse response)方法
+   */
+  @Override
+  public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)
+      throws IOException, ServletException {
+    HttpServletRequest request = (HttpServletRequest) req;
+    HttpServletResponse response = (HttpServletResponse) res;
+    doFilter(request, response, filterChain);
+  }
+  /**
+   * 抽象方法，为HTTP请求定制，必须实现的方法
+   * @param request
+   * @param response
+   * @param filterChain
+   */
+  public abstract void Filter(HttpServletRequest request, HttpServletResponse response,
+      FilterChain filterChain);
+  //不建议子类直接覆盖，若直接覆盖将可能导致filterConfig成员变量初始化失败
+  @Override
+  public void init(FilterConfig filterConfig) throws ServletException {
+    this.filterConfig = filterConfig;
+    init();
+  }
+  //供子类继承的初始化方法
+  protected void init() {
+  }
+  //获取FilterConfig对象
+  public FilterConfig getFilterConfig() {
+    return filterConfig;
+  }
+}</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
+		 			</li>
+		 		</ul>
+		 	</li>
+		 	<li>Filter链执行过程
+		 		<img src="photo/filter/filter2.png" class="am-img-responsive">
+		 		<u>执行顺序: 1 -> 3 -> 5 -> 4 -> 2</u>
+		 	</li>
+		 	<li>映射Filter
+		 		<ul>
+		 			<li>filter-name：子元素用于设置filter的注册名称，该值必须在filter元素中声明过过滤器的名称</li>
+		 			<li>url-pattern：设置filter所拦截的请求路径</li>
+		 			<li>serlvet-name：指定过滤器所拦截的servlet名称</li>
+		 			<li>dispatcher：指定过滤器所拦截的资源被Se rvlet容器调用的方式，可以是：REQUEST(default),INCLUDE,FORWARD,ERROR</li>
+		 		</ul>
+		 	</li>
+		 </ol>
+		 <h3>1.2 过滤器的应用场景</h3>
+		 <ol>
+		 	<li>禁用缓存过滤器
+<pre class="am-scrollable-horizontal am-hide-sm">
+@WebFilter(dispatcherTypes = {
+        DispatcherType.REQUEST, 
+        DispatcherType.FORWARD, 
+        DispatcherType.INCLUDE, 
+        DispatcherType.ERROR
+    }
+          , urlPatterns = { "/cache/*" })
+public class NoCacheFilter implements Filter {
+  public NoCacheFilter() {}
+  public void destroy() {}
+  public void doFilter(ServletRequest request, ServletResponse response, 
+      FilterChain chain) throws IOException, ServletException {
+    System.out.println("noCacheFilter is working");
+    HttpServletResponse res = (HttpServletResponse) response;
+    res.setDateHeader("Expires", -1);
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Pragma", "no-cache");
+    chain.doFilter(request, response);
+  }
+  public void init(FilterConfig fConfig) throws ServletException {} 
+}</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
+		 	</li>
+		 	<li>字符编码过滤器
+<pre class="am-scrollable-horizontal am-hide-sm">
+@WebFilter(dispatcherTypes = {
+        DispatcherType.REQUEST, 
+        DispatcherType.FORWARD, 
+        DispatcherType.INCLUDE, 
+        DispatcherType.ERROR
+    }
+          , urlPatterns = { "/encoding/*" })
+public class EncodingFilter implements Filter {
+  private FilterConfig filterConfig = null;
+  private String encoding = null;
+  public EncodingFilter() {}
+  public void destroy() {}
+  public void doFilter(ServletRequest request, ServletResponse response, 
+      FilterChain chain) throws IOException, ServletException {
+    encoding = filterConfig.getServletContext().getInitParameter("encoding");
+    request.setCharacterEncoding(encoding);
+    response.setCharacterEncoding(encoding);
+    chain.doFilter(request, response);
+  }
+  public void init(FilterConfig fConfig) throws ServletException {
+    this.filterConfig = fConfig;
+  }
+}
+  &lt;context-param>
+    &lt;param-name>encoding&lt;/param-name>
+    &lt;param-value>utf-8&lt;/param-value>
+  &lt;/context-param></pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
+		 	</li>
+		 	<li>登录验证过滤器
+<pre class="am-scrollable-horizontal am-hide-sm">
+@WebFilter(dispatcherTypes = {
+        DispatcherType.REQUEST, 
+        DispatcherType.FORWARD, 
+        DispatcherType.INCLUDE, 
+        DispatcherType.ERROR
+    }
+          , urlPatterns = { "/*" })
+public class LoginFilter implements Filter {
+  private FilterConfig filterConfig = null;
+  private String sessionUserKey = null;
+  private String redirectUrl = null;
+  private String uncheckedUrls = null;
+  public LoginFilter() {
+  }
+  public void destroy() {
+  }
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    HttpServletRequest req = (HttpServletRequest) request;
+    HttpServletResponse res = (HttpServletResponse) response;
+    //将配置中不需要检测的url地址串以逗号分割后存放到List之中
+    List<String> urls = Arrays.asList(uncheckedUrls.split(","));
+    //如果不是免检测url，则查询当前session是否存在需要检测的session键名对应的值
+    if (!urls.contains(req.getServletPath())) {
+      String username = (String) req.getSession().getAttribute(sessionUserKey);
+      if (username != null) {
+        //如果成功则放行
+        chain.doFilter(request, response);
+      } else {
+        //不成功则重定向回配置的url
+        res.sendRedirect(req.getContextPath() + redirectUrl);
+      }
+      return ;
+    }
+    chain.doFilter(request, response);
+  }
+  public void init(FilterConfig fConfig) throws ServletException {
+    this.filterConfig = fConfig;
+    //获取配置相关参数
+    sessionUserKey = filterConfig.getServletContext()
+        .getInitParameter("sessionUserKey");
+    redirectUrl = filterConfig.getServletContext()
+        .getInitParameter("redirectUrl");
+    uncheckedUrls = filterConfig.getServletContext()
+        .getInitParameter("uncheckedUrls");
+  }
+}
+  &lt;!-- 配置需要检测的session键值 -->
+  &lt;context-param>
+      &lt;param-name>sessionUserKey&lt;/param-name>
+      &lt;param-value>SESSIONUSERKEY&lt;/param-value>
+  &lt;/context-param>
+  &lt;!-- 配置如果未登陆重定向的页面 -->
+  &lt;context-param>
+      &lt;param-name>redirectUrl&lt;/param-name>
+      &lt;param-value>/login.jsp&lt;/param-value>
+  &lt;/context-param> 
+  &lt;!-- 配置不需要检查的页面 -->
+  &lt;context-param>
+      &lt;param-name>uncheckedUrls&lt;/param-name>
+      &lt;param-value>/index.jsp,/login.jsp,/doAction.jsp,/a.jsp&lt;/param-value>
+  &lt;/context-param></pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
+		 	</li>
+		 	<li>敏感词过滤器
+<pre class="am-scrollable-horizontal am-hide-sm">
+@WebFilter(dispatcherTypes = {
+        DispatcherType.REQUEST, 
+        DispatcherType.FORWARD, 
+        DispatcherType.INCLUDE, 
+        DispatcherType.ERROR
+    }
+          , urlPatterns = { "/bbs.jsp" })
+public class ContentFilter implements Filter {
+  public ContentFilter() {
+  }
+  public void destroy() {
+  }
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    //1. 获取请求参数content的值
+    String content = request.getParameter("content");
+    //2. 将其中fuck,shit等字符替换为***
+    HttpServletRequest request2 = (HttpServletRequest) request;
+    HttpServletResponse response2 = (HttpServletResponse) response;
+    HttpServletRequest req = new MyHttpSerlvetRequest(request2);
+    if (content.contains("fuck")) {
+      //ServletRequest, HttpServletRequest中并没有提供诸如setParameter(paramName, paramValue)的方法
+      //目标：改变HttpServletRequest中并没有提供setParameter方法
+      //方法1. 如果对一个类的方法不满意，需要进行重写，最常见的方法是继承父类重写方法
+        //若实现则需要继承org.apache.catalina.connector.RequestFacade，而仅仅是Tomcat
+      //方法2. 直接写一个HttpServletRequest接口实现类：无法实现其中的方法
+      //方法3.装饰目前的HttpServletRequest对象,装饰其getParameter方法,其他方法和其实现相同
+        //创建一个类，该类实现HttpServletRequest接口，把当前doFilter中的request传入该类，
+        //作为其成员变量，使用该成员变量去实现接口的全部方法
+    }
+    //3. 转到目标页面
+    chain.doFilter(req, response);
+  }
+  public void init(FilterConfig fConfig) throws ServletException {
+  }
+}
+public class MyHttpSerlvetRequest extends HttpServletRequestWrapper {
+  public MyHttpSerlvetRequest(HttpServletRequest request) {
+    super(request);
+  }
+  @Override
+  public String getParameter(String name) {
+    String val = super.getParameter(name);
+    if (val != null && val.contains("fuck")) {
+      val = val.replace("fuck", "****");
+    }
+    return val;
+  }
+}</pre>
+<pre class="am-scrollable-horizontal am-show-sm">请在电脑端查看代码...</pre>
+		 	</li>
+		 </ol>
+		 <h2>第二部分 监听器 Listener</h2>
+		 <h3>2.1 监听器概述</h3>
+		 <ol>
+		 	<li>监听器是专门用于对其他对象身上发生的时间或状态改变进行监听和相应处理的对象，当被监视对象发生情况时立即采取相应的行动</li>
+		 	<li>	Servlet监听器：Servlet规范中定义的一种特殊类，用于监听web应用程序中ServletContext,HttpSession,ServletRequest等域对象的创建和销毁事件，以及监听这些域对象中的属性发生修改的事件</li>
+		 	<li>Servlet监听器分类
+		 		<ul>
+		 			<li>监听域对象自身的创建和销毁事件监听器</li>
+		 			<li>监听域对象中的属性增加和删除事件监听器</li>
+		 			<li>监听绑定到HttpSession域中某个对象状态的事件监听器</li>
+		 		</ul>
+		 	</li>
+		 </ol>
+		 <h3>2.2 常用的监听器</h3>
+		 <ol>
+		 	<li>对象创建销毁监听器
+		 	</li>
+		 	<li>域对象属性变更监听器</li>
+		 	<li>感知Session绑定事件监听器</li>
+		 </ol>
+         <!--文章]]-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+    <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+      <div class="am-offcanvas-bar">
+      
+        <ul class="am-nav">
+        	<h1>过滤器与监听器</h1>
+        	<!--导航[[-->
+          <li class="am-nav-header">过滤器Filter</li>
+          <li><a href="#!" id="btn1">过滤器的使用</a></li>
+          <li><a href="#!" id="btn2">过滤器的应用场景</a></li>
+          <li class="am-nav-header">监听器Listener</li>
+          <li><a href="#!" id="btn5">监听器概述</a></li>
+          <li><a href="#!" id="btn6">常用的监听器</a></li>
+
+        </ul>
+        <!--导航]]-->
+      </div>
+    </div>
+  </div>
+  <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button" 
+  	data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+  <!--页脚[[-->
+  <br><br><br>
+  <div class="am-g">
+  	<div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+  	  <br>
+  	  <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+  	  <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+  	</div>
+  </div>
+  <br><br><br>
+  <!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+	//加载进度条
+	var progress = $.AMUI.progress;
+	$(window).load(function() {
+		progress.done();
+	})
+	$(document).ready(function() {
+		progress.start();
+	})
+	//侧边栏平滑滚动
+	$(window).smoothScroll();
+	function navClick($btnObj, $pageObj) {
+		$btnObj.on("click", function() {
+			var $w = $(window);
+			$w.smoothScroll({position: $pageObj.offset().top});
+		})
+	}
+	navClick($("#btn1"), $("#page1"));
+	navClick($("#btn2"), $("#page2"));
+	navClick($("#btn3"), $("#page3"));
+	navClick($("#btn4"), $("#page4"));
+	navClick($("#btn5"), $("#page5"));
+	navClick($("#btn6"), $("#page6"));
+	navClick($("#btn7"), $("#page7"));
+	
+</script>
+</body>
+</html>
