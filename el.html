@@ -14,7 +14,7 @@
   <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
   <!--代码高亮highlight.js-->
   <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
-  <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>  
+  <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>-->
   <!--Link Base Style-->
   <link rel="stylesheet" type="text/css" href="css/base.css">
@@ -25,7 +25,7 @@
 <body>
   <!--导航栏 [[-->
   <header class="am-topbar" >
-    <h1 class="am-topbar-brand css89d1c34bc5489"> 
+    <h1 class="am-topbar-brand css89d1c34bc5489">
       <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
     </h1>
   </header>
@@ -35,10 +35,10 @@
     <div class="am-g">
       <div class="am-u-sm-11 am-u-sm-centered">
         <div class="am-cf am-article am-scrollable-horizontal">
-         
+
          <!--文章[[-->
 		 <h2>第一部分 JavaBean</h2>
-		 <h3>1.1 JavaBean的要求</h3>
+		 <h3 id="page1">1.1 JavaBean的要求</h3>
 		 <ol>
 		 	<li>用作javaBean的类必须具有一个公共的，无参数的构造方法</li>
 		 	<li>javaBean的属性是以方法定义的形式出现的</li>
@@ -133,6 +133,835 @@
 		 		</ul>
 		 	</li>
 		 </ol>
+		 <h2 id="page2">第二部分 EL表达式</h2>
+		 <h3>2.1 EL表达式</h3>
+		 <ol>
+		 	<li>EL(Expression Language) 表达式语言，用于在jsp页面上显示表达式</li>
+		 	<li>语法 : <code>${expression}</code>
+		 			<ol>
+		 				<li>e.g.1 <br><code><%=request.getParameter("username")%>  ===  ${param.username}</code></li>
+		 				<li>e.g.2
+		 					<pre>
+&lt;jsp:useBean id="student" class="org.yang.demo.Student"/>
+&lt;jsp:setProperty property="name" name="student" value="yang"/>
+&lt;span>name is ${pageScope.student.name}&lt;/span></pre>
+		 				</li>
+		 			</ol>
+
+		 	</li>
+		 	<li>EL变量<br>
+<code>${varName}</code>表示取出某一范围中名称为varName的变量，
+并没有指定变量范围的情况下默认从Page范围内寻找，找不到则依序到Request,Session,Application范围，
+假如途中找到varName，则直接回传，如果所有范围内都未找到则回传null
+		 	</li>
+		 </ol>
+		 <h3>2.2 EL隐含对象</h3>
+		 <ol>
+		 	<li>与范围有关的隐含对象
+		 		<table class="am-table am-table-compact">
+		 			<thead>
+		 				<th>标识符</th>
+		 				<th>描述</th>
+		 				<th>示例</th>
+		 			</thead>
+		 			<tbody>
+		 				<tr>
+		 					<td>pageScope</td>
+		 					<td>包含page作用域内变量的map</td>
+		 					<td>&lt;jsp:usebean id="student" class="page.StudentBean" scope="page"> ${pageScope.name}</td>
+		 				</tr>
+		 				<tr>
+		 					<td>requestScpoe</td>
+		 					<td>包含request作用域变量的map</td>
+		 					<td>request.setAttribute("name", nameVal)${requestScope.name}</td>
+		 				</tr>
+		 				<tr>
+		 					<td>sessionScope</td>
+		 					<td>包含session作用域变量的map</td>
+		 					<td>session.setAttribute("name", nameVal)${sessionScope.name}</td>
+		 				<tr>
+              <tr>
+                <td>applicationScope</td>
+                <td>包含application作用于变量的map</td>
+                <td>application.setAttribute("name", nameVal)${applicationScope.name}</td>
+            <tr>
+		 			</tbody>
+		 		</table>
+		 	</li>
+		 	<li>与输入有关的隐含对象
+        <table class="am-table am-table-compact">
+          <thead>
+            <th>标识符</th>
+            <th>描述</th>
+            <th>示例</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>param</td>
+              <td>包含请求参数的map</td>
+              <td>request.getParameter("name") === ${param.name}</td>
+            </tr>
+            <tr>
+              <td>paramValues</td>
+              <td>
+                包含请求参数的map，返回数组
+              </td>
+              <td>request.getParameterValues("type") === ${paramValues.type}</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+		 	<li>其他隐含对象
+        <table class="am-table am-table-compact">
+          <thead>
+            <th>标识符</th>
+            <th>描述</th>
+            <th>示例</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>cookie</td>
+              <td>包含cookie的map</td>
+              <td>${cookie.JSESSIONID.value}</td>
+            </tr>
+            <tr>
+              <td>header</td>
+              <td>包含头信息的map</td>
+              <td>${header["Accept-Language"]}</td>
+            </tr>
+            <tr>
+              <td>initParam</td>
+              <td>包含初始化参数的map</td>
+              <td>${initParam.initName}</td>
+            </tr>
+            <tr>
+              <td>pageContext</td>
+              <td>包含上下文变量的map</td>
+              <td>${pageContext.request.contextPath}</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ol>
+    <h3>2.3 EL运算符</h3>
+    <ol>
+      <li>EL算数运算符: 	EL支持简单的运算，包括加(+)减(-)乘(*)除(/ or div)取余(% or mod)</li>
+      <li>EL关系运算符: 	EL支持6个关系运算符：==(eq), !=(ne), >(gt), <(lt), >=(ge), <=(le)</li>
+      <li>EL逻辑运算符: 	EL支持与或非：and(&amp;&amp;), or(||), not(!)</li>
+      <li>EL其他运算符:
+        <ul>
+          <li>三目运算符: (exp?val1:val2)
+            <pre>
+<%session.setAttribute("num", 50);%>
+${ sessionScope.num > 60 ? "合格" : "不合格" }</pre>
+          </li>
+          <li>emp: 用作一个集合,若该集合不存在或集合中没有元素则返回true
+            <pre>
+<%
+  List&lt;String> names = new ArrayList&lt;>();
+  request.setAttribute("names", names);
+%></pre>
+          </li>
+        </ul>
+      </li>
+    </ol>
+    <h2>第三部分 标签</h2>
+    <h3 id="page3">3.1 自定义标签</h3>
+    <ol>
+      <li>自定义标签: 用户定义的一种自定义jsp标记，当一个含有自定义标签的jsp页面被jsp引擎编译成servlet时，tag标签被转化成标签处理类对象的操作 </li>
+      <li>类结构关系图
+         <img src="photo/el/el1.png" class="am-img-responsive">
+      </li>
+      <li>标签的形式:
+        <ul>
+          <li>空标签：<code>&lt;test/></code></li>
+          <li>带属性的空标签：<code>&lt;max num1="3" num2="5"></code></li>
+          <li>带内容的标签：<code>&lt;greeting name="t">test&lt;greeting></code></li>
+        </ul>
+      </li>
+      <li>自定义标签开发步骤
+        <ul>
+          <li>编写完成标签功能的java类(标签处理器)：创建一个标签处理器类：实现SimpleTag接口
+            <pre>
+import javax.servlet.jsp.tagext.SimpleTag;
+public class TestSimpleTag implements SimpleTag {
+  @Override
+    public void doTag() throws JspException, IOException {
+    System.out.println("this is doTag() function!");
+  }
+  @Override
+  public JspTag getParent() {
+    return null;
+  }
+  @Override
+  public void setJspBody(JspFragment arg0) {
+  }
+  @Override
+  public void setJspContext(JspContext arg0) {
+  }
+  @Override
+  public void setParent(JspTag arg0) {
+  }
+}</pre>
+          </li>
+          <li>编写标签库描述文件(tld)，在tld文件中对自定义标签进行描述：在WEB-INF文件夹下新建一个.tld的xml文件
+            <pre>
+&lt;?xml version="1.0" encoding="UTF-8" ?>
+&lt;taglib>
+  &lt;!-- 描述TLD文件 -->
+  &lt;descrpition>MyTag 1.0 core library&lt;/descrpition>
+  &lt;display-name>MyTag core&lt;/display-name>
+  &lt;tlib-version>1.0&lt;/tlib-version>
+  &lt;jspversion>1.1&lt;/jspversion>
+  &lt;!-- 建议在jsp页面上使用的标签前缀 -->
+  &lt;short-name>yang&lt;/short-name>
+  &lt;!-- 作为tld文件的id，用来唯一标识当前的tld文件，多个tld文件的uri不能重复 -->
+  &lt;!-- 需要在使用的jsp页面上使用taglib标签导入时uri属性对应值与之相匹配 -->
+  &lt;uri>http://www.yangyuhao.org/mytag/core&lt;/uri>
+  &lt;!-- 描述自定义标签HelloSimpleTag -->
+  &lt;tag>
+    &lt;!-- 在jsp页面上使用的自定义标签的名称 -->
+    &lt;name>hello&lt;/name>
+    &lt;tag-class>org.yang.demo.tag.TestSimpleTag&lt;/tag-class>
+    &lt;body-content>empty&lt;/body-content>
+  &lt;/tag>
+&lt;/taglib></pre>
+          </li>
+          <li>在jsp页面中导入和使用自定义标签
+            <ul>
+              <li>导入自定义标签库：uri -> tld中对应的uri ; preifx -> 制定标签的前缀<br>
+                <code><%@ taglib uri="http://www.yangyuhao.org/mytag/core" prefix="yang"%></code>
+              </li>
+              <li>使用自定义标签: <code>&lt;yang:hello /></code></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>编写带属性的自定义标签步骤
+        <ul>
+          <li>在标签处理器类中定义属性对应的成员变量和setter
+<pre>
+private String value;
+private String count;
+public void setValue(String value) {
+  this.value = value;
+}
+public void setCount(String count) {
+  this.count = count;
+}</pre>
+          </li>
+          <li>对属性进行相应操作
+<pre>
+public void doTag() throws JspException, IOException {
+  for (int i = 0; i < Integer.parseInt(count); ++i) {
+    pageContext.getOut().print(i + " . " + value + "<br>");
+  }
+}
+//jsp引擎调用，把代表jsp页面的PageContext对象传入
+@Override
+public void setJspContext(JspContext arg0) {
+  this.pageContext = (PageContext) arg0;
+}</pre>
+          </li>
+          <li>在tld中描述标签的属性
+<pre>
+&lt;!-- 描述当前标签的属性 -->
+&lt;attribute>
+  &lt;!-- 属性名 -->
+  &lt;name>value&lt;/name>
+  <!-- 该属性是否被必须 -->
+  &lt;required>true&lt;/required>
+  &lt;!-- 当前属性是否允许接收运行时表达式的动态值 -->
+  &lt;rtexprvalue>true&lt;/rtexprvalue>
+&lt;/attribute></pre>
+          </li>
+          <li>在页面中使用属性，属性名同tld文件中定义的名字<br>
+          <code>&lt;yang:hello value="${cookie.JSESSIONID.value }" count="10"/></code>
+          </li>
+        </ul>
+      </li>
+      <li>带标签体的自定义标签
+        <ul>
+          <li>在自定义标签中使用JspFragment对象封装标签提信息</li>
+          <li>若配置标签含有标签体，则jsp引擎会调用setJspBody()方法吧JspFragment传递给标签处理器类，在SimpleTagSupport中定义了getJspBody方法，可供返回JspFragment对象</li>
+          <li>JspFragment的invoke(Writer)方法：将标签体内容从Writer中输出，若为null则等同于invoke(getJspContext().getOut()),即直接输出到页面上</li>
+          <li>在tld文件中使用body-content结点来描述标签体类型，取值有3种:
+            <ul>
+              <li>empty: 没有标签提体</li>
+              <li>scriptless: 标签体可以包含el表达式和jsp动作元素，不可以包含jsp脚本元素</li>
+              <li>tagdependent: 标签题交由标签本身去解析处理，若制定tagdependent，在标签体中的所有代码都会原封不动的交给标签处理器，而不是将执行结果传递给标签处理器</li>
+            </ul>
+          </li>
+          <li>e.g. 创建自定义标签实现遍历功能
+             <pre>
+ //ForEachSImpleTag.java
+  public class ForEachSimpleTag extends SimpleTagSupport {
+    private Collection<?> items;
+    public void setItems(Collection<?> items) {
+      this.items = items;
+    }
+    private String var;
+    public void setVar(String var) {
+      this.var = var;
+    }
+    @Override
+    public void doTag() throws JspException, IOException {
+      //1. 遍历items对应的集合
+      if (items != null) {
+        for (Object object : items) {
+          //2. 将正在遍历的对象放入pageContext中，键:var，值:正在遍历的对象
+          getJspContext().setAttribute(var, object);
+          //3. 将标签体内容直接输出到页面上
+          getJspBody().invoke(null);
+        }
+      }
+    }
+  }
+//myTag.tld
+&lt;tag>
+  &lt;name>forEach&lt;/name>
+  &lt;tag-class>org.yang.demo.tag.ForEachSimpleTag&lt;/tag-class>
+  &lt;body-content>scriptless<&lt;/body-content>
+  &lt;attribute>
+   &lt;name>items&lt;/name>
+   &lt;required>true&lt;/required>
+   &lt;rtexprvalue>true&lt;/rtexprvalue>
+ &lt;/attribute>
+ &lt;attribute>
+    &lt;name>var&lt;/name>
+    &lt;required>true&lt;/required>
+    &lt;rtexprvalue>true&lt;/rtexprvalue>
+  &lt;/attribute>
+&lt;/tag>
+//index.jsp
+<%
+  List&lt;Student> students = new ArrayList&lt;>();
+  students.add(new Student("s1", 21, 181.5));
+  students.add(new Student("s2", 22, 182.5));
+  students.add(new Student("s3", 23, 183.5));
+  students.add(new Student("s4", 24, 184.5));
+  students.add(new Student("s5", 25, 185.5));
+  request.setAttribute("students", students);
+%>
+&lt;yang:forEach items="${requestScope.students}" var="stu">
+  ${pageScope.stu.name }
+&lt;/yang:forEach></pre>
+          </li>
+        </ul>
+      </li>
+      <li>带有父标签的标签
+        <ul>
+          <li>父标签无法获取子标签的引用，父标签仅把子标签作为标签体来使用</li>
+          <li>子标签可以通过getParent()方法获取父标签的引用(需继承SimpleTagSupport或自实现SimpleTag接口的方法)若子标签存在父标签，jsp引擎会把代表父标签的引用通过setParent()赋给标签处理器</li>
+          <li>父标签的类型是JspTag类型，该接口是一个空接口，用来同一SimpleTag和Tag的，实际使用时需要类型转换</li>
+          <li>e.g.1
+            <pre>
+@Override
+public void doTag() throws JspException, IOException {
+	//1. 得到父标签的引用
+	JspTag parent =  getParent();
+	//2. 获取父标签的name属性
+	ParentSimpleTag parentSimpleTag = (ParentSimpleTag) parent;
+	String name = parentSimpleTag.getName();
+	//3. 把name值打印到jsp
+	getJspContext().getOut().print("子标签输出name : " + name);
+}</pre>
+          <li>e.g.2 实现类似switch选择功能
+<pre>
+//标签处理器
+public class ChooseSimpleTag extends SimpleTagSupport {
+  private boolean flag = true;
+  public void setFlag(boolean flag) {
+    this.flag = flag;
+  }
+  public boolean isFlag() {
+    return flag;
+  }
+  @Override
+  public void doTag() throws JspException, IOException {
+    getJspBody().invoke(null);
+  }
+}
+public class WhenSimpleTag extends SimpleTagSupport {
+  private boolean test;
+  public void setTest(boolean test) {
+    this.test = test;
+  }
+  @Override
+  public void doTag() throws JspException, IOException {
+    if (test) {
+      ChooseSimpleTag chooseSimpleTag = (ChooseSimpleTag) getParent();
+      boolean flag = chooseSimpleTag.isFlag();
+      if (flag) {
+        getJspBody().invoke(null);
+        chooseSimpleTag.setFlag(false);
+      }
+    }
+  }
+}
+public class OtherwiseSimpleTag extends SimpleTagSupport {
+  @Override
+  public void doTag() throws JspException, IOException {
+    ChooseSimpleTag chooseSimpleTag = (ChooseSimpleTag) getParent();
+    if (chooseSimpleTag.isFlag()) {
+      getJspBody().invoke(null);
+    }
+  }
+}
+//页面
+&lt;% request.setAttribute("grade", 70);%>
+&lt;yang:choose>
+  &lt;yang:when test="${grade > 60 }">合格&lt;/yang:when>
+  &lt;yang:otherwise>不合格&lt;/yang:otherwise>
+&lt;/yang:choose></pre>
+          </li>
+        </ul>
+      </li>
+    </ol>
+    <h3 id="page4">3.2 EL自定义函数</h3>
+    <ol>
+      <li>EL自定义函数: 在EL表达式中调用某个java类的静态方法，这个静态方法需要在web应用中进行配置才可以被EL表达式进行调用</li>
+      <li>开发步骤:
+        <ul>
+          <li>编写EL自定义函数映射的java类中的静态方法：这个java类必须被public修饰的静态方法
+<pre>
+public class MyELFunction {
+  public static String concat(String str1, String str2) {
+    return str1 + str2;
+  }
+}</pre>
+          </li>
+          <li>编写标签库描述文件(tld)，在tld中描述自定义函数
+<pre>
+  <!-- 描述EL自定义函数 -->
+&lt;function>
+  &lt;name>concat&lt;/name>
+  &lt;function-class>org.yang.demo.tag.MyELFunction&lt;/function-class>
+  &lt;function-signature>
+    java.lang.String concat(java.lang.String, java.lang.String)
+  &lt;/function-signature>
+&lt;/function></pre>
+          </li>
+          <li>在jsp页面中导入和使用自定义函数<br>
+          <code>${yang:concat("hello", "world") }</code>
+          </li>
+        </ul>
+      </li>
+    </ol>
+    <h2>第四部分 JSTL</h2>
+    <h3 id="page5">4.1 标准函数标签库JSTL(JavaServer Pages Standard Tag Library)</h3>
+    <ul>
+      <li>各标签库一览表
+        <table class="am-table am-table-compact">
+          <thead>
+            <th>JSTL</th>
+            <th>前置名称</th>
+            <th>URI</th>
+            <th>范例</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>核心标签库</td>
+              <td>c</td>
+              <td>http://java.sun.com/jsp/jstl/core</td>
+              <td>&lt;c:out></td>
+            </tr>
+            <tr>
+              <td>I18N格式标签库</td>
+              <td>fmt</td>
+              <td>http://java.sun.com/jsp/jstl/xml</td>
+              <td>&lt;fmt:formatDate></td>
+            </tr>
+            <tr>
+              <td>SQL标签库</td>
+              <td>sql</td>
+              <td>http://java.sun.com/jsp/jstl/sql</td>
+              <td>&lt;sql:query></td>
+            </tr>
+            <tr>
+              <td>XML标签库</td>
+              <td>xml</td>
+              <td>http://java.sun.com/jsp/jstl/xml</td>
+              <td>&lt;x:forBach></td>
+            </tr>
+            <tr>
+              <td>函数标签库</td>
+              <td>fn</td>
+              <td>http://java.sun.com/jsp/jstl/functions</td>
+              <td>&lt;fn:split></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+    <h3 id="page6">4.2 表达式操作</h3>
+    <ol>
+      <li>c:out
+        <ul>
+          <li>功能: 向页面输出信息</li>
+          <li>属性
+            <table class="am-table am-table-compact">
+              <thead>
+                <th>名称</th>
+                <th>说明</th>
+                <th>EL</th>
+                <th>类型</th>
+                <th>必须</th>
+                <th>默认值</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>value</td>
+                  <td>需要显示的值</td>
+                  <td>YObject</td>
+                  <td>Object</td>
+                  <td>是</td>
+                  <td>无</td>
+                </tr>
+                <tr>
+                  <td>default</td>
+                  <td>如果value是NULL,则显示默认值</td>
+                  <td>YObject</td>
+                  <td>Object</td>
+                  <td>否</td>
+                  <td>无</td>
+                </tr>
+                <tr>
+                  <td>excapeXml</td>
+                  <td>是否转换特殊字符,如将<转换为&amp;lt</td>
+                  <td>YBoolean</td>
+                  <td>boolean</td>
+                  <td>否</td>
+                  <td>true</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+        </ul>
+      </li>
+      <li>c:set
+        <ul>
+          <li>功能: 用来将变量存储到jsp或javaBean的属性中</li>
+          <li>属性
+            <table class="am-table am-table-compact">
+              <thead>
+                <th>名称</th>
+                <th>说明</th>
+                <th>EL</th>
+                <th>类型</th>
+                <th>必须</th>
+                <th>默认值</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>value</td>
+                  <td>需要存储的值</td>
+                  <td>Y</td>
+                  <td>Object</td>
+                  <td>否</td>
+                  <td>无</td>
+                </tr>
+                <tr>
+                  <td>var</td>
+                  <td>需要存放变量的名称</td>
+                  <td>N</td>
+                  <td>String</td>
+                  <td>否</td>
+                  <td>无</td>
+                </tr>
+                <tr>
+                  <td>scope</td>
+                  <td>var变量的jsp范围</td>
+                  <td>N</td>
+                  <td>String</td>
+                  <td>否</td>
+                  <td>否</td>
+                </tr>
+                <tr>
+                  <td>target</td>
+                  <td>指定javaBean或java.util.Map对象</td>
+                  <td>Y</td>
+                  <td>Object</td>
+                  <td>否</td>
+                  <td>无</td>
+                </tr>
+                <tr>
+                  <td>property</td>
+                  <td>指定target对象的属性</td>
+                  <td>Y</td>
+                  <td>String</td>
+                  <td>否</td>
+                  <td>无</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+        </ul>
+      </li>
+      <li>c:remove
+        <ul>
+          <li>功能: 移除某一变量</li>
+          <li>属性
+            <table class="am-table am-table-compact">
+              <thead>
+                <th>名称</th>
+                <th>说明</th>
+                <th>EL</th>
+                <th>类型</th>
+                <th>必须</th>
+                <th>默认值</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>var</td>
+                  <td>需要移除的变量</td>
+                  <td>N</td>
+                  <td>String</td>
+                  <td>否</td>
+                  <td>无</td>
+                </tr>
+                <tr>
+                  <td>scope</td>
+                  <td>需要移除的范围</td>
+                  <td>N</td>
+                  <td>String</td>
+                  <td>否</td>
+                  <td>无</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+        </ul>
+      </li>
+    </ol>
+    <h3 id="page7">4.3 流程控制</h3>
+    <ol>
+      <li>c:if
+        <ul>
+          <li>功能: 实现判断功能</li>
+          <li>属性
+            <table class="am-table am-table-compact">
+              <thead>
+                <th>名称</th>
+                <th>说明</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>test</td>
+                  <td>需要判断的表达式</td>
+                </tr>
+                <tr>
+                  <td>var</td>
+                  <td>存放判断结果的变量名</td>
+                </tr>
+                <tr>
+                  <td>scope</td>
+                  <td>存放判断结果变量的作用域</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+          <li>e.g. 判断成绩是否合格,并将结果保存下来
+<pre>
+&lt;c:set var="num" value="70" scope="session"/>
+&lt;c:if test="${sessionScope.num > 60 }" var="isTrue" scope="session">合格</c:if>
+${sessionScope.isTrue }
+</pre>
+          </li>
+        </ul>
+      </li>
+      <li>c:choose, c:when, c:otherwise
+        <ul>
+          <li>功能: 类似switch的选择功能</li>
+          <li>e.g. 判断你成绩是否合格
+<pre>
+  &lt;c:choose>
+    &lt;c:when test="${sessionScope.num > 60 }">合格</c:when>
+    &lt;c:otherwise>不合格&lt;/c:otherwise>
+&lt;/c:choose></pre>
+          </li>
+        </ul>
+      </li>
+      <li>c:forEach
+        <ul>
+          <li>功能: 对数组,Collection,Map进行遍历</li>
+          <li>属性
+            <table class="am-table am-table-compact">
+              <thead>
+                <th>名称</th>
+                <th>说明</th>
+                <th>EL</th>
+                <th>类型</th>
+                <th>必须</th>
+                <th>默认值</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>var</td>
+                  <td>用来存放现在指向的成员</td>
+                  <td>N</td>
+                  <td>String</td>
+                  <td>否</td>
+                  <td>无</td>
+                </tr>
+                <tr>
+                  <td>item</td>
+                  <td>被迭代的集合对象</td>
+                  <td>Y</td>
+                  <td>Ayyays/Collection/Iterator<br>/Enumeration/Map/String</td>
+                  <td>否</td>
+                  <td>无</td>
+                </tr>
+                <tr>
+                  <td>valStates</td>
+                  <td>用来存放现在指向的成员相关信息</td>
+                  <td>N</td>
+                  <td>String</td>
+                  <td>否</td>
+                  <td>无</td>
+                </tr>
+                <tr>
+                  <td>begin</td>
+                  <td>开始的位置</td>
+                  <td>Y</td>
+                  <td>String</td>
+                  <td>否</td>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <td>end</td>
+                  <td>结束的位置</td>
+                  <td>Y</td>
+                  <td>int</td>
+                  <td>否</td>
+                  <td>last</td>
+                </tr>
+                <tr>
+                  <td>stop</td>
+                  <td>每次迭代的间隔数</td>
+                  <td>Y</td>
+                  <td>int</td>
+                  <td>否</td>
+                  <td>1</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+          <li>e.g.1 遍历List
+<pre>
+<%
+    List&lt;Student> students = new ArrayList&lt;>();
+    students.add(new Student("s1", 1, 1));
+    students.add(new Student("s2", 2, 2));
+    students.add(new Student("s3", 3, 3));
+    students.add(new Student("s4", 4, 4));
+    students.add(new Student("s5", 5, 5));
+    request.setAttribute("students", students);
+  %>
+  &lt;c:forEach items="${requestScope.students }" var="stu" varStatus="status">
+    student name is ${stu.name } , student age is ${stu.age } , student height is ${stu.height }
+    ${status.index } ${status.first } ${status.last } ${status.count }
+&lt;/c:forEach></pre>
+          </li>
+          <li>e.g.2 遍历Map
+<pre>
+<%
+    Map&lt;String, Student> map = new HashMap&lt;>();
+    map.put("a", new Student("s1", 1, 1));
+    map.put("b", new Student("s2", 2, 2));
+    map.put("c", new Student("s3", 3, 3));
+    map.put("d", new Student("s4", 4, 4));
+    map.put("e", new Student("s5", 5, 5));
+    request.setAttribute("map", map);
+  %>
+  &lt;c:forEach items="${requestScope.map }" var="stu">
+    ${stu.key } -> ${stu.value.name } , ${stu.value.age } , ${stu.value.height }
+  &lt;/c:forEach></pre>
+          </li>
+          <li>e.g.3 遍历Array
+<pre>
+<%
+  String [] names = new String[]{"aa", "bb", "cc"};
+  request.setAttribute("strs", names);
+%>
+&lt;c:forEach items="${requestScope.strs }" var="str">
+  ${str }
+&lt;/c:forEach></pre>
+          </li>
+          <li>e.g.4 遍历Enumeration
+<pre>
+&lt;c:forEach items="${pageContext.session.attributeNames }" var="name">
+  ${name }
+&lt;/c:forEach>
+</pre>
+          </li>
+        </ul>
+      </li>
+      <li>c:forTokens
+        <ul>
+          <li>功能: 遍历字符串,以某个字符分隔</li>
+          <li>属性
+            <table class="am-table am-table-compact">
+              <thead>
+                <th>名称</th>
+                <th>说明</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>items</td>
+                  <td>被遍历的字符串</td>
+                </tr>
+                <tr>
+                  <td>delims</td>
+                  <td>用于分隔的字符</td>
+                </tr>
+                <tr>
+                  <td>var</td>
+                  <td>存放指向的成员</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+          <li>e.g.
+<pre>
+&lt;c:set var="testTokens" value="a,b,c.d.e.f;g;h;j" scope="request"/>
+&lt;c:forTokens items="${requestScope.testTokens }" delims="." var="s">
+    ${s }
+&lt;/c:forTokens>
+</pre>
+          </li>
+        </ul>
+      </li>
+    </ol>
+    <h3 id="page8">4.4 url操作</h3>
+    <ol>
+      <li>c:import
+        <ul>
+          <li>功能: 包含任何页面到当前页面</li>
+          <li>e.g.<br><code>&lt;c:import url="http://www.baidu.com"/></code></li>
+        </ul>
+      </li>
+      <li>c:redirect
+        <ul>
+          <li>功能: 使当前jsp页面重定向到指定页面</li>
+          <li>e.g.<br><code>&lt;c:redirect url="/test.jsp"/></code></li>
+        </ul>
+      </li>
+      <li>c:url
+        <ul>
+          <li>功能: 产生一个url地址,根据Cookie是否可用智能进行url重写,对get请求参数进行编码,并将生成的url存储到域对象中</li>
+          <li>使用c:param子标签可以为url添加参数,c:url会自动对其转码</li>
+          <li>e.g.
+  <pre>
+&lt;c:url value="/test.jsp" var="testUrl" scope="page">
+  &lt;c:param name="name" value="yang">&lt;/c:param>
+  &lt;c:param name="age" value="20">&lt;/c:param>
+&lt;/c:url>
+${testUrl }</pre>
+          </li>
+        </ul>
+      </li>
+    </ol>
          <!--文章]]-->
         </div>
       </div>
@@ -141,7 +970,7 @@
   <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
     <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
       <div class="am-offcanvas-bar">
-      
+
         <ul class="am-nav">
         	<h1>JavaBean,EL,标签</h1>
         	<!--导航[[-->
@@ -151,19 +980,19 @@
           <li><a href="#!" id="btn2">语法,隐含对象,运算符</a></li>
           <li class="am-nav-header">标签</li>
           <li><a href="#!" id="btn3">自定义标签</a></li>
-          <li><a href="#!" id="btn3">自定义函数</a></li>
+          <li><a href="#!" id="btn4">自定义函数</a></li>
           <li class="am-nav-header">JSTL</li>
-          <li><a href="#!" id="btn4">标准函数标签库</a></li>
-          <li><a href="#!" id="btn5">表达式操作</a></li>
-          <li><a href="#!" id="btn6">流程控制</a></li>
-          <li><a href="#!" id="btn7">url操作</a></li>
+          <li><a href="#!" id="btn5">标准函数标签库</a></li>
+          <li><a href="#!" id="btn6">表达式操作</a></li>
+          <li><a href="#!" id="btn7">流程控制</a></li>
+          <li><a href="#!" id="btn8">url操作</a></li>
 
         </ul>
         <!--导航]]-->
       </div>
     </div>
   </div>
-  <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button" 
+  <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
   	data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
 </div>
 
@@ -212,8 +1041,9 @@
 	navClick($("#btn4"), $("#page4"));
 	navClick($("#btn5"), $("#page5"));
 	navClick($("#btn6"), $("#page6"));
-	navClick($("#btn7"), $("#page7"));
-	
+  navClick($("#btn7"), $("#page7"));
+  navClick($("#btn8"), $("#page8"));
+
 </script>
 </body>
 </html>
