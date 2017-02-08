@@ -38,7 +38,7 @@
          
          <!--文章[[-->
 		 <h2>第一部分 过滤器Filter</h2>
-		 <h3>1.1 过滤器的使用</h3>
+		 <h3 id="page1">1.1 过滤器的使用</h3>
 		 <ol>
 		 	<li>概述
 		 		<ul>
@@ -162,7 +162,7 @@ public abstract class HttpFilter implements Filter {
 		 		</ul>
 		 	</li>
 		 </ol>
-		 <h3>1.2 过滤器的应用场景</h3>
+		 <h3 id="page2">1.2 过滤器的应用场景</h3>
 		 <ol>
 		 	<li>禁用缓存过滤器
 <pre class="am-scrollable-horizontal am-hide-sm">
@@ -339,7 +339,7 @@ public class MyHttpSerlvetRequest extends HttpServletRequestWrapper {
 		 	</li>
 		 </ol>
 		 <h2>第二部分 监听器 Listener</h2>
-		 <h3>2.1 监听器概述</h3>
+		 <h3 id="page3">2.1 监听器概述</h3>
 		 <ol>
 		 	<li>监听器是专门用于对其他对象身上发生的时间或状态改变进行监听和相应处理的对象，当被监视对象发生情况时立即采取相应的行动</li>
 		 	<li>	Servlet监听器：Servlet规范中定义的一种特殊类，用于监听web应用程序中ServletContext,HttpSession,ServletRequest等域对象的创建和销毁事件，以及监听这些域对象中的属性发生修改的事件</li>
@@ -351,12 +351,178 @@ public class MyHttpSerlvetRequest extends HttpServletRequestWrapper {
 		 		</ul>
 		 	</li>
 		 </ol>
-		 <h3>2.2 常用的监听器</h3>
+		 <h3 id="page4">2.2 常用的监听器</h3>
 		 <ol>
 		 	<li>对象创建销毁监听器
+		 		<ul>
+		 			<li>	域对象创建和销毁事件监听器用来监听ServletContext,HttpSession,HttpServletRequest三个对象的创建和销毁事件监听器</li>
+		 			<li>域对象创建和销毁时机
+		 				<table class="am-table am-table-compact">
+		 					<thead>
+		 						<th>域对象</th>
+		 						<th>创建时机</th>
+		 						<th>销毁时机</th>
+		 					</thead>
+		 					<tbody>
+		 						<tr>
+		 							<td>ServletContext</td>
+		 							<td>web服务器启动每一个web应用程序创建对应的ServletContext对象</td>
+		 							<td>web服务器关闭时每隔web应用销毁对应的ServletContext对象</td>
+		 						</tr>
+		 						<tr>
+		 							<td>HttpSession</td>
+		 							<td>浏览器开始与服务器会话时创建</td>
+		 							<td>调用HttpSession.invalidate(); 超过session最大有效时间间隔; 服务器进程被终止</td>
+		 						</tr>
+		 						<tr>
+		 							<td>ServletRequest</td>
+		 							<td>每次请求开始时创建</td>
+		 							<td>每次访问结束后销毁</td>
+		 						</tr>
+		 					</tbody>
+		 				</table>
+		 			</li>
+		 			<li>ServletContextListener
+		 				<ul>
+		 					<li>监听ServletContext对象被创建或销毁Servlet监听器</li>
+		 					<li>实现步骤
+		 						<ul>
+		 							<li>创建一个实现了ServletContextListener接口的类，编写其中的方法</li>
+		 							<li>在web.xml文件中配置Listener
+		 								<pre>
+&lt;listener>
+  &lt;listener-class>org.yang.demo.TestServletContextListener&lt;/listener-class>
+&lt;/listener></pre>
+		 							</li>
+		 						</ul>
+		 					</li>
+		 					<li>用途：创建数据库连接池，创建Spring的IOC容器，读取当前web应用初始化参数</li>
+		 					<li>API
+		 						<ul>
+		 							<li><code>public void contextDestroyed(ServletContextEvent arg0);  <br>//ServletContext对象被创建时调用</code></li>
+		 							<li><code>public void contextInitialized(ServletContextEvent arg0)  <br>//ServletContext对象被销毁是调用</code></li>
+		 							<li><code>ServletContextEvent 中的方法：getServletContext();  <br>//获取ServletContext</code></li>
+		 						</ul>
+		 					</li>
+		 				</ul>
+		 			</li>
+		 			<li>HttpRequestListener
+		 				<ul>
+		 					<li><code>public void requestInitialized(ServletRequestEvent arg0)</code></li>
+		 					<li><code>public void requestDestroyed(ServletRequestEvent arg0)</code></li>
+		 				</ul>
+		 			</li>
+		 			<li>HttpSessionListener
+		 				<ul>
+		 					<li><code>public void sessionCreated(HttpSessionEvent arg0)</code></li>
+		 					<li><code>public void sessionDestroyed(HttpSessionEvent arg0)</code></li>
+		 				</ul>
+		 			</li>
+		 			<li>e.g.
+		 				<pre>
+public class TestServletListener implements ServletContextListener,
+     ServletRequestListener, HttpSessionListener{
+  public void contextDestroyed(ServletContextEvent arg0) {
+    System.out.println("ServletContext 被销毁");
+  }   
+  public void contextInitialized(ServletContextEvent arg0) {
+    System.out.println("ServletContext 被创建");
+  }
+  public void sessionCreated(HttpSessionEvent arg0) {
+    System.out.println("Httpsession 被创建");
+  }
+  public void sessionDestroyed(HttpSessionEvent arg0) {
+    System.out.println("Httpsession 被销毁");
+  }
+  public void requestDestroyed(ServletRequestEvent arg0) {
+    System.out.println("ServletRequest 被销毁");
+  }
+  public void requestInitialized(ServletRequestEvent arg0) {
+    System.out.println("ServletRequest 被创建");
+  }
+}</pre>
+		 			</li>
+		 		</ul>
 		 	</li>
-		 	<li>域对象属性变更监听器</li>
-		 	<li>感知Session绑定事件监听器</li>
+		 	<li>域对象属性变更监听器
+		 		<ul>
+		 			<li>域对象属性变更监听器用来监听ServletContext, HttpSession, HttpSerlvetRequest这三个对象中的属性变更信息事件的监听器</li>
+		 			<li>
+		 				<pre>
+public class TestAttributeListener implements <br>    ServletContextAttributeListener, ServletRequestAttributeListener,
+HttpSessionAttributeListener {
+  //通过方法传入的event对象可以获取监听对象的名称和值等信息
+  @Override
+  public void attributeAdded(HttpSessionBindingEvent arg0) {
+    System.out.println("向session添加一个属性 :name : " + arg0.getName() + " value : " + arg0.getValue());
+  }
+  @Override
+  public void attributeRemoved(HttpSessionBindingEvent arg0) {
+    System.out.println("向session移出属性");
+  }
+  @Override
+  public void attributeReplaced(HttpSessionBindingEvent arg0) {
+    System.out.println("向session替换属性");
+  }
+  @Override
+  public void attributeAdded(ServletRequestAttributeEvent arg0) {
+    System.out.println("向request添加属性");
+  }
+  @Override
+  public void attributeRemoved(ServletRequestAttributeEvent arg0) {
+    System.out.println("向request移出属性");
+  }
+  @Override
+  public void attributeReplaced(ServletRequestAttributeEvent arg0) {
+    System.out.println("向request修改属性");
+  }
+  @Override
+  public void attributeAdded(ServletContextAttributeEvent arg0) {
+    System.out.println("向ServletContext添加属性");
+  }
+  @Override
+  public void attributeRemoved(ServletContextAttributeEvent arg0) {
+    System.out.println("向ServletContext移出属性");
+  }
+  @Override
+  public void attributeReplaced(ServletContextAttributeEvent arg0) {
+    System.out.println("向ServletContext修改属性");
+  }
+}</pre>
+		 			</li>
+		 		</ul>
+		 	</li>
+		 	<li>感知Session绑定事件监听器
+		 		<ul>
+		 			<li>	保存在Session域对象可以有多种状态: 绑定到Session中；从Session中解除绑定；碎Session对象持久化到存储设备；随Session对象从存储设备中恢复</li>
+		 			<li>Servlet规范中定义了两个监听器来帮助javaBean对象了解自己Session域中的状态: <br>
+		 				<code>HttpSessionBindingListener &amp;HttpSessionActivationListener </code><br>(不需要配置web.xml)
+		 			</li>
+		 			<li>e.g.
+		 			<pre>
+public class Student implements <br> HttpSessionBindingListener, HttpSessionActivationListener {
+  @Override
+  public void valueBound(HttpSessionBindingEvent arg0) {
+    System.out.println("javaBean绑定到session");
+  }
+  @Override
+  public void valueUnbound(HttpSessionBindingEvent arg0) {
+    System.out.println("javaBean解除绑定到session");
+  }
+  //在活化之后被调用
+  @Override
+  public void sessionDidActivate(HttpSessionEvent arg0) {
+    System.out.println("从磁盘读取到内存中...");
+  }
+  //在钝化之前被调用
+  @Override
+  public void sessionWillPassivate(HttpSessionEvent arg0) {
+    System.out.println("从内存中写到磁盘上...");
+  }
+}</pre>
+		 			</li>
+		 		</ul>
+		 	</li>
 		 </ol>
          <!--文章]]-->
         </div>
@@ -374,8 +540,8 @@ public class MyHttpSerlvetRequest extends HttpServletRequestWrapper {
           <li><a href="#!" id="btn1">过滤器的使用</a></li>
           <li><a href="#!" id="btn2">过滤器的应用场景</a></li>
           <li class="am-nav-header">监听器Listener</li>
-          <li><a href="#!" id="btn5">监听器概述</a></li>
-          <li><a href="#!" id="btn6">常用的监听器</a></li>
+          <li><a href="#!" id="btn3">监听器概述</a></li>
+          <li><a href="#!" id="btn4">常用的监听器</a></li>
 
         </ul>
         <!--导航]]-->
@@ -429,9 +595,6 @@ public class MyHttpSerlvetRequest extends HttpServletRequestWrapper {
 	navClick($("#btn2"), $("#page2"));
 	navClick($("#btn3"), $("#page3"));
 	navClick($("#btn4"), $("#page4"));
-	navClick($("#btn5"), $("#page5"));
-	navClick($("#btn6"), $("#page6"));
-	navClick($("#btn7"), $("#page7"));
 	
 </script>
 </body>
