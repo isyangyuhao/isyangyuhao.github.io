@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>杨宇昊的学习笔记-javascropt DOM</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <!--Link Web Font-->
+    <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+    <!--代码高亮highlight.js-->
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>-->
+    <!--Link Base Style-->
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css"/>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<!--导航栏 [[-->
+<header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+        <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+</header>
+<!--导航栏 ]]-->
+<div class="am-g am-g-fixed">
+    <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+        <div class="am-g">
+            <div class="am-u-sm-11 am-u-sm-centered">
+                <div class="am-cf am-article am-scrollable-horizontal">
+
+                    <!--文章[[-->
+                    <h3 id="page1">1. 概述</h3>
+                    <ol>
+                        <li>DOM - Document Object Model
+                            <ul>
+                                <li>Document文档: html文档或者xml文档</li>
+                                <li>Object对象: document对象的属性和方法</li>
+                                <li>Model模型</li>
+                            </ul>
+                        </li>
+                        <li>DOM树
+                            <img src="photo/dom/dom1.png" class="am-img-responsive">
+                        </li>
+                        <li>节点
+                            <ul>
+                                <li>定义: 来源于网络理论,代表网路中的一个连接点,网络是由节点构成的集合</li>
+                                <li>类型
+                                    <ul>
+                                        <li>元素节点</li>
+                                        <li>属性节点 - 元素的属性,可以通过属性的方法来操作</li>
+                                        <li>文本节点 - 元素节点的子节点,其内容为文本</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page2">2. 节点的获取</h3>
+                    <ol>
+                        <li><code>document.getElementById("idName")</code>
+                            <br>寻找一个有着给定id属性值的元素，返回值是一个有着给定id属性值的元素节点。如果不存在这样的元素，返回null
+                        </li>
+                        <li><code>document.getElementsByTagName("tagName")</code>
+                            <br>寻找有着给定标签名的所有元素，这个方法将返回一个节点集合，这个集合可以当作一个数组来处理。这个集合的length属性等于当前文档里有着给定标签名的所有元素的总个数
+                        </li>
+                        <li><code>document.getElementsByName("name")</code>
+                            <br>根据文档元素的name属性名来获取节点的集合,若html元素没有name属性，则此方法对于IE无效
+                        </li>
+                        <li><code>hasChildNodes("nodeName")</code>
+                            <ul>
+                                <li>该方法用来检查一个元素是否有子节点，返回值是true或false</li>
+                                <li>文本节点和属性节点不会包含子节点</li>
+                                <li>如果hasChildNodes方法的返回值是false，则childNodes, firstChild, lastChild将是空数组和空字符串</li>
+                            </ul>
+                        </li>
+                        <li>获取节点的子节点
+                            <ul>
+                                <li>通过childNodes属性获取元素节点子节点(不推荐)<br>
+                                    <code>var li = ul.childNodes;</code>
+                                </li>
+                                <li>通过获取节点方法获取元素节点子节点<br>
+                                    <code>var li = ul.getElementsByTagName("li");</code>
+                                </li>
+                                <li>获取节点元素的首子节点和尾子节点
+                                    <code>var li1 = ul.firstChild; var li2 = ul.lastChild;</code>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page3">3. 节点的操作</h3>
+                    <ol>
+                        <li>操作属性节点
+                            <ul>
+                                <li>属性节点即为某一指定的元素节点的属性</li>
+                                <li>获取某一元素节点的属性值：通过元素.属性的方式获取属性值<br>
+                                e.g.
+                                    <pre>
+&lt;input type="text" value="123">
+var inputValue = document.getElementsByTagName[0].value;</pre>
+                                </li>
+                                <li>修改某一元素节点的属性值：通过为元素.属性赋值的方式修改属性值
+                                <br><code>document.getElementsByTagName[0].value = "editAttr";</code>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>操作文本节点
+                            <ul>
+                                <li>文本节点一定是元素节点的子节点</li>
+                                <li>通过firstChild获取元素节点对应的文本节点，调用nodeValue属性获取文本节点的值<br>
+                                    <code>var liValue = document.getElementById("li").firstChild.nodeValue;</code>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>innerHTML
+                            <ul>
+                                <li>浏览器几乎都支持该属性，但不是DOM标准组成部分，innerHTML可以用来读写元素中的文本内容</li>
+                                <li>读取：<code>var text = obj.innerHTML;</code></li>
+                                <li>写入：<code>obj.innerHTML = "test";</code></li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page4">4. 节点的通用属性</h3>
+                    <ol>
+                        <li>在文档中，任何节点都有三个属性：nodeType, nodeName, nodeValue</li>
+                        <li>id, name, value, type ... 属于具体节点属性</li>
+                        <li>nodeType属性
+                            <ul>
+                                <li>返回一个整数，这个数值代表给定节点的类型
+                                    <ul>
+                                        <li>Node.ELEMENT_NODE (1) - 元素节点</li>
+                                        <li>Node.ATTRIBUTE_NODE (2) - 属性节点</li>
+                                        <li>Node.TEXT_NODE (3) - 文本节点</li>
+                                    </ul>
+                                </li>
+                                <li>nodeType属性为只读</li>
+                            </ul>
+                        </li>
+                        <li>nodeName属性
+                            <ul>
+                                <li>返回一个字符串，其内容是给定节点的名字</li>
+                                <li>如果该节点属于文本节点，则nodeName属性值为#text</li>
+                                <li>nodeName属性为只读</li>
+                            </ul>
+                        </li>
+                        <li>nodeValue属性
+                            <ul>
+                                <li>返回一个字符串，其内容是该节点的值
+                                    <ul>
+                                        <li>如果给定节点是一个属性节点，返回值是这个属性的值</li>
+                                        <li>如果给定节点是一个文本节点，返回值是这个文本节点的内容</li>
+                                    </ul>
+                                </li>
+                                <li>文本节点和属性节点的nodeValue可读可写，元素节点的nodeValue不可以写入</li>
+                            </ul>
+                        </li>
+                        <li>e.g.
+                        <pre>
+var node = document.getElementsByTagName('li')[0];
+var nodeType = node.nodeType;  //1
+var nodeName = node.nodeName;  //li
+var nodeValue = node.nodeValue;  //null
+//===============================================
+var nodeAttr = node.getAttributeNode("name");
+var nodeAttrType = nodeAttr.nodeType;  //2
+var nodeAttrName = nodeAttr.nodeName;  //name
+var nodeAttrValue = nodeAttr.nodeValue;  //liName
+//===============================================
+var nodeText = node.firstChild;
+var nodeTextType = nodeText.nodeType;  //3
+var nodeTextName = nodeText.nodeName;  //#text</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page5">5. 节点的创建</h3>
+                    <ol>
+                        <li>创建元素节点 - <code>document.createElement(elementTagName)</code>
+                            <ul>
+                                <li>按照给定的标签创建一个新的元素节点</li>
+                                <li>方法的唯一参数：被创建的元素节点的名称，是一个字符串</li>
+                                <li>方法的返回值：一个指向新建节点的引用指针，返回值是一个元素节点，nodeType=1</li>
+                                <li>新元素节点不会自动添加到文档里，存在于Javascript上下文的对象</li>
+                            </ul>
+                        </li>
+                        <li>创建文本节点 - <code>document.createTextNode(string)</code>
+                            <ul>
+                                <li>创建一个包含给定文本的新文本节点</li>
+                                <li>方法的返回值：指向新建文本节点的指针，nodeType=3</li>
+                                <li>方法的参数：新建文本节点所包含的字符串，新元素节点不会自动添加到文档中</li>
+                            </ul>
+                        </li>
+                        <li>为元素节点添加子节点 - <code>elementNode.appendChild(newChild)</code>
+                            <ul>
+                                <li>给定子节点newChild将成为给定元素elementNode的最后一个子节点</li>
+                                <li>方法的返回值：一个指向新增子节点的引用指针</li>
+                            </ul>
+                        </li>
+                        <li>e.g.
+                            <pre>
+window.onload = function() {
+  //创建元素节点
+  var liNode = document.createElement("li");
+ //获取被添加子节点的父节点对象
+ var UlNode = document.getElementsByTagName('ul')[0];
+ //创建一个文本节点
+ var textNode = document.createTextNode("li - 5");
+ //将创建好的文本节点添加到元素节点的子节点
+ liNode.appendChild(textNode);
+ //将创建好的元素节点添加到父元素节点的子节点
+ UlNode.appendChild(liNode);
+} </pre>
+                        </li>
+                    </ol>
+                    <h3 id="page6">6. 节点的替换</h3>
+                    <ol>
+                        <li><code>var replace = element.replaceChild(newChild, oldChild)</code></li>
+                        <li>返回值是一个指向已被替换的子节点的引用指针</li>
+                        <li>e.g.
+                            <pre>
+//创建准备替换的元素节点
+var liNode = document.createElement("li");
+//创建被替换的节点的父节点
+var UlNode = document.getElementsByTagName("ul")[0];
+//创建被替换的节点的文本节点
+var textNode = document.createTextNode("li-3-replace");
+//为准备替换的元素节点添加文本节点
+liNode.appendChild(textNode);
+//将新元素节点替换旧元素节点</pre>
+                        </li>
+                        <li>节点克隆 - <code>elementNode.cloneNode()</code>
+                            <ul>
+                                <li>根据elementNode节点克隆一个相同的节点</li>
+                                <li>方法返回值为克隆出的节点</li>
+                                <li>方法可以传入一个布尔值参数，true代表克隆该节点的同时克隆子节点</li>
+                            </ul>
+                        </li>
+                        <li>节点互换
+                            <pre>
+//被交换的第一个元素节点
+var node1 = document.getElementsByTagName("li")[0];
+//被交换的第二个元素节点
+var node2 = document.getElementsByTagName("li")[3];
+//克隆出第二个需要交换的节点，并将其子节点同时克隆
+var node2c = node2.cloneNode(true);
+//获取需要交换节点的父节点
+var nodeUl = document.getElementsByTagName("ul")[0];
+//将克隆的第二个节点替换第一个节点
+nodeUl.replaceChild(node2c, node1);
+//将第一个节点替换原来的第二个节点
+nodeUl.replaceChild(node1, node2);</pre>
+                        </li>
+                        <li>自定义通用节点互换函数
+                            <pre>
+function replaceEach(aNode, bNode) {
+   //获取两个节点的父节点
+   var aParent = aNode.parentNode;
+   var bParent = bNode.parentNode;
+   if (aParent && bParent) {
+       //克隆其中一个节点
+       bNodeClone = bNode.cloneNode(true);
+       //两个节点交换位置
+       aParent.replaceChild(bNodeClone, aNode);
+       bParent.replaceChild(aNode, bNode);
+   }
+}
+                            </pre>
+                        </li>
+                    </ol>
+                    <h3 id="page7">7. 节点的删除</h3>
+                    <ol>
+                        <li><code>elementNode.removeChild(node) </code></li>
+                        <li>从给定元素中删除一个子节点</li>
+                        <li>返回值：指向已删除的子节点的引用的指针</li>
+                        <li>如果不知道需要删除节点的父节点是谁，则调用该节点的parentNode属性获取</li>
+                        <li>e.g.
+                            <pre>
+document.getElementsByTagName("li")[1].
+    parentNode.removeChild(document.getElementsByTagName("li")[1]);</pre>
+                        </li>
+                        <li>利用弹窗确认删除
+                            <pre>
+window.onload = function() {
+  var obj = document.getElementsByTagName("a");
+  for (var i = 0; i < obj.length; ++i) {
+    obj[i].onclick = function() {
+    var flag = confirm("您确认删除" + this.firstChild.nodeValue + "吗?");
+    if (flag) {
+      this.parentNode.parentNode.removeChild(this.parentNode);
+    }
+      return false;
+    }
+  }
+} </pre>
+                        </li>
+                    </ol>
+                    <h3 id="page8">8. 节点的插入</h3>
+                    <ol>
+                        <li><code>insertBefore(newNode, targetNode) </code></li>
+                        <li>将一个节点插入到一个元素节点的给定子节点前面，newNode会插入到targetNode节点的前边</li>
+                        <li>插入新的元素节点
+                            <pre>
+window.onload = function() {
+  //获取父元素节点
+  var parentObj = document.getElementsByTagName("ul")[0];
+  //获取需要插入之后位置的元素节点
+  var obj2 = document.getElementsByTagName("li")[1];
+  //创建新的元素节点
+  var newObj = document.createElement("li");
+  var newObjText = document.createTextNode("LI-NEW");
+  newObj.appendChild(newObjText);
+  //将创建好的新元素节点插入到父节点的obj2节点之前
+  parentObj.insertBefore(newObj, obj2);
+}</pre>
+                        </li>
+                        <li>移动元素节点
+                            <pre>
+var parentObj = document.getElementsByTagName("ul")[0];
+var obj2 = document.getElementsByTagName("li")[1];
+var obj5 = document.getElementsByTagName("li")[4];
+parentObj.insertBefore(obj5, obj2);</pre>
+                        </li>
+                        <li>自定义insertAfter方法，将新节点插入指定节点的后边
+                            <pre>
+  window.onload = function() {
+  //自定义插入节点到目标节点后边的方法
+  function insertAfter(newNode, targetNode) {
+      //获取父节点
+      var parentNode = targetNode.parentNode;
+      if (parentNode) {
+          //测试目标节点是否为其父节点的最后一个节点
+          var lastChild = parentNode.lastChild;
+          if (targetNode == lastChild) {
+              //如果是，则直接将newNode插入为父节点的最后一个子节点
+               parentNode.appendChild(parentNode);
+          } else {
+              //如果不是，则获取目标节点的下一个兄弟节点，将newNode插入到兄弟节点前边
+              var targetNodeNext = targetNode.nextSibling;
+              parentNode.insertBefore(newNode, targetNodeNext);
+          }
+      }
+  }
+  //测试InsertAfter方法
+  var newLi = document.createElement("li");
+  var newLiText = document.createTextNode("New-Li");
+  newLi.appendChild(newLiText);
+  var li1 = document.getElementsByTagName("li")[0];
+  insertAfter(newLi, li1);
+                            </pre>
+                        </li>
+                    </ol>
+                    <!--文章]]-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+        <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+            <div class="am-offcanvas-bar">
+
+                <ul class="am-nav">
+                    <h1>Javascript DOM</h1>
+                    <!--导航[[-->
+                    <li><a href="#!" id="btn1">概述</a></li>
+                    <li><a href="#!" id="btn2">节点的获取</a></li>
+                    <li><a href="#!" id="btn3">节点的操作</a></li>
+                    <li><a href="#!" id="btn4">节点的通用属性</a></li>
+                    <li><a href="#!" id="btn5">节点的创建</a></li>
+                    <li><a href="#!" id="btn6">节点的替换</a></li>
+                    <li><a href="#!" id="btn7">节点的删除</a></li>
+                    <li><a href="#!" id="btn8">节点的插入</a></li>
+                </ul>
+                <!--导航]]-->
+            </div>
+        </div>
+    </div>
+    <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+        data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+<!--页脚[[-->
+<br><br><br>
+<div class="am-g">
+    <div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+        <br>
+        <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+        <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+    </div>
+</div>
+<br><br><br>
+<!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+    //加载进度条
+    var progress = $.AMUI.progress;
+    $(window).load(function() {
+        progress.done();
+    })
+    $(document).ready(function() {
+        progress.start();
+    })
+    //侧边栏平滑滚动
+    $(window).smoothScroll();
+    function navClick($btnObj, $pageObj) {
+        $btnObj.on("click", function() {
+            var $w = $(window);
+            $w.smoothScroll({position: $pageObj.offset().top});
+        })
+    }
+    navClick($("#btn1"), $("#page1"));
+    navClick($("#btn2"), $("#page2"));
+    navClick($("#btn3"), $("#page3"));
+    navClick($("#btn4"), $("#page4"));
+    navClick($("#btn5"), $("#page5"));
+    navClick($("#btn6"), $("#page6"));
+    navClick($("#btn7"), $("#page7"));
+    navClick($("#btn8"), $("#page8"));
+
+</script>
+</body>
+</html>
