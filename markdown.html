@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>杨宇昊的学习笔记-Markdown</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <!--Link Web Font-->
+    <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+    <!--代码高亮highlight.js-->
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>-->
+    <!--Link Base Style-->
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css"/>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<!--导航栏 [[-->
+<header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+        <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+</header>
+<!--导航栏 ]]-->
+<div class="am-g am-g-fixed">
+    <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+        <div class="am-g">
+            <div class="am-u-sm-11 am-u-sm-centered">
+                <div class="am-cf am-article am-scrollable-horizontal">
+
+                    <!--文章[[-->
+                    <h3 id="page1">零. 概述</h3>
+                    <ol>
+                        <li>Markdown是一种可以使用普通文本编辑器编写的标记语言，通过简单的标记语法，它可以使普通文本内容具有一定的格式</li>
+                        <li>不在 Markdown 涵盖范围之内的标签，都可以直接在文档里面用 HTML 撰写。不需要额外标注这是 HTML 或是 Markdown；只要直接加标签就可以了</li>
+                    </ol>
+                    <h3 id="page2">一. 标题</h3>
+                    <ol>
+                        <li>Setext形式标题写法
+                            <pre>
+这是一级标题(在标题下方的等号数量无限制)
+=============
+这是二级标题(在标题下方的中横线数量无限制)
+-------------</pre>
+                        </li>
+                        <li>Atx形式的标题写法
+                            <pre>
+# 这是一级标题
+## 这是二级标题
+### 这是三级标题
+#### 这是四级标题
+##### 这是五级标题
+###### 这是六级标题</pre>
+                        </li>
+                        <li>Atx形式的标题写法中,可以选择性的闭合标记,闭合标记纯粹是处于美观,并无语法要求且闭合的井号个数无限制
+                            <pre>
+# 这是闭合的一级标题 #
+## 这是闭合的二级标题 ##
+##### 这是闭合的五级标题,闭合的井号只写一个也没问题 #</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page3">二. 区块引用</h3>
+                    <pre>
+> 这是区块引用的第一行
+> 这是第二行
+> 这是第三行</pre>
+                    <pre>
+> 区块引用可以使用简写模式
+允许只在第一行标记右尖括号
+后边的尖括号不必给出</pre>
+                  <pre>
+> 区块引用允许嵌套
+>> 只需要根据层次,加上不同的尖括号数量即可</pre>
+                    <pre>
+> 区块引用中可以使用其他的MarkDown语法
+> # 例如这样</pre>
+                    <h3 id="page4">三. 列表</h3>
+                    <ol>
+                        <li>无序列表
+                            <ul>
+                                <li>无序列表可以使用星号作为标记
+                                    <pre>
+* 无序列表1
+* 无序列表2
+* 无序列表3</pre>
+                                </li>
+                                <li>无序列表可以使用加号作为标记
+                                    <pre>
++ 无序列表1
++ 无序列表2
++ 无序列表3</pre>
+                                </li>
+                                <li>无序列表可以使用减号作为标记
+                                    <pre>
+- 无序列表1
+- 无序列表2
+- 无序列表3</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>有序列表
+                            <br>有序列表使用数字接着一个英文句点
+                            <pre>
+1. 有序列表1
+2. 有序列表2
+3. 有序列表3</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page5">四. 代码区块</h3>
+                    <ol>
+                        <li>使用四个缩进或一个制表符将会转换为代码区块
+                            <pre>
+    System.out.println("hello world!");</pre>
+                        </li>
+                        <li>需要标记一段行内代码,可以使用反引号将其包裹起来
+                            <pre>
+this is code: `using namespace;`</pre>
+                        </li>
+                        <li>如果需要在代码片段中使用反引号,则需要使用双反引号标注行内代码
+                            <pre>
+this is code: `` i want use `  ``</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page6">五. 分割线</h3>
+                    <ol>
+                        <li>使用三个以上的星号、减号来建立分割线,行内不能存在其他内容
+                            <pre>
+*********************</pre>
+                        </li>
+                        <li>分割线中间允许插入空格
+                            <pre>
+* * * * * * * * * * *</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page7">六. 链接</h3>
+                    <ol>
+                        <li>行内式链接
+                            <pre>
+[点击进入百度](http://www.baidu.com/)</pre>
+                        </li>
+                        <li>参考式链接
+                            <pre>
+[点击进入京东][1]
+[点击进入淘宝][2]
+[github]
+[1]: http://www.jd.com/
+[2]: http://www.taobao.com/
+[github]: http://github.com</pre>
+                        </li>
+                        <li>自动链接:当链接文字和链接地址一致直接使用尖括号包裹
+                            <pre>
+&lt;http://www.baidu.com> </pre>
+                        </li>
+                    </ol>
+                    <h3 id="page8">七. 重要与强调</h3>
+                    <ol>
+                        <li>重要strong
+                            <pre>
+**这是重要的内容,会加粗**
+__这是重要的内容,回家粗__</pre>
+                        </li>
+                        <li>强调em
+                            <pre>
+*这是强调的内容,会变斜*
+_这是强调的内容,会变斜_</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page9">八. 图片</h3>
+                    <ol>
+                        <li>行内式插入图片
+                            <pre>
+![图片的替代文字](http://yangyuhao.org/photo/javaWeb/javaWeb1.png)</pre>
+                        </li>
+                        <li>参考式插入图片
+                            <pre>
+![图片的替代文字][1]
+[1]:http://yangyuhao.org/photo/javaWeb/javaWeb1.png</pre>
+                        </li>
+                    </ol>
+                    <h3>九. 表格</h3>
+                    <pre>
+| 表头1         | 表头2           | 表头3  |
+| ------------- |:-------------:| -----:|
+| 默认是左对齐 |在两侧加上双冒号居中对齐|右侧加上双冒号右侧对齐 |</pre>
+                    <!--文章]]-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+        <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+            <div class="am-offcanvas-bar">
+
+                <ul class="am-nav">
+                    <h1>Markdown</h1>
+                    <!--导航[[-->
+                    <li><a href="#!" id="btn1">概述</a></li>
+                    <li><a href="#!" id="btn2">标题</a></li>
+                    <li><a href="#!" id="btn3">区块引用</a></li>
+                    <li><a href="#!" id="btn4">列表</a></li>
+                    <li><a href="#!" id="btn5">代码区块</a></li>
+                    <li><a href="#!" id="btn6">分割线</a></li>
+                    <li><a href="#!" id="btn7">链接</a></li>
+                    <li><a href="#!" id="btn8">重要和强调</a></li>
+                    <li><a href="#!" id="btn9">图片</a></li>
+                    <li><a href="#!" id="btn10">表格</a></li>
+                </ul>
+                <!--导航]]-->
+            </div>
+        </div>
+    </div>
+    <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+        data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+<!--页脚[[-->
+<br><br><br>
+<div class="am-g">
+    <div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+        <br>
+        <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+        <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+    </div>
+</div>
+<br><br><br>
+<!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+    //加载进度条
+    var progress = $.AMUI.progress;
+    $(window).load(function() {
+        progress.done();
+    })
+    $(document).ready(function() {
+        progress.start();
+    })
+    //侧边栏平滑滚动
+    $(window).smoothScroll();
+    function navClick($btnObj, $pageObj) {
+        $btnObj.on("click", function() {
+            var $w = $(window);
+            $w.smoothScroll({position: $pageObj.offset().top});
+        })
+    }
+    navClick($("#btn1"), $("#page1"));
+    navClick($("#btn2"), $("#page2"));
+    navClick($("#btn3"), $("#page3"));
+    navClick($("#btn4"), $("#page4"));
+    navClick($("#btn5"), $("#page5"));
+    navClick($("#btn6"), $("#page6"));
+    navClick($("#btn7"), $("#page7"));
+    navClick($("#btn8"), $("#page8"));
+    navClick($("#btn9"), $("#page9"));
+    navClick($("#btn10"), $("#page10"));
+</script>
+</body>
+</html>
