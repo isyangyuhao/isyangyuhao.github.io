@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>杨宇昊的学习笔记-Javascript OOP</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <!--Link Web Font-->
+    <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+    <!--代码高亮highlight.js-->
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>-->
+    <!--Link Base Style-->
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css"/>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<!--导航栏 [[-->
+<header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+        <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+</header>
+<!--导航栏 ]]-->
+<div class="am-g am-g-fixed">
+    <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+        <div class="am-g">
+            <div class="am-u-sm-11 am-u-sm-centered">
+                <div class="am-cf am-article am-scrollable-horizontal">
+
+                    <!--文章[[-->
+                    <h3 id="page1">1. Javascript解析与执行过程</h3>
+                    <ol>
+                        <li>全局预处理阶段
+                            <ul>
+                                <li>创建LexicalEnvironment(池法环境，文法环境+变量环境，等价于window对象)</li>
+                                <li>扫描用声明的方式创建的函数，用"var"定义的变量，将它们的名称和函数的引用存放到LexicalEnvironment中
+                                    <ul>
+                                        <li>e.g. 声明变量和函数后再LexicalEnvironment中的状态
+                                            <pre>
+----------------------
+var num = 5;
+var sum;
+function f() {
+
+}
+----------------------
+LexicalEnvironment
+{
+    num : undefined
+    f : 对函数的引用
+}
+----------------------</pre>
+                                        </li>
+                                        <li>js解析器会先扫描函数声明，后扫描变量声明</li>
+                                        <li>处理函数声明有冲突的情况下，函数冲突会被覆盖，变量冲突会被忽略</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>全局执行阶段 - 给全局预处理成员赋值
+                            <br>e.g.
+                            <pre>
+alert(a);  //undefined
+alert(b);  //error:b not found
+alert(f);  //function() {colsole.log('f')}
+alert(g);  //undefined
+var a = 5;
+b = 6;
+alert(b);  //6
+function f() {colsole.log('f')};
+var g = function() {colsole.log('g')};
+alert(g);  //function() {colsole.log('g')}</pre>
+                        </li>
+                        <li>函数预处理阶段
+                            <ul>
+                                <li>每调用一次函数，都会生成一个LexicalEnvironment，而且处在解析器内部无法访问</li>
+                                <li>扫描用声明的方式创建的函数，用"var"定义的变量，将它们的名称和函数的引用存放到LexicalEnvironment中
+                                    <ul>
+                                        <li>js解析器会先扫描函数声明，后扫描变量声明</li>
+                                        <li>处理函数声明有冲突的情况下，函数冲突会被覆盖，变量冲突会被忽略</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>函数执行阶段 - 给函数预处理成员赋值
+                            <br>如果没有用var声明的变量，将会成为最外部的LexicalEnvironment(全局预处理LexicalEnvironment)成员
+                        </li>
+                    </ol>
+                    <h3 id="page2">2. 作用域</h3>
+                    <ol>
+                        <li>定义：确定成员在程序中可以被访问的范围</li>
+                        <li>块作用域 - js不支持块作用域</li>
+                        <li>函数作用域 - 在函数内部可访问的变量，在函数外部不允许访问</li>
+                        <li>动态作用域 - 根据调用函数不同动态加载变量
+                            <br>e.g.
+                            <pre>
+function f() {alert(x)}
+function f1() {var x = 1; f()}
+function f2() {var x = 2; f()}</pre>
+                        </li>
+                        <li>词法作用域
+                            <ul>
+                                <li>普通函数的词法作用域指向起函数的作用域，函数作用域指向其父级词法作用域，父级词法作用域指向其父级函数作用域(等价于window，全局池法环境)，构成作用域链</li>
+                                <li>e.g.
+                                    <pre>
+function f() {
+    var x = 100
+    function g() {
+
+    }
+    g();
+}</pre>
+                                    <span style="text-decoration: underline">作用域链:<br>g.lexicalEnvironment -> g.[[scope]] -> f.lexicalEnvironment -> f.[[scope]] -> window</span>
+                                </li>
+                                <li>使用var f = new Function("x", "alert(x)")方式声明的函数作用域直接指向全局池法环境</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page3">3. 闭包</h3>
+                    <ol>
+                        <li>定义：闭包是词法闭包的简称，是引用了自由变量的函数，这个被引用的变量和这个函数一同存在，即使已经离开它的创造环境也不例外；或者说闭包就是由函数与其相关引用环境组成而形成的实体</li>
+                        <li>闭包实例1
+                            <pre>
+function f1() {
+    var a = 10;
+        function f2() {
+            console.log(a);
+        }
+        f2();
+    }
+f1();</pre>
+                            <span style="text-decoration: underline">f2函数体以及对自由变量的引用a构成了闭包</span>
+                        </li>
+                        <li>闭包实例2
+                            <pre>
+function f1() {
+    var a = 10;
+    return function(){
+    console.log(a);
+    }
+}
+var f2 = f1();
+f2();</pre>
+                            <span style="text-decoration: underline">f2()函数体就算脱离了创造环境，依然可以对自由变量进行捕获，构成闭包</span>
+                        </li>
+                        <li>如果在函数中并没有对父级函数中的变量进行引用，则不会产生闭包
+                            <br>e.g.
+                            <pre>
+function f1() {
+    var a = 10;
+    function f2() {
+        console.log("test");
+    }
+    f2();
+}
+f1();</pre>
+                        </li>
+                        <li>闭包的优点
+                            <ul>
+                                <li>减少全局变量
+                                    <img src="photo/oop/oop1.png" class="am-img-responsive">
+                                </li>
+                                <li>减少传递给函数的参数数量
+                                    <img src="photo/oop/oop2.png" class="am-img-responsive">
+                                </li>
+                                <li>封装
+                                    <pre>
+(function() {
+    var n = 0;
+    function getN(){
+        return n;
+    }
+    function setN(val) {
+        n = val;
+    }
+    window.getN = getN;
+    window.setN = setN;
+})();
+setN(5);
+alert(getN());</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>闭包的注意事项
+                            <ul>
+                                <li>闭包中的函数对自由变量是引用而不是复制
+                                    <pre>
+function f() {
+    var num = 0;
+    ++num;
+    function g() {
+        alert(num);  //2
+    }
+    ++num;
+    g();
+}
+f();</pre>
+                                </li>
+                                <li>父函数每调用一次，会产生不同的闭包
+                                    <pre>
+function f() {
+    var num = 0;
+    return function() {
+        ++num;
+        alert(num);
+    }
+}
+var add1 = f();
+var add2 = f();
+add1();  //1
+add2();  //1</pre>
+                                </li>
+                                <li>循环中的问题
+                                    <pre>
+for (var i = 1; i <= 3; ++i) {
+    var elem = document.getElementById(i);
+    elem.onclick = function() {
+        alert(i);  //因为相应点击事件函数在循环结束之后发生，所有变量i的值一直为4
+    }
+}</pre>
+                                    解决方案: 使用this关键词或使用闭包进行变量捕获
+                                    <pre>
+for (var i = 1; i <= 3; ++i) {
+    var elem = document.getElementById(i);
+    elem.onclick = (function(id) {
+        return function() {
+            alert(id);
+        }
+    })(i)
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page4">4. 类与对象</h3>
+                    <ol>
+                        <li>对象的种类：js内置对象(如Number)，宿主环境对象(如window)，自定义创建对象</li>
+                        <li>对象的创建
+                            <ul>
+                                <li>对象字面量形式
+                                    <pre>
+//以字面量(json)格式声明对象
+var person = {
+    //以下"划线+变量名"的方式声明私有属性，虽然依旧可以被访问但约定不使用
+    _name : "",
+    //编写属性对应的getter
+    get name() {
+        return this._name;
+    },
+    //编写属性对应的setter
+    set name(name) {
+        this._name = name; 
+    },
+    _age : 0,
+    get age() {
+        return this._age;
+    },
+    set age(age) {
+        //判断如果设置的属性不符合标准则抛出异常
+        if (age < 0 || age > 150) {
+            throw new Error("Age invalid error!");
+        }
+        this._age = age;
+    },
+    //声明成员方法
+    display : function() {
+    alert("display : name is " + this._name);
+    alert("display : age is " +this._age);
+    }
+};</pre>
+                                </li>
+                                <li>成员访问
+                                    <pre>
+//通过"对象.属性名 = 属性值"方式设置成员变量的值，js解析器会自动调用对应的setter
+person.name = "yang";
+person.age = 20;
+//通过"对象.属性名"方式获取成员变量的值，js解析器会自动调用对应的getter
+alert(person.name);
+//也可以通过"对象["属性名"]"方式获取成员变量的值
+alert(person["age"]);
+//可以通过"对象.方法()"方式调用成员方法
+person.display();</pre>
+                                </li>
+                                <li>Object
+                                    <pre>
+//通过"var 对象名 = new Object()"方法创建对象
+var person = new Object();
+//通过"对象.属性名=属性值"方式为对象添加属性
+person.name = "yang";
+person.age = 20;
+//通过"对象.方法名 = function() {...}"方式为对象添加方法
+person.display = function() {
+alert(person.name + "/" + person.age);
+}
+//通过"Object.defineProperty方法给对象添加
+//第一个参数传入对象，第二个参数传入属性名，第三个参数传入对象(所有属性默认为false)"
+//第三个对象支持value, get, set, writeable, enuerable, configurable
+Object.defineProperty(person, "tell", {value:12345, writeable:false});
+alert("tell is " + person.tell);
+person.tell = 54321;
+alert("$tell is " + person.tell);
+//通过"Object.defineProperties"方法给对象批量添加属性
+Object.defineProperties(person, {
+    testProperty1 : {value:"test1", writeable:false},
+    testProperty2 : {value:"test2", writeable:false},
+})</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>对象的基本操作
+                            <ul>
+                                <li>成员的遍历 - 如果成员变量的enuerable=false则无法被遍历出来
+                                    <ul>
+                                        <li>通过循环的方式遍历对象成员属性
+                                            <pre>
+for (sx in person) {
+    alert(sx + " : " + person[sx]);
+}</pre>
+                                        </li>
+                                        <li>通过Object.keys()方式获取对象成员属性的集合数组
+                                            <pre>
+var personProperties = Object.keys(person)</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>检查对象是否存在当前属性
+                                    <ul>
+                                        <li>通过"属性名 in 对象"形式判断，如果存在返回true，否则返回false</li>
+                                        <li>通过"对象.hasOwnProperty(属性名)"形式判断当前变量是否为当前对象所拥有，拥有返回true，不存在或者是父类继承的属性返回false</li>
+                                    </ul>
+                                </li>
+                                <li>成员的删除 - 自带属性以及configurable=false的属性不可以被删除
+                                    <ul>
+                                        <li>通过"delete.属性名"方式可以删除指定对象的属性</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>属性特征
+                            <table class="am-table am-table-compact">
+                                <thead>
+                                <th>特征</th>
+                                <th>描述</th>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>writeable</td>
+                                    <td>当前属性是否为可写，默认为false</td>
+                                </tr>
+                                <tr>
+                                    <td>enuerable</td>
+                                    <td>当前属性是否可以被列举，默认为false</td>
+                                </tr>
+                                <tr>
+                                    <td>configurable</td>
+                                    <td>当前属性是否可以被配置，默认为false</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </li>
+                        <li>构造器与类型检测
+                            <ul>
+                                <li>构造器
+                                    <ul>
+                                        <li>Function() -> Function()</li>
+                                        <li>Function() -> Object -> {} / new Object</li>
+                                        <li>Function() -> Number -> var a = 1 / new Number(1)</li>
+                                        <li>Function() -> Array -> ...</li>
+                                        <li>...</li>
+                                    </ul>
+                                </li>
+                                <li>类型转换
+                                    <ul>
+                                        <li>typeof obj - 判断对象类型</li>
+                                        <li>obj instanceof constructor 判断对象是否为某个构造器的实例</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>通过对象工厂创建对象
+                            <pre>
+function userFactory(pId, pName) {
+    return {
+        id : pId,
+        name : pName
+    }
+}
+var user1 = userFactory(1, "user1");
+var user2 = userFactory(2, "user2");</pre>
+                        </li>
+                        <li>通过构造器函数创建对象
+                            <pre>
+function Person(id, name) {
+    this.id = id;
+    this.name = name;
+}
+Person.prototype.school = "tjnu";//通过"构造器名+prototype+属性名"创建的属性所有对象共享
+var p1 = new Person(1, "person1");
+var p2 = new Person(2, "person2");
+alert(p1.id + "/" + p1.name + "/" + p1.school);
+alert(p2.id + "/" + p2.name + "/" + p2.school);</pre>
+                        </li>
+                        <li>prototype
+                            <ul>
+                                <li>只有通过function创建的对象具有prototype属性</li>
+                                <li>prototype会创建一个原型对象，存放对象的构造器以及function创建的对象所共有的方法，当function创建对象后所有对象都会引用由prototype创建的原型对象</li>
+                            </ul>
+                        </li>
+                        <li>__proto__
+                            <ul>
+                                <li>js通过__proto__使function创建的对象与原型对象进行关联</li>
+                                <li>通过"对象名.__proto__.属性名"可以调出对象所关联的原型对象的内部属性，此方法在IE中不可以使用</li>
+                                <li>原型对象的修改：当原型对象被修改后，只会影响到修改原型对象后创建的对象，修改前创建的对象不会受到影响
+                                    <pre>
+function Person(id, name) {
+    this.id = id;
+    this.name = name;
+};
+Person.prototype = {type1 : "person1"};
+var person1 = new Person(1, "p1");
+alert(person1.id + "/" + person1.name + "/" + person1.type1);// "1/p1/person1"
+Person.prototype = {type2 : "person2"};
+var person2 = new Person(2, "p2");
+alert(person2.id + "/" + person2.name + "/" + person2.type2);// "2/p2/person2"</pre>
+                                </li>
+                                <li>对象修改原型对象属性：当某个具体的对象修改了原型对象的某个属性后，会自动为这个对象创建一个单独的原型对象，并对该原型对象进行修改，通过__proto__进行关联，而不会修改全局的原型对象
+                                    <pre>
+function User(id, name) {
+    this.id = id;
+    this.name = name;
+}
+User.prototype.type = "pserson";
+var user1 = new User(1, "user1");
+var user2 = new User(2, "user2");
+user1.type = "$person";
+alert(user1.type);  //$person
+alert(user2.type);  //person</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>this
+                            <ul>
+                                <li>this的基本原则:运行时指定,this指向调用函数的对象
+                                    <br>e.g.
+                                    <pre>
+var obj = {
+    name : "test",
+    display : function() {
+        alert(this.name);
+    }
+}
+obj.display();  //test
+var display = obj.display;
+display();  //(空)</pre>
+                                    <span style="text-decoration: underline">当 var display = obj.display时，this.name指向从obj转移为window,而池法环境中并没有变量name，所以为空</span>
+                                </li>
+                                <li>改变this的指向
+                                    <ul>
+                                        <li>通过function.call(obj, "name", "", ""...)可以指定调用方法的对象以及指向的属性
+                                            <br><code>f.call(obj, "name", "", "", ...) === obj.f("name", "", "", ...)</code>
+                                        </li>
+                                        <li>通过function.apply(obj, ["name", "", "", ...])也可以指定调用方法的对象以及指向的属性
+                                            <br><code>f.apply(obj, ["name", "", "", ...]) === obj.f("name", "", "", ...)</code>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>new的自定义实现
+                            <pre>
+function Person(id, name) {
+    this.id = id;
+    this.name = name;
+}
+function New(f) {
+    return function() {
+        var obj = {"__proto__" : f.prototype};
+        f.apply(obj, arguments);
+        return obj;
+    }
+}
+var p1 = new Person(1, "p1-name");
+var p2 = New(Person)(2, "p2-name");</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page5">5. 封装</h3>
+                    <ol>
+                        <li>命名空间: 使用空对象模拟命名空间
+                            <pre>
+var namespace1 = {};
+    namespace1.obj = {
+        name : "yang",
+        age : 10,
+        dispaly : function() {
+        alert(this.name + "/" + this.age);
+    }
+}
+namespace1.obj.dispaly();</pre>
+                        </li>
+                        <li>静态成员：伪类(函数)的本质也是对象，通过为伪类(函数)添加属性实现模拟静态成员变量
+                            <pre>
+function Person(id, name) {
+    this.id = id;
+    this.name = name;
+}
+Person.type = "type_person";
+alert(Person.type);</pre>
+                        </li>
+                        <li>成员的权限
+                            <pre>
+function Person(id, name) {
+    //通过"this.pro = pro"形式赋值的变量属于共有属性
+    this.id = id;
+    this.name = name;
+    //通过"var"声明的变量属于私有变量
+    var age = 20;
+    //通过声明方式定义的方法属于私有方法
+    function tellAge() {
+        alert(age);
+    };
+    //通过"this.f = functoin() {}"声明的方法属于共有方法
+    this.display = function() {
+        alert("id : " + this.id);
+        alert("name : " + this.name);
+        tellAge.call(this);  //在共有方法中通过call方式调用私有方法
+    };
+}
+var p = new Person(1, "yang");
+p.display();</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page6">6. 对象的继承</h3>
+                    <ol>
+                        <li>浅拷贝
+                            <pre>
+var person = {
+    name : "yang",
+    age : 20
+    address : {
+        address_id : 1,
+        address_name : "BeiJing"
+    }
+
+};
+var student = {
+    studentId : 14302
+}
+function extend(p, c) {
+    var c = c || {};
+    for (var prop in p) {
+        c[prop] = p[prop];
+    }
+}
+extend(person, student);
+alert(student.name + "/" + student.age + "/" + student.studentId);
+alert(student.address.address_id + "/" + student.address.address_name);</pre>
+                            <span style="text-decoration: underline">使用浅拷贝会将父对象的成员变量值赋值给子对象，
+                                而父对象的成员变量如果为对象或数组的话则会将引用传递给子对象，
+                                因此修改子对象的普通成员变量不会影响到父对象，
+                                但修改数组或对象类型的成员变量则会使父对象的属性一同修改</span>
+                        </li>
+                        <li>深拷贝
+                            <pre>
+function extendDeeply(p, c) {
+    var c = c || {};
+    for (var prop in p) {
+        if (typeof p[prop] === "object") {
+            c[prop] = (p[prop].constructor === Array) ? [] : {};
+            extendDeeply(p[prop], c[prop]);
+            } else {
+            c[prop] = p[prop];
+        }
+    }
+}
+extendDeeply(person, student);
+alert(student.name + "/" + student.age + "/" + student.studentId);
+alert(student.address.address_id + "/" + student.address.address_name);</pre>
+                            <span style="text-decoration: underline">使用深拷贝会将父对象的所有类型的成员属性全部继承到子对象并进行赋值，不会传递引用 </span>
+                        </li>
+                        <li>call形式拷贝
+                            <pre>
+function Person(name, age) {
+    this.name = name;
+    this.age = age;
+}
+function Student(studentId, name, age) {
+    Person.call(this, name, age);
+    this.studentId = studentId;
+}
+var stu = new Student(1, "yang", 20);
+alert(stu.studentId + "/" + stu.name + "/" + stu.age);</pre>
+                            <span style="text-decoration: underline">通过在子对象中调用父对象的构造器实现拷贝继承，每次new开辟新的存储空间不会传递引用</span>
+                        </li>
+                        <li>create方法自实现
+                            <pre>
+var person = {
+    name : "yang"
+}
+function myCreate(obj) {
+    var ins;
+    function F() {}
+    F.prototype = obj;
+    ins = new F();
+    return ins;
+}
+var person2 = myCreate(person);
+alert(person2.name);</pre>
+                        </li>
+                        <li>create实现继承
+                            <pre>
+var person = {
+    name : "yang",
+    age : 20
+}
+var student = Object.create(person, {
+    studentId : {value:12345}
+});
+alert(student.studentId + "/" + student.name + "/" + student.age);</pre>
+                        </li>
+                        <li>原型链
+                            <img src="photo/oop/oop3.jpeg" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3 id="page7">7. 类的继承</h3>
+                    <ol>
+                        <li>instanceof运算符
+                            <ul>
+                                <li>用来判断某个构造函数的prototype属性是否存在另外一个要检测对象的原型链上</li>
+                                <li>e.g.
+                                    <pre>
+function Person() {this.name = name};
+var p = new Person();
+alert(p instanceof Person);  //true
+alert(p instanceof Object);  //true</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>通过将子类的prototype指向父类的property实现类继承
+                            <ul>
+                                <li>实现
+                                    <pre>
+function Person() {}
+function Student() {}
+Student.prototype = Person.prototype;</pre>
+                                </li>
+                                <li>测试
+                                    <pre>
+var s = new Student();
+alert(s instanceof Student);  //true
+alert(s instanceof Person);  //true </pre>
+                                </li>
+                                <li>缺点: 子类的属性完全暴露给父类，违背了继承的设计原则</li>
+                            </ul>
+                        </li>
+                        <li>通过父类对象桥接子类的property实现类继承
+                            <ul>
+                                <li>实现
+                                    <pre>
+function Person() {}
+function Student() {}
+Student.prototype = new Person();</pre>
+                                </li>
+                                <li>测试
+                                    <pre>
+var s = new Student();
+alert(s instanceof Student);  //true
+alert(s instanceof Person);  //true</pre>
+                                </li>
+                                <li>缺点: 虽然子类的内容不会暴露给父类，但是当父类的属性过多时会浪费内存空间</li>
+                            </ul>
+                        </li>
+                        <li>通过临时函数桥接父类protytype实现类继承
+                            <ul>
+                                <li>实现
+                                    <pre>
+function Person() {}
+function Student() {}
+function F() {}
+F.prototype = Person.prototype;
+var f = new F();
+Student.prototype = f;</pre>
+                                </li>
+                                <li>使用create方法改良实现
+                                    <pre>
+function Person() {}
+function Student() {}
+Student.prototype = Object.create(Person.prototype); </pre>
+                                </li>
+                                <li>测试
+                                    <pre>
+var s = new Student();
+alert(s instanceof Student);  //true
+alert(s instanceof Person);  //true</pre>
+                                </li>
+                                <li>该方法因为仅仅创建了一个空函数，所以不会浪费内存空间，并且不会讲子类内容暴露给父类，推荐使用</li>
+                            </ul>
+                        </li>
+                        <li>继承实例
+                            <ul>
+                                <li>编写父类
+                                    <pre>
+function Person() {
+}
+Person.prototype.headCount = 1;
+Person.prototype.eat = function() {
+alert("eat ...");
+}
+                                    </pre>
+                                </li>
+                                <li>编写子类
+                                    <pre>
+function Student() {
+}</pre>
+                                </li>
+                                <li>实现继承,修改构造器指向
+                                    <pre>
+Student.prototype = Object.create(Person.prototype);
+Student.prototype.constructor = Student;</pre>
+                                </li>
+                                <li>编写子类特有属性和方法
+                                    <pre>
+Student.prototype.school = "Center School";
+Student.prototype.study = function() {
+    alert("student study ...");
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>编写通用继承方法
+                            <pre>
+function createEx(Child, Parent) {
+function F() {}
+    F.prototype = Parent.prototype;
+    var f = new F();
+    Child.prototype = f;
+    Child.prototype.constructor = Child; 
+    Child.super = Child.base = Parent.prototype;  //实现在子类方法中调用父类属性和方法
+}</pre>
+                        </li>
+                        <li>实现对属性和方法的继承
+                            <ul>
+                                <li>编写父类
+                                    <pre>
+function Person(name, age) {
+    this.name = name;
+    this.age = age;
+}
+Person.prototype.headCount = 1;
+Person.prototype.eat = function() {
+    alert("eat ...");
+}</pre>
+                                </li>
+                                <li>编写子类
+                                    <pre>
+function Student(name, age, studentId) {
+    Person.apply(this, arguments);
+    this.studentId = studentId;
+    this.display = function() {
+        alert(this.name + "/" + this.age + "/" + this.studentId);
+    }
+}</pre>
+                                </li>
+                                <li>实现继承,修改构造器指向
+                                    <pre>
+createEx(Student, Person);</pre>
+                                </li>
+                                <li>编写子类特有属性和方法
+                                    <pre>
+Student.prototype.school = "Center School";
+Student.prototype.study = function() {
+alert("student study ...");
+    Student.base.eat();  //子类调用父类方法
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page8">8. 方法重载</h3>
+                    <ol>
+                        <li>argumens
+                            <ul>
+                                <li>是一个类似于数组的对象，只存在于函数内部，可以通过argumens访问或修改函数参数的相关信息</li>
+                                <li>e.g.
+                                    <pre>
+function f(a, b) {
+    alert(arguments.length);
+    alert(arguments[0]);
+    alert(arguments[1]);
+}
+f(1,2);</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>实现可变参数的函数：利用argumens参数获取参数信息
+                            <ul>
+                                <li>e.g.1 编写计算所有参数的和
+                                    <pre>
+    function getSum() {
+    var sum = 0;
+    for (var i = 0; i < arguments.length; ++i) {
+        sum += arguments[i];
+    }
+    return sum;
+}
+var sum = getSum(1,2,3,4,5,6,7,8,9,0);
+alert(sum);</pre>
+                                </li>
+                                <li>e.g.2 编写字号函数，传入一个参数为获取对应id值得DOM的文本字体大小，传入两个参数第一个参数获取对应id值的DOM，
+                                    第二个参数为调节字号的尺寸，返回修改后的文本字体大小
+                                    <pre>
+function fontSize() {
+    var elem = document.getElementById(arguments[0]);
+    if (arguments.length == 1) {
+        return elem.style.fontSize;
+    } else if (arguments.length == 2) {
+        elem.style.fontSize = arguments[1];
+        return elem.style.fontSize;
+    }
+}
+alert(fontSize("test"));  //20px
+alert(fontSize("test", "100px"));  //100px </pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page9">9. 方法重写</h3>
+                    <ol>
+                        <li>第一种情况：重写传入对象的方法
+                            <pre>
+function f(obj) {
+    obj.run();
+}
+var obj1 = {run:function() {
+    alert("obj1 running ...");
+}}
+var obj2 = {run:function() {
+    alert("obj2 running ...");
+}}
+f(obj1);  //obj1 running ...
+f(obj2);  //obj2 running ...</pre>
+                        </li>
+                        <li>第二种情况：实例对象重写类原型对象中的方法
+                            <pre>
+function F() {
+}
+F.prototype.run = function() {
+    alert("F.prototype.run running ...");
+}
+var f = new F();
+//方法重写
+f.run = function() {
+    alert("f.prototype.run running ...");
+    F.prototype.run();  //调用被重写前的方法
+}
+f.run();</pre>
+                        </li>
+                        <li>第三种情况：子类重写父类对象中的方法
+                            <pre>
+function Parent() {
+    this.run = function() {
+        alert("Parent running ...");
+    }
+}
+function Child() {
+    Parent.call(this);
+    var ParentRun = this.run;  //保存父类需要重写的方法
+    this.run = function() {
+        alert("Child running ...");
+        ParentRun();  //执行父类被重写的方法
+    }
+}
+var c = new Child();
+c.run();  //Child running ..., Parent running ...</pre>
+                        </li>
+                        <li>第四种情况：子类原型对象重写父类原型对象方法
+                            <pre>
+function Parent() {}
+function Child() {}
+Parent.prototype.run = function() {
+    alert("Parent.prototype.run running ...");
+}
+Child.prototype = Object.create(Parent.prototype);
+Child.prototype.constructor = Parent.prototype.constructor;
+Child.super = Parent.prototype;
+//重写父类原型中的方法
+Child.prototype.run = function() {
+    alert("Child.prototype.run running ...");
+    Child.super.run();  //调用父类原型被重写的方法
+}
+var c = new Child();
+c.run();</pre>
+                        </li>
+                    </ol>
+                    <!--文章]]-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+        <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+            <div class="am-offcanvas-bar">
+
+                <ul class="am-nav">
+                    <h1>Javascript OOP</h1>
+                    <!--导航[[-->
+                    <li><a href="#!" id="btn1">Javascript解析与执行过程</a></li>
+                    <li><a href="#!" id="btn2">作用域</a></li>
+                    <li><a href="#!" id="btn3">闭包</a></li>
+                    <li><a href="#!" id="btn4">类与对象</a></li>
+                    <li><a href="#!" id="btn5">封装</a></li>
+                    <li><a href="#!" id="btn6">对象的继承</a></li>
+                    <li><a href="#!" id="btn7">类的继承</a></li>
+                    <li><a href="#!" id="btn8">方法重载</a></li>
+                    <li><a href="#!" id="btn9">方法重写</a></li>
+                </ul>
+                <!--导航]]-->
+            </div>
+        </div>
+    </div>
+    <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+        data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+<!--页脚[[-->
+<br><br><br>
+<div class="am-g">
+    <div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+        <br>
+        <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+        <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+    </div>
+</div>
+<br><br><br>
+<!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+    //加载进度条
+    var progress = $.AMUI.progress;
+    $(window).load(function() {
+        progress.done();
+    })
+    $(document).ready(function() {
+        progress.start();
+    })
+    //侧边栏平滑滚动
+    $(window).smoothScroll();
+    function navClick($btnObj, $pageObj) {
+        $btnObj.on("click", function() {
+            var $w = $(window);
+            $w.smoothScroll({position: $pageObj.offset().top});
+        })
+    }
+    navClick($("#btn1"), $("#page1"));
+    navClick($("#btn2"), $("#page2"));
+    navClick($("#btn3"), $("#page3"));
+    navClick($("#btn4"), $("#page4"));
+    navClick($("#btn5"), $("#page5"));
+    navClick($("#btn6"), $("#page6"));
+    navClick($("#btn7"), $("#page7"));
+    navClick($("#btn8"), $("#page8"));
+    navClick($("#btn9"), $("#page9"));
+
+</script>
+</body>
+</html>
