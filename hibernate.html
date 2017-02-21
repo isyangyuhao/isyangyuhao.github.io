@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>杨宇昊的学习笔记-Hibernate</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <!--Link Web Font-->
+    <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+    <!--代码高亮highlight.js-->
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>-->
+    <!--Link Base Style-->
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css"/>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<!--导航栏 [[-->
+<header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+        <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+</header>
+<!--导航栏 ]]-->
+<div class="am-g am-g-fixed">
+    <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+        <div class="am-g">
+            <div class="am-u-sm-11 am-u-sm-centered">
+                <div class="am-cf am-article am-scrollable-horizontal">
+
+                    <!--文章[[-->
+                    <h2>第一部分 基础知识</h2>
+                    <h3>1.1 对象持久化与ORM</h3>
+                    <ol>
+                        <li>对象持久化
+                            <ul>
+                                <li>狭义的理解：持久化仅仅只把对象永久保存在数据库中</li>
+                                <li>广义的理解：持久化包括和数据库相关的各种操作
+                                    <ul>
+                                        <li>保存 - 把对象永久保存到数据库中</li>
+                                        <li>更新 - 更新数据库中对象(记录)的状态</li>
+                                        <li>删除 - 从数据库中删除一个对象</li>
+                                        <li>查询 - 根据特定的查询条件，把符合查询条件的一个或多个对象从数据库加载到内存中</li>
+                                        <li>加载 - 根据特定的OID，把一个对象从数据库中加载到内存中
+                                            <br>OID - 为了在系统中能够找到所需的对象，需要为每一个对象分配一个唯一的表示号，在关系数据库中称为主键，在对象术语中成为对象标示(Object identifier-OID)
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>ORM
+                            <ul>
+                                <li>ORM主要解决对象-关系映射
+                                    <table class="am-table am-table-compact">
+                                        <thead>
+                                        <th>面向对象的概念</th>
+                                        <th>面向关系的概念</th>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>类</td>
+                                            <td>表</td>
+                                        </tr>
+                                        <tr>
+                                            <td>对象</td>
+                                            <td>表的行</td>
+                                        </tr>
+                                        <tr>
+                                            <td>属性</td>
+                                            <td>表的列</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </li>
+                                <li>ORM思想：将关系数据库中表的记录映射为对象，以对象的形式展现，可以将数据库的操作转化为对对象的操作</li>
+                                <li>ORM采用元数据来描述对象-关系映射细节，元数据通常采用XML格式，存放在专门的对象-关系映射文件中</li>
+                                <li>关系图
+                                    <img src="photo/hibernate/hibernate1.emf" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3>1.2 Hibernate开发步骤</h3>
+                    <ol>
+                        <li>安装eclipse的hibernate插件
+                            <br>安装方法说明:
+                            <ul>
+                                <li>Help --> Install New Software...</li>
+                                <li>Click Add... </li>
+                                <li>In dialog Add Site dialog, click Archive... </li>
+                                <li>Navigate to hibernatetools-Update-4.1.1.Final_2013-12-08_01-06-33-B605.zip  and click  Open </li>
+                                <li>Clicking OK in the Add Site dialog will bring you back to the dialog 'Install' </li>
+                                <li>Select the Jboss Tools hibernatetools Nightly Build Update Site that has appeared</li>
+                                <li>Click Next  and then Finish </li>
+                                <li>Approve the license </li>
+                                <li>Restart eclipse when that is asked</li>
+                            </ul>
+                        </li>
+                        <li>准备Hibernate环境
+                            <ul>
+                                <li>导入Hibernate必须的jar包 - hibernate-release-4.2.4.Final\lib\required\*.jar</li>
+                                <li>加入数据库驱动的jar包</li>
+                            </ul>
+                        </li>
+                        <li>Hibernate开发步骤与实例
+                            <ul>
+                                <li>创建Hibernate配置文件 : src/hibernate.cfg.xml
+                                    <pre>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+&lt;hibernate-configuration>
+    &lt;session-factory>
+        &lt;!-- Hibernate 连接数据库基本信息 -->
+        &lt;property name="connection.username">root&lt;/property>
+        &lt;property name="connection.password">root&lt;/property>
+        &lt;property name="connection.driver_class">com.mysql.jdbc.Driver&lt;/property>
+        &lt;property name="connection.url">jdbc:mysql:///testh&lt;/property>
+        &lt;!-- Hibernate 基本配置 -->
+        &lt;property name="dialect">org.hibernate.dialect.MySQLDialect&lt;/property>
+        &lt;property name="show_sql">true&lt;/property>
+        &lt;property name="format_sql">true&lt;/property>
+        &lt;property name="hbm2ddl.auto">update&lt;/property>
+        &lt;!-- 设置Hibernate的事务隔离级别 -->
+        &lt;property name="connection.isolation">2&lt;/property>
+        &lt;!-- 删除对象后，使其OID置为null -->
+        &lt;property name="use_identifier_rollback">true&lt;/property>
+        &lt;!-- 配置C3P0数据源 -->
+        &lt;!-- 数据库连接池的最大连接数 -->
+        &lt;property name="hibernate.c3p0.max_size">10&lt;/property>
+        &lt;!-- 数据库连接池的最小连接数 -->
+        &lt;property name="hibernate.c3p0.min_size">5&lt;/property>
+        &lt;!-- 连接池检测线程多长时间检测一次池内的所有链接对象是否超时 -->
+        &lt;property name="hibernate.c3p0.idle_test_period">2000&lt;/property>
+        &lt;!-- 数据库连接池中连接对象在多长时间没有使用过后，就应该被销毁 -->
+        &lt;property name="hibernate.c3p0.timeout">2000&lt;/property>
+        &lt;!-- 缓存Statement对象的数量 -->
+        &lt;property name="hibernate.c3p0.max_statements">10&lt;/property>
+        &lt;!-- 设定JDBC的Statement读取数据的时候每次从数据库中去除的记录条数 -->
+        &lt;property name="hibernate.jdbc.fetch_size">100&lt;/property>
+        &lt;!-- 设定对数据库进行批量删除，批量更新，批量插入时批次大小 -->
+        &lt;property name="jdbc.batch_size">30&lt;/property>
+        &lt;mapping resource="org/yang/demo/News.hbm.xml"/>
+    &lt;/session-factory>
+&lt;/hibernate-configuration></pre>
+                                </li>
+                                <li>创建持久化类 : src/org/yang/demo/News.java
+                                    <pre>
+package org.yang.demo;
+import java.sql.Date;
+public class News {
+    private Integer id;
+    private String title;
+    private String author;
+    private Date date;
+    public News() {
+    }
+    public News(String title, String author, Date date) {
+        this.author = author;
+        this.title = title;
+        this.date = date;
+    }
+    public String getAuthor() {
+        return author;
+    }
+    public Date getDate() {
+        return date;
+    }
+    public Integer getId() {
+        return id;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+    public void setDate(Date date) {
+        this.date = date;
+    }
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    @Override
+    public String toString() {
+        return "News [id=" + id + ", title=" + title + ", author=" + author + ", date=" + date + "]";
+    }
+}</pre>
+                                </li>
+                                <li>创建对象-关系映射文件 : src/org/yang/demo/News.hbm.xml
+                                    <pre>
+&lt;?xml version="1.0"?>
+&lt;!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+                                <!-- Generated 2016-8-18 0:00:54 by Hibernate Tools 3.4.0.CR1 -->
+&lt;hibernate-mapping>
+    &lt;class name="org.yang.demo.News" table="NEWS">
+        &lt;id name="id" type="java.lang.Integer">
+            &lt;column name="ID" />
+            &lt;!-- 指定主键的生成方式，native:使用数据库本地的方式 -->
+            &lt;generator class="native" />
+        &lt;/id>
+        &lt;property name="title" type="java.lang.String">
+            &lt;column name="TITLE" />
+        &lt;/property>
+        &lt;property name="author" type="java.lang.String">
+            &lt;column name="AUTHOR" />
+        &lt;/property>
+        &lt;property name="date" type="java.sql.Date">
+            &lt;column name="DATE" />
+        &lt;/property>
+    &lt;/class>
+&lt;/hibernate-mapping></pre>
+                                </li>
+                                <li>通过Hibernate API编写访问数据库代码
+                                    <pre>
+public class HibernateTest {
+    @Test
+    public void test() {
+        //1. 创建SessionFactory对象
+        SessionFactory sessionFactory = null;
+        //1-1 创建Configuration对象，
+                对应hibernate的基本配置信息和对象关系映射信息
+        Configuration configuration = new Configuration().configure();
+        //sessionFactory = configuration.buildSessionFactory();4.0前的方法已过期
+        //1-2 创建ServiceRegistry对象,
+                hibernate任何配置和服务都需要在该对象中注册才能有效
+        ServiceRegistry serviceRegistry = new ServiceRegistryBuilder()
+                .applySettings(configuration.getProperties())
+                .buildServiceRegistry();
+        sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+        //2. 创建一个Session对象
+        Session session = sessionFactory.openSession();
+        //3. 开启事务
+        Transaction transaction = session.beginTransaction();
+        //4. 执行保存操作
+        News news = new News("test1", "yang",
+                                new Date(new java.util.Date().getTime()));
+        session.save(news);
+        //5. 提交事务
+        transaction.commit();
+        //6. 关闭Session
+        session.close();
+        //7. 关闭SessionFactory
+        sessionFactory.close();
+    }
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3>1.3 基本配置</h3>
+                    <ol>
+                        <li>创建持久化java类要求
+                            <ul>
+                                <li>提供一个无参的构造器：使Hibernate可以使用Constructor.newInstance()来获取持久化类实例</li>
+                                <li>提供一个标识属性：通常映射为数据库表的主键字段，如果没有该属性会使一些功能无法使用，例如Session.saveOrUpdate()</li>
+                                <li>为类的持久化字段声明修改器和访问器：Hibernate对javaBean风格的属性实行持久化</li>
+                                <li>使用非final类：运行时生成代理是Hibernate的重要功能，如果持久化类没有实现任何接口，Hibernate使用CGLIB生成代理，如果使用final类则无法生成CGLIB代理</li>
+                                <li>重写equals和hashCode方法：如果需要将持久类的实例放到Set(当需要进行关联映射时)，重写这两个方法</li>
+                                <li>Hibernate不要求持久化类继承任何父类和接口，以保证代码不被污染，因此称Hibernate为低侵入式设计</li>
+                            </ul>
+                        </li>
+                        <li>Configuration
+                            <ul>
+                                <li>Configuration类负责管理Hibernate配置信息，包括
+                                    <ul>
+                                        <li>Hibernate运行的底层信息：数据库url，用户名，密码，JDBC驱动类，数据库Dialect，数据库连接池等(对应hibernate.cfg.xml)</li>
+                                        <li>持久化类与数据表的映射关系(对应*.hbm.xml)</li>
+                                    </ul>
+                                </li>
+                                <li>创建Configuration的方式
+                                    <ul>
+                                        <li>属性文件(hibernate.properties)
+                                            <br><code>Configuration cfg = new Configuration();</code>
+                                        </li>
+                                        <li>xml文件(hibernate.cfg.xml)
+                                            <br><code>Configuration cfg = new Configuration.configure();</code>
+                                        </li>
+                                        <li>指定xml配置文件
+                                            <br><code>File file = new File("simpleit.xml");</code>
+                                            <br><code>Configuration cfg = new Configuration.configure(file);</code>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>SessionFactory
+                            <ul>
+                                <li>针对单个数据库映射关系经过编译后的内存镜像，是线程安全的</li>
+                                <li>SessionFactory对象一旦构建完毕，即被赋予特定的配置信息</li>
+                                <li>SessionFactory是生成Session工厂</li>
+                                <li>构造SessionFactory很消耗资源，一般情况下值初始化一个SessionFactory对象</li>
+                                <li>Hibernate4新增了ServiceRegistry接口，所以基于Hibernate的配置或者服务都必须同一向ServiceRegistry注册后才生效</li>
+                                <li>Hibernate4创建SessionFactory步骤：
+                                    <ul>
+                                        <li>创建Configuration对象
+                                            <br><code>Configuration configuration = Configuration.configure();</code>
+                                        </li>
+                                        <li>创建ServiceRegistry对象
+                                            <br><code>ServiceRegistryBuilder().applySettings(configuration.getProperties())<br>.buildServiceRegistry();</code>
+                                        </li>
+                                        <li>创建SessionFactory对象
+                                            <br><code>SessionFactory sessionFactory = configuration<br>.buildSessionFactory(serviceRegistry);
+                                            </code>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>事务Transaction
+                            <ul>
+                                <li>事务一次原子操作，它具有数据库事务的概念，所有持久层都应该在事务管理下进行，即使是读操作</li>
+                                <li>开启事务：Transaction transaction = session.beginTransaction();</li>
+                                <li>常用方法：
+                                    <ul>
+                                        <li>transaction.commit() - 提交相关联的实例</li>
+                                        <li>transaction.rollback() - 撤销事务操作</li>
+                                        <li>transaction.wasCommitted() - 检查事务是否提交</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>hbm2ddl.auto配置项
+                            <ul>
+                                <li>该属性可以实现正向工程，即由java生成数据库脚本，进而生成具体的表结构</li>
+                                <li>属性取值
+                                    <ul>
+                                        <li>create：会根据.hbm.xml文件来生成数据表，但每次运行都会删除上一次的表重新生成，哪怕第二次没有改变</li>
+                                        <li>create-drop：会根据.hbm.xml文件来生成表，但是SessionFactory一旦关闭就自动删除</li>
+                                        <li>update：常用属性值，根据.hbm.xml文件生成表，若.hbm.xml和数据库中对应数据表结构不同，Hibernate将更新表结构，不会删除已有项</li>
+                                        <li>validate：和数据库中的表进行比较，若.hbm.xml文件中列在数据表中不存在，则抛出异常</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Hibernate配置C3P0数据源
+                            <ul>
+                                <li>导入jar包 ： hibernate-release.Final\lib\optional\c3p0\*.jar</li>
+                                <li>加入配置文件
+                                    <pre>
+&lt;!-- 数据库连接池的最大连接数 -->
+&lt;property name="hibernate.c3p0.max_size">10&lt;/property>
+&lt;!-- 数据库连接池的最小连接数 -->
+&lt;property name="hibernate.c3p0.min_size">5&lt;/property>
+&lt;!-- 连接池检测线程多长时间检测一次池内的所有链接对象是否超时 -->
+&lt;property name="hibernate.c3p0.idle_test_period">2000&lt;/property>
+&lt;!-- 数据库连接池中连接对象在多长时间没有使用过后，就应该被销毁 -->
+&lt;property name="hibernate.c3p0.timeout">2000&lt;/property>
+&lt;!-- 缓存Statement对象的数量 -->
+&lt;property name="hibernate.c3p0.max_statements">10&lt;/property></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>配置项jdbc.fetch_size和jdbc.batch_size属性
+                            <ul>
+                                <li>hibernate.jdbc.fetch_size：
+                                    <br>设定JDBC的Statement读取数据时每次从数据库中读取的记录条数，常设置fetchSize=100；mySql不支持该特性
+                                </li>
+                                <li>hibernate.jdbc.batch_size：
+                                    <br>设定对数据库进行批量删除，批量更新，批量插入时候的批次大小，常设置batchSize=30
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3>1.4 Session & CRUD</h3>
+                    <ol>
+                        <li>概述
+                            <ul>
+                                <li>Session接口是Hibernate向应用程序提供操纵数据库的最主要接口，提供基本的保存，更新，删除，加载java对象的方法</li>
+                                <li>Session具有一个缓存，位于缓存中的对象成为持久化对象，它和数据库中的相关记录对应，Session能够在某些时间点按照缓存中对象的变化来执行相关sql语句同步更新数据库，这一过程成为刷新缓存</li>
+                                <li>在持久化角度，Hibernate将对象分为4种状态：持久化状态，临时状态，游离状态，删除状态；Sessionde的特定方法能使对象从一个转换转换到另一状态</li>
+                            </ul>
+                        </li>
+                        <li>Session类的方法
+                            <ul>
+                                <li>取得持久化对象的方法：get()，load()</li>
+                                <li>持久化对象保存，更新，删除：save()，update()，saveOrUpdate()，delete()</li>
+                                <li>开启事务：beginTransaction()</li>
+                                <li>管理Session方法：isOpen()，flush()，clear()，evict()，close()，refresh()</li>
+                            </ul>
+                        </li>
+                        <li>Session缓存(一级缓存)
+                            <ul>
+                                <li>
+                                    在Session接口实现的中包含一系列java集合，这些java集合构成了Session缓存，
+                                    只要Session实例没有结束生命周期，且没有清理缓存，则存放在缓存中的对象也不会结束生命周期
+                                </li>
+                                <li>Session缓存可以减少Hibernate应用程序访问数据库的频率</li>
+                                <li>flush：为了使数据表中的记录和Session缓存中的对象保持一致，则可能会发送对应的sql语句
+                                    <ul>
+                                        <li>在Transaction的commit()方法中，先自动调用session的flush方法，再提交事务</li>
+                                        <li>flush()方法可能会发送sql语句，但不会提交事务</li>
+                                        <li>再未执行session.flush()方法之前，也有可能进行flush操作
+                                            <br>执行HQL或QBC查询，会先进行flush操作，以得到数据表的最新记录
+                                        </li>
+                                        <li>例外情况：若记录的ID是由底层的数据库自增的方式生成的，则在调用save()方法之后，会立即发送INSERT语句，因为save方法后必须保证对象的ID是存在的</li>
+                                    </ul>
+                                </li>
+                                <li>refresh：会强制发送SELECT语句，以使Session缓存中对象的状态和数据表中的内容一致
+                                    <br>mysql默认的隔离级别为"可重复读"，需要修改为"读已提交"，修改方法：在hibernate.cfg.xml中添加
+                                    <pre>
+&lt;!-- 设置Hibernate的事务隔离级别 -->
+&lt;property name="connection.isolation">2&lt;/property></pre>
+                                </li>
+                                <li>clear：清理缓存</li>
+                                <li>Session缓存与数据库的关系
+                                    <img src="photo/hibernate/hibernate2.emf" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>持久化对象的状态
+                            <ul>
+                                <li>临时对象
+                                    <ul>
+                                        <li>在使用代理主键的情况下，OID通常为null</li>
+                                        <li>不出在Session缓存中</li>
+                                        <li>在数据库中没有对应的记录</li>
+                                    </ul>
+                                </li>
+                                <li>持久化对象
+                                    <ul>
+                                        <li>OID不为null</li>
+                                        <li>位于Session缓存中</li>
+                                        <li>若在数据库中已有和其对应的记录，持久化对象和数据库中的相关记录对应</li>
+                                        <li>Session在flush缓存时，会根据持久化对象的属性变化来同步更新数据库</li>
+                                        <li>在同一个Session缓存实例中，数据表表中的每条记录只对应唯一的持久化对象</li>
+                                    </ul>
+                                </li>
+                                <li>删除对象
+                                    <ul>
+                                        <li>在数据库中没有和其OID对应的记录</li>
+                                        <li>不在处于Session缓存中</li>
+                                        <li>一般情况下，应用程序不该再使用被删除的对象</li>
+                                    </ul>
+                                </li>
+                                <li>游离对象(托管对象)
+                                    <ul>
+                                        <li>OID不为null</li>
+                                        <li>不再处于Session缓存中</li>
+                                        <li>一般情况下，游离对象是有持久化对象转变过来的，因此在数据库中可能还存在与其对应的记录</li>
+                                    </ul>
+                                </li>
+                                <li>对象状态转换图
+                                    <img src="photo/hibernate/hibernate3.emf" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Session API
+                            <ul>
+                                <li>save(Object obj);  //将临时对象转变为持久化对象
+                                    <ul>
+                                        <li>为对象分配OID</li>
+                                        <li>在flush缓存时会发送INSERT语句</li>
+                                        <li>持久化对象的id不能随意修改</li>
+                                        <li>在执行save()前设置ID值无效</li>
+                                    </ul>
+                                </li>
+                                <li>persist(Object obj);  //将临时对象转变为持久化对象
+                                    <ul>
+                                        <li>功能同save()</li>
+                                        <li>save&persist区别：在执行persist()方法前设置ID值不会执行INSERT并且会抛出异常，save则当作ID不存在继续执行</li>
+                                    </ul>
+                                </li>
+                                <li>get(Class clazz, int index);  //根据OID从数据库中加载一个持久化对象</li>
+                                <li>load(Class clazz, int index);  //根据OID从数据库中加载一个持久化对象
+                                    <br>get&load区别
+                                    <ul>
+                                        <li>执行get方法会立即加载对象(立即检索)，执行load方法如果不使用该对象则不会立即执行查询操作，而是返回代理一个对象(延迟检索)</li>
+                                        <li>若数据表中没有记录，get方法会返回null，load则会抛出异常</li>
+                                        <li>load方法可能会抛出LazyInitializationException异常：在需要初始化代理对象之前关闭了session，若不使用该对象的任何属性则不会有问题</li>
+                                    </ul>
+                                </li>
+                                <li>upload(Object obj);  //使一个游离对象转变为持久化对象，并计划执行一条UPDATE语句
+                                    <br>若更新一个持久化对象，不需要显式的调用update方法
+                                    <ul>
+                                        <li>在调用Transaction的commit()方法时，先会执行session的flush方法</li>
+                                        <li>更新一个游离状态，需要显示的调用session的update方法，可以将游离对象变为持久化对象</li>
+                                        <li>无论更新的游离对象和数据表是否一致，都会发送update语句，在.hbm.xml文件的class结点设置 select-before-update="true"可以避免，通常情况下不设置，除非使用触发器</li>
+                                        <li>若数据表中没有对应的记录，但还调用的update方法，则会抛出异常</li>
+                                        <li>当update()方法关联一个游离对象时，如果Session的缓存中已经存在相同的OID的持久化对象，会抛出异常，Session缓存中不能有两个相同OID对象</li>
+                                    </ul>
+                                </li>
+                                <li>saveOrUpdate(Object obj);  //包含了Session的save和update方法
+                                    <ul>
+                                        <li>若执行的对象是游离对象则执行update，是临时对象的话则执行save</li>
+                                        <li>判断对象是游离还是临时的标准为OID，OID为null是临时对象，OID不为null则是游离对象</li>
+                                        <li>OID值等于id的unsaved-value属性值的对象也被认为是一个游离对象</li>
+                                        <li>若OID不为空，但数据表中还没有和其对应的记录，则会抛出异常</li>
+                                    </ul>
+                                </li>
+                                <li>delete(Object obj);  //删除游离对象或持久化对象
+                                    <ul>
+                                        <li>只要OID和数据表中有一条记录对应，就会准备执行delete操作</li>
+                                        <li>若OID在数据表中没有对应的记录，则抛出异常</li>
+                                        <li>Hibernate的cfg.xml配置文件中如果将hibernate.use_identifier_rollback属性设置为true，则delete方法会将持久化对象或游离对象的OID设置为null，使他们变成临时对象</li>
+                                    </ul>
+                                </li>
+                                <li>evict(Object obj);  //从session缓存中把指定的对象移出</li>
+                            </ul>
+                        </li>
+                        <li>通过Hibernate调用存储过程
+                            <ul>
+                                <li>Work接口：直接通过JDBC API访问数据库的操作</li>
+                                <li>Session的doWork(Work)方法用于执行Work对象指定的操作，即调用Work对象的execute()方法，Session会把当前使用的数据库连接传递给execute()方法</li>
+                                <li>Hibernate没有提供存储过程的接口，需要使用原生JDBC调用存储过程
+                                    <pre>
+@Test
+public void testDoWork() {
+    session.doWork(new Work() {
+        @Override
+        public void execute(Connection arg0) throws SQLException {
+            //调用存储过程
+        }
+    });
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Hibernate与触发器协同工作
+                            <ul>
+                                <li>Hibernate与数据库中的触发器协同工作时会出现的问题
+                                    <ul>
+                                        <li>触发器使Session的缓存中的持久化对象与数据库中对应的数据不一致:触发器运行在数据库中, 它执行的操作对Session是透明的</li>
+                                        <li>Session的update()方法盲目地激发触发器:无论游离对象的属性是否发生变化, 都会执行update语句, 而update语句会激发数据库中相应的触发器</li>
+                                    </ul>
+                                </li>
+                                <li>解决方案
+                                    <ul>
+                                        <li>在执行完Session的相关操作后,立即调用Session的flush()和refresh()方法,迫使Session的缓存与数据库同步(refresh()方法重新从数据库中加载对象)</li>
+                                        <li>在映射文件的的<class>元素中设置select-before-update属性:当 Session的update或saveOrUpdate()方法更新一个游离对象时, 会先执行 Select 语句, 获得当前游离对象在数据库中的最新数据, 只有在不一致的情况下才会执行update 语句</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <!--文章]]-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+        <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+            <div class="am-offcanvas-bar">
+
+                <ul class="am-nav">
+                    <h1>Hibernate</h1>
+                    <!--导航[[-->
+                    <li class="am-nav-header">基础知识</li>
+                    <li><a href="#!" id="btn1">对象持久化与ORM</a></li>
+                    <li><a href="#!" id="btn2">Hibernate开发步骤</a></li>
+                    <li><a href="#!" id="btn3">基本配置</a></li>
+                    <li><a href="#!" id="btn4">Session & CRUD</a></li>
+                    <li class="am-nav-header">映射</li>
+                    <li><a href="#!" id="btn5">类与表的映射</a></li>
+                    <li><a href="#!" id="btn6">类型映射</a></li>
+                    <li><a href="#!" id="btn7">映射关联关系</a></li>
+                    <li><a href="#!" id="btn8">继承映射</a></li>
+                    <li class="am-nav-header">更多操作</li>
+                    <li><a href="#!" id="btn9">检索</a></li>
+                    <li><a href="#!" id="btn10">缓存</a></li>
+                    <li><a href="#!" id="btn11">管理Session</a></li>
+                    <li><a href="#!" id="btn12">批量处理数据</a></li>
+
+                </ul>
+                <!--导航]]-->
+            </div>
+        </div>
+    </div>
+    <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+        data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+<!--页脚[[-->
+<br><br><br>
+<div class="am-g">
+    <div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+        <br>
+        <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+        <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+    </div>
+</div>
+<br><br><br>
+<!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+    //加载进度条
+    var progress = $.AMUI.progress;
+    $(window).load(function() {
+        progress.done();
+    })
+    $(document).ready(function() {
+        progress.start();
+    })
+    //侧边栏平滑滚动
+    $(window).smoothScroll();
+    function navClick($btnObj, $pageObj) {
+        $btnObj.on("click", function() {
+            var $w = $(window);
+            $w.smoothScroll({position: $pageObj.offset().top});
+        })
+    }
+    navClick($("#btn1"), $("#page1"));
+    navClick($("#btn2"), $("#page2"));
+    navClick($("#btn3"), $("#page3"));
+    navClick($("#btn4"), $("#page4"));
+    navClick($("#btn5"), $("#page5"));
+    navClick($("#btn6"), $("#page6"));
+    navClick($("#btn7"), $("#page7"));
+    navClick($("#btn8"), $("#page8"));
+
+</script>
+</body>
+</html>
