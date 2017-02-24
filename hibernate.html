@@ -38,7 +38,7 @@
 
                     <!--文章[[-->
                     <h2>第一部分 基础知识</h2>
-                    <h3>1.1 对象持久化与ORM</h3>
+                    <h3 id="page1">1.1 对象持久化与ORM</h3>
                     <ol>
                         <li>对象持久化
                             <ul>
@@ -88,7 +88,7 @@
                             </ul>
                         </li>
                     </ol>
-                    <h3>1.2 Hibernate开发步骤</h3>
+                    <h3 id="page2">1.2 Hibernate开发步骤</h3>
                     <ol>
                         <li>安装eclipse的hibernate插件
                             <br>安装方法说明:
@@ -261,7 +261,7 @@ public class HibernateTest {
                             </ul>
                         </li>
                     </ol>
-                    <h3>1.3 基本配置</h3>
+                    <h3 id="page3">1.3 基本配置</h3>
                     <ol>
                         <li>创建持久化java类要求
                             <ul>
@@ -375,7 +375,7 @@ public class HibernateTest {
                             </ul>
                         </li>
                     </ol>
-                    <h3>1.4 Session & CRUD</h3>
+                    <h3 id="page4">1.4 Session & CRUD</h3>
                     <ol>
                         <li>概述
                             <ul>
@@ -547,7 +547,7 @@ public void testDoWork() {
                         </li>
                     </ol>
                     <h2>第二部分 映射</h2>
-                    <h3>2.1 类与表的映射</h3>
+                    <h3 id="page5">2.1 类与表的映射</h3>
                     <ol>
                         <li>类与表的映射
                             <table class="am-table am-table-compact">
@@ -787,7 +787,7 @@ public void testBlob() throws IOException, SQLException {
                             </ul>
                         </li>
                     </ol>
-                    <h3>2.2 映射关联关系</h3>
+                    <h3 id="page6">2.2 映射关联关系</h3>
                     <ol>
                         <li>映射组合关联关系
                             <ul>
@@ -932,6 +932,809 @@ public void testBlob() throws IOException, SQLException {
                             </ul>
                         </li>
                     </ol>
+                    <h3 id="page7">2.3 继承映射</h3>
+                    <ol>
+                        <li>继承映射：对于面向对象的程序设计语言而言，继承和多态是两个最基本的概念。Hibernate的继承映射可以理解为持久化类之间的继承关系</li>
+                        <li>继承映射策略
+                            <ul>
+                                <li>subclass - 将域模型中的每一个实体对象映射到一个独立的表中，也就是说不用在关系数据模型中考虑域模型中的继承关系和多态</li>
+                                <li>joined-subclass - 对于继承关系中的子类使用同一个表，这就需要在数据库表中增加额外的区分子类类型的字段</li>
+                                <li>union-subclass - 域模型中的每个类映射到一个表，通过关系数据模型中的外键来描述表之间的继承关系。这也就相当于按照域模型的结构来建立数据库中的表，并通过外键来建立表之间的继承关系</li>
+                            </ul>
+                        </li>
+                        <li>持久化类示例
+                            <img src="photo/hibernate/hibernate31.png" class="am-img-responsive">
+                        </li>
+                        <li>subclass继承映射
+                            <ul>
+                                <li>采用subclass继承映射可以实现对继承关系中父类和子类使用同一张表</li>
+                                <li>辨别者列：因为父类和子类需要保存在同一张表，因此需要在该表内增加一列，使用该列来区分每行记录到底是哪一个类的实例</li>
+                                <li>在这种策略映射下，使用subclass元素来映射子类，使用class和subclass的discriminator-value属性指定辨别者列的值</li>
+                                <li>所有子类定义的字段不能有非空约束</li>
+                                <li>e.g.
+                                    <img src="photo/hibernate/hibernate32.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>joined-subclass继承映射
+                            <ul>
+                                <li>采用joined-subclass元素的继承映射可以实现每一个子类一张表</li>
+                                <li>采用这种映射策略，父类实例保存在父类表中，子类实例由父类表和子类表共同存储，子类表新增的属性保存在子类表中</li>
+                                <li>这种映射策略不需要辨别者列，但需要每个子类使用key元素映射共有主键</li>
+                                <li>e.g.
+                                    <img src="photo/hibernate/hibernate33.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>union-subclass继承映射
+                            <ul>
+                                <li>采用union-sublcass元素可以实现每一个实体对象映射到一个独立的表中</li>
+                                <li>子类增加的属性可以有非空约束，子类的数据保存在子表中，父类的数据保存在父表中</li>
+                                <li>子类实例的数据仅保存在子类表中，在父类表中没有任何记录</li>
+                                <li>该映射策略既不需要鉴别这列也不需要key元素映射主键</li>
+                                <li>
+                                    在union-subclass映射策略不可以使用identity的主键生成策略，因为同一类继承层次中所有实体类都需要同一个主键种子，也不能使用native生成策略，应该使用hilo
+                                </li>
+                                <li>e.g.
+                                    <img src="photo/hibernate/hibernate34.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>三种继承映射方式比较
+                            <img src="photo/hibernate/hibernate35.emf" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h2>第三部分 更多操作</h2>
+                    <h3 id="page8">3.1 检索</h3>
+                    <ol>
+                        <li>检索策略
+                            <ul>
+                                <li>类级别和关联级别可选的检索策略
+                                    <img src="photo/hibernate/hibernate36.png" class="am-img-responsive">
+                                </li>
+                                <li>检索策略的运行机制
+                                    <img src="photo/hibernate/hibernate37.png" class="am-img-responsive">
+                                </li>
+                                <li>映射文件中用于设定检索策略的属性
+                                    <img src="photo/hibernate/hibernate38.png" class="am-img-responsive">
+                                </li>
+                                <li>检索策略特点
+                                    <img src="photo/hibernate/hibernate39.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>检索方式
+                            <ul>
+                                <li>导航对象图检索方式：根据已经加载的对象导航到其他对象</li>
+                                <li>OID检索方式：按照对象的OID来检索对象</li>
+                                <li>HQL检索方式：使用面向对象的OID来检索对对象</li>
+                                <li>QBC检索方式：使用QBC(Query By Criteria)API来检索对象，这种API封装了就字符串形式的查询语句，提供了更加面向对象的查询接口</li>
+                                <li>本地SQL检索方式：使用本地数据库的SQL查询语句</li>
+                            </ul>
+                        </li>
+                        <li>HQL检索
+                            <ul>
+                                <li>概述: HQL(Hibernate Query Language)是面向对象的查询语言，在Hibernate检索方式中最广的一种，包含功能
+                                    <ul>
+                                        <li>在查询语句中设定查询条件</li>
+                                        <li>支持投影查询，检索出对象的部分属性</li>
+                                        <li>支持分页查询</li>
+                                        <li>支持连接查询</li>
+                                        <li>支持分组查询，允许使用HAVING和GROUP BY关键字</li>
+                                        <li>提供内置聚集函数，如SUM(),MIN(),MAX()</li>
+                                        <li>支持子查询</li>
+                                        <li>支持动态绑定参数</li>
+                                        <li>能够调用用户定义的sql函数或标准sql函数</li>
+                                    </ul>
+                                </li>
+                                <li>HQL检索步骤
+                                    <ul>
+                                        <li>通过Session对象的createQuery()方法创建一个Query对象，包括一个HQL查询语句，HQL查询语句中包含命名参数</li>
+                                        <li>调用绑定参数</li>
+                                        <li>调用Query相关方法执行查询语句</li>
+                                    </ul>
+                                </li>
+                                <li>Query接口支持方法链编程风格，它的setXxx()方法返回自身实例而不是void</li>
+                                <li>HQL和SQL比较
+                                    <ul>
+                                        <li>
+                                            HQL查询语句是面向对象的，Hibernate负责解析HQL查询语句，然后根据对象-关系映射文件中的映射信息，把HQL查询语句翻译成相关SQL语句，HQL查询语句的主体是域模型中类及类的属性
+                                        </li>
+                                        <li>SQL查询语句是与关系数据库绑定在一起的，SQL查询语句中的主体是数据库表及表的字段</li>
+                                    </ul>
+                                </li>
+                                <li>绑定参数
+                                    <ul>
+                                        <li>Hibernate的参数绑定机制依赖于JDBC API中的PreparedStatement的预定义SQL语句功能</li>
+                                        <li>HQL的参数绑定形式
+                                            <br>按参数名字绑定：在HQL查询语句中定义命名参数，命名参数以":"开头
+                                            <br>按参数位置绑定：在HQL查询语言中用"?"定义参数位置
+                                        </li>
+                                        <li>相关方法
+                                            <br>setEntity() : 把参数与一个持久化类绑定
+                                            <br>setParameter() : 绑定任意类型的参数，该方法的第三个参数显示指定Hibernate映射类型
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>排序：HQL采用ORDERBY关键字对查询结果进行排序</li>
+                                <li>基本查询示例
+                                    <img src="photo/hibernate/hibernate40.png" class="am-img-responsive">
+                                </li>
+                                <li>分页查询
+                                    <ul>
+                                        <li>setFirstResult(int firstResult)：设定从哪一个对象开始检索，参数firstResult表示这个对象在查询结果中的索引位置，所以位置的起始值为0，默认情况下，Query从查询结果中的第一个对象开始检索</li>
+                                        <li>setMaxResults(int maxResults)：设定一次最多检索出的对象数目，默认情况下，Query和Criteria接口检索出查询结果中所有对象</li>
+                                        <li>e.g.
+                                            <pre>
+@Test
+public void testPageQuery() {
+    String hql = "from Employee";
+    Query query = session.createQuery(hql);
+    int pageNo = 5;  //页数
+    int pageSize = 20;  //每页显示数量
+     //进行分页查询
+    query.setFirstResult((pageNo-4) * pageSize)
+        .setMaxResults(pageSize)
+        .list();
+    List&lt;Employee> employees = query.list();
+    //显示对应的结果集
+    for (int i = 0; i < employees.size(); ++i) {
+        System.out.println(employees.get(i));
+    }
+}</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>命名查询：在映射文件中定义命名查询语句
+                                    <ul>
+                                        <li>Hibernate允许在映射文件中定义字符串形式的查询语句</li>
+                                        <li>&lt;query>元素用于定义HQL查询语句，和&lt;class>位置并列</li>
+                                        <li>在程序中通过Session的getNameQuery方法获取查询语句对应的Query对象</li>
+                                        <li>e.g.
+                                            <pre>
+&lt;!-- 命名查询 -->
+&lt;query name="salaryEmps">
+    <![CDATA[from Employee e where e.salary > :minSal]]>
+&lt;/query>
+@Test
+public void testNamedQuery() {
+    Query query = session.getNamedQuery("salaryEmps");
+    List&lt;Employee> employees = query.setFloat("minSal", 1000).list();
+    System.out.println(employees.size());
+}</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>投影查询
+                                    <ul>
+                                        <li>查询结果集仅包含实体的部分属性，通过select关键字实现</li>
+                                        <li>Query的list()方法返回的集合中包含的是数组类型元素，每个对象数组代表查询结果的一条记录</li>
+                                        <li>可以在持久化类中定义一个对象的构造器来包装投影查询的返回记录，是程序代码能完全运用面向对象的语义来访问查询结果集</li>
+                                        <li>可以通过distinct关键字来保证查询结果不会返回重复元素</li>
+                                        <li>e.g.1 结果集为数组类型的投影查询
+                                            <pre>
+@Test
+public void testFieldQuery() {
+    String hql = "select e.id, e.name from Employee e where e.department = :dept";
+    Query query = session.createQuery(hql);
+    Department department = new Department();
+    department.setId(1);
+    List<Object[]> result = query.setEntity("dept", department).list();
+    for (Object [] objects : result) {
+        System.out.println(Arrays.asList(objects));
+    }
+}</pre>
+                                        </li>
+                                        <li>e.g.2 结果集为对象类型的投影查询
+                                            <pre>
+@Test
+public void testFileQuery2() {
+    //结果集为对象类型的投影查询，需要在对应持久化类中加入无参构造器和对应参数构造器
+    String hql = "select new Employee(e.id, e.name, e.department) from Employee e";
+    Query query = session.createQuery(hql);
+    List&lt;Employee> employees = query.list();
+    for (Employee employee : employees) {
+        System.out.println(employee.getId() + " - " + employee.getName());
+    }
+}</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>报表查询：对数据分组和统计
+                                    <ul>
+                                        <li>和SQL相同，HQL使用GROUP BY关键字对数据进行分组，用HAVING关键字对分组数据设定约束条件</li>
+                                        <li>在HQL查询语句中可以调用的聚集函数 : count(), min(), max(), sum(), avg()</li>
+                                        <li>e.g.
+                                            <pre>
+@Test
+public void testGroupBy() {
+    String hql = "select min(e.salary), max(e.salary) from Employee e"
+            + " group by e.department having min(salary) > 500";
+    Query query = session.createQuery(hql);
+    List<Object[]> objects = query.list();
+    for (Object[] obj : objects) {
+        System.out.println(Arrays.asList(obj));
+    }
+}</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>HQL迫切左外连接
+                                    <ul>
+                                        <li>LEFT JOIN FETCH关键字表示迫切左外连接检索策略</li>
+                                        <li>list()方法返回集合中存放实体对象的引用，每个查询的实体对象关联的对象集合都被初始化，存放其实体对象</li>
+                                        <li>查询结果可能会包含重复元素，通过DISTINCT关键字或者HashSet过滤重复元素</li>
+                                        <li>e.g.
+                                            <pre>
+@Test
+public void testLeftJoinFetch() {
+    String hql = "select distinct d from Department d left join fetch d.employees";
+    Query query = session.createQuery(hql);
+    List&lt;Department> departments = query.list();
+    //可以通过包装List方式去重
+    //departments= new ArrayList<>(new LinkedHashSet<>(departments));
+    for (Department department : departments) {
+    System.out.println(department.getEmployees().size());
+    }
+}</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>HQL左外连接
+                                    <ul>
+                                        <li>LEFT JOIN关键字表示左外连接查询</li>
+                                        <li>list()方法返回的集合中存放的是对象数组类型</li>
+                                        <li>根据配置文件来决定被关联对象的检索策略</li>
+                                        <li>通过SELECT关键字将返回的集合类型从对象数组改为对象</li>
+                                        <li>e.g.
+                                            <pre>
+@Test
+public void testLeftJoin() {
+    String hql = "select distinct d from Department d left join d.employees";
+    Query query = session.createQuery(hql);
+    List&lt;Department> departments = query.list();
+    //不可以通过包装List方式去重
+    //departments = new ArrayList<>(new LinkedHashSet<>(departments));
+    for (Department department : departments) {
+    System.out.println(department.getName());
+    }
+}</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>HQL迫切内连接
+                                    <ul>
+                                        <li>INNER JOIN FETCH关键字表示迫切内连接，INNER可以省略</li>
+                                        <li>list()方法返回的集合中存放对象的引用，所有被关联的对象集合都被初始化，存放其关联对象实例</li>
+                                        <li>e.g.
+                                            <pre>
+@Test
+public void testInnerJoinFetch() {
+    String hql = "select distinct d from Department d inner join fetch d.employees";
+    Query query = session.createQuery(hql);
+    List&lt;Department> departments = query.list();
+    System.out.println(departments.size());
+ }</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>HQL内连接
+                                    <ul>
+                                        <li>INNER JOIN关键字表示内连接，INNER可以省略</li>
+                                        <li>list()方法的集合中存放每隔元素对应查询结果的一条记录，每隔元素都是对象数组类型</li>
+                                        <li>如果希望list()方法的返回集合仅包含对象，可以在HQL查询语句中使用SELECT关键字</li>
+                                    </ul>
+                                </li>
+                                <li>HQL更新操作
+                                    <br>
+                                    <pre>
+@Test
+public void testHQLUpdate() {
+    String hql = "delete from Employee e where e.id = :id";
+    Query query = session.createQuery(hql);
+    query.setInteger("id", 103).executeUpdate();
+}</pre>
+                                </li>
+                                <li>关联级别运行时的检索策略
+                                    <ul>
+                                        <li>如果在HQL中没有显示指定检索策略，将使用映射文件中配置的检索策略</li>
+                                        <li>HQL会忽略映射文件中设置的迫切左外连接检索策略，如果希望HQL采用迫切左外连接策略，必须在HQL查询语句中显式指定</li>
+                                        <li>若在HQL代表中显式了检索策略，就会覆盖映射文件中配置的检索策略</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>QBC检索和本地SQL检索
+                            <ul>
+                                <li>QBC检索方式概述：QBC查询就是通过使用Hibernate提供的Query By Criteria
+                                    API来查询对象，这种API封装的SQL语句的动态拼装，对查询提供了面向对象的功能接口
+                                </li>
+                                <li>QBC基本查询
+                                    <pre>
+@Test
+public void testQBC() {
+    //1. 创建一个Criteria对象
+    Criteria criteria = session.createCriteria(Employee.class);
+    //2. 添加查询条件：在QBC中查询条件使用Criterion来表示
+    //        Criterion可以通过Restrictions的静态方法得到
+    criteria.add(Restrictions.eq("name", "test20"));
+    criteria.add(Restrictions.gt("salary", 500F));
+    //3. 执行查询
+    Employee employee = (Employee) criteria.uniqueResult();
+    System.out.println(employee);
+}</pre>
+                                </li>
+                                <li>QBC逻辑运算查询
+                                    <pre>
+@Test
+public void testQBC2() {
+    Criteria criteria = session.createCriteria(Employee.class);
+    //1. AND : 使用Conjunction表示
+    //        Conjuction本身就是一个Criterion对象
+    Conjunction conjunction = Restrictions.conjunction();
+    conjunction.add(Restrictions.like("name", "e", MatchMode.ANYWHERE));
+    Department dept = new Department();
+    dept.setId(50);
+    conjunction.add(Restrictions.eq("department", dept));
+    System.out.println(conjunction);
+    //2. OR
+    Disjunction disjunction = Restrictions.disjunction();
+    disjunction.add(Restrictions.ge("salary", 500F));
+    disjunction.add(Restrictions.isNull("name"));
+    criteria.add(disjunction);
+    criteria.add(conjunction);
+    criteria.list();
+}</pre>
+                                </li>
+                                <li>QBC统计查询
+                                    <pre>
+@Test
+public void testQBC3() {
+    Criteria criteria = session.createCriteria(Employee.class);
+    //统计查询：使用Projection来表示,可以由Projections静态方法得到
+    criteria.setProjection(Projections.max("salary"));
+    System.out.println(criteria.uniqueResult());
+}</pre>
+                                </li>
+                                <li>QBC排序查询
+                                    <pre>
+@Test
+public void testQBC4() {
+    //排序
+    Criteria criteria = session.createCriteria(Employee.class);
+    //1. 添加排序
+    criteria.addOrder(Order.asc("salary"));
+    criteria.addOrder(Order.desc("name"));
+    //2. 添加分页方法
+    int pageNo = 5;
+    int pageSize = 20;
+    List&lt;Employee> employees =
+                criteria.setFirstResult((pageNo - 4) * pageSize)
+                .setMaxResults(pageSize).list();
+                System.out.println(employees.size());
+}</pre>
+                                </li>
+                                <li>本地SQL检索
+                                    <pre>
+@Test
+public void testNativeSQL() {
+    String sql = "insert into employee(name, salary, dept_id) value(?,?,?)";
+    Query query = session.createSQLQuery(sql);
+    query.setString(0, "#test#")
+        .setFloat(1, 6666).setInteger(2, 2).executeUpdate();
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page9">3.2 缓存</h3>
+                    <ol>
+                        <li>缓存(Cache)
+                            <ul>
+                                <li>缓存介于应用程序和永久性数据存储源(如硬盘上的文件或者数据库)之间，其作用是降低应用程序直接读写永久性数据存储源的频率，从而提高应用的运行性能</li>
+                                <li>Hibernate中提供两个级别的缓存
+                                    <ul>
+                                        <li>第一级别缓存：Session级别的缓存，属于事务范围的缓存，由Hibernate管理</li>
+                                        <li>第二级别缓存：SessionFactory级别的缓存，属于进程范围的缓存</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>SessionFactory级别缓存分类
+                            <ul>
+                                <li>
+                                    内置缓存：Hibernate自带，不可卸载，通常在Hibernate的初始化阶段，Hibernate会把映射元数据和预定义的SQL语句放到SessionFactory的缓存中，映射元数据是映射文件中数据(.hbm.xml文件中的数据)的复制，该内置缓存是只读的
+                                </li>
+                                <li>外置缓存(二级缓存)：一个可配置的缓存插件，在默认情况下SessionFactory不会启用这个缓存插件，外置缓存中的数据是数据库数据的复制，外置缓存的物理介质可以是内存或硬盘</li>
+                            </ul>
+                        </li>
+                        <li>使用环境
+                            <ul>
+                                <li>适合放入二级缓存的数据
+                                    <ul>
+                                        <li>很少被修改的数据</li>
+                                        <li>不是很重要的数据，允许偶尔出现并发问题</li>
+                                    </ul>
+                                </li>
+                                <li>不适合放入二级缓存的数据
+                                    <ul>
+                                        <li>经常被修改的数据</li>
+                                        <li>财务数据，绝对不允许出现并发问题</li>
+                                        <li>与其他应用程序共享的程序</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>二级缓存并发访问策略
+                            <ul>
+                                <li>两个并发的事务同时访问持久层的缓存的相同数据时，也有可能出现各类并发问题</li>
+                                <li>二级缓存可以设定4中类型的并发策略，每一种访问策略对应一种事务隔离级别
+                                    <ul>
+                                        <li>非严格读写(Nonstrict-read-write)：不保证缓存与数据库中的数据一致性，提供Read
+                                            Uncommited事务隔离级别，对于极少被修改，允许脏读的数据可以采用这种策略
+                                        </li>
+                                        <li>读写型(Read-write)：提供Read Commited数据隔离级别，经常读但是很少被修改数据，可以采用这种隔离级别，可以防止脏读</li>
+                                        <li>事务型(Transactional)：仅在受管理环境下适用，提供Repeatable
+                                            Read事务隔离级别，对于经常读但很少修改的数据可以采用，可以防止脏读和不重复读
+                                        </li>
+                                        <li>只读型(Read-Only)：提供Serializable数据隔离级别，对于从来不会被修改的数据可以采用该访问策略</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>管理Hibernate二级缓存
+                            <ul>
+                                <li>Hibernate的二级缓存是进程或集群范围内的缓存</li>
+                                <li>二级缓存是可配置的插件，Hibernate允许一下类型的缓存插件
+                                    <ul>
+                                        <li>EHCache - 可作为进程范围内的缓存,存放数据的物理介质可以使内存或硬盘,对Hibernate的查询缓存提供了支持</li>
+                                        <li>OpenSymphony OSCache -
+                                            可作为进程范围内的缓存,存放数据的物理介质可以使内存或硬盘,提供了丰富的缓存数据过期策略,对Hibernate的查询缓存提供了支持
+                                        </li>
+                                        <li>SwarmCache - 可作为集群范围内的缓存,但不支持Hibernate的查询缓存</li>
+                                        <li>JBossCache - 可作为集群范围内的缓存,支持Hibernate的查询缓存</li>
+                                    </ul>
+                                </li>
+                                <li>缓存插件支持的并发访问策略
+                                    <img src="photo/hibernate/hibernate41.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>配置Hibernate二级缓存步骤
+                            <ul>
+                                <li>加入二级缓存插件的jar包及配置文件
+                                    <ul>
+                                        <li>复制/hibernate-release.Final/lib/optional/ehcache/*.jar到当前Hibernate应用的类路径下
+                                        </li>
+                                        <li>复制/hibernate-release.Final/project/etc/ehcache.xml到当前WEB应用类路径下</li>
+                                    </ul>
+                                </li>
+                                <li>配置hibernate.cfg.xml
+                                    <ul>
+                                        <li>配置启用hibernate的二级缓存
+                                            <br><code>&lt;property name="cache.use_second_level_cache">true&lt;/property></code>
+                                        </li>
+                                        <li>配置hibernate二级缓存使用的产品
+                                            <br><code>
+                                                &lt;property name="hibernate.cache.region.factory_class"><br>
+                                                org.hibernate.cache.ehcache.EhCacheRegionFactory&lt;/property></code>
+                                        </li>
+                                        <li>配置使用二级缓存的类以及对应的缓存策略(也可以在.hbm.xml文件中配置)
+                                            <br><code>
+                                                &lt;class-cache usage="read-write" class="org.yang.demo.Employee"/><br>
+                                                &lt;cache usage="read-write"/>(.hml.xml中配置)
+                                            </code>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>类级别二级缓存
+                            <pre>
+@Test
+public void testHibernateSecondLevelCache() {
+    Employee employee = (Employee) session.get(Employee.class, 100);
+    System.out.println(employee);
+    transaction.commit();
+    session.close();
+    session = sessionFactory.openSession();
+    transaction = session.beginTransaction();
+    Employee employee2 = (Employee) session.get(Employee.class, 100);
+    System.out.println(employee);
+}
+&lt;class-cache usage="read-write" class="org.yang.demo.Employee"/></pre>
+                        </li>
+                        <li>集合级别二级缓存
+                            <pre>
+@Test
+public void testCollectionSecondLevalCache() {
+    Department department = (Department) session.get(Department.class, 1);
+    System.out.println(department.getName());
+    System.out.println(department.getEmployees().size());
+    transaction.commit();
+    session.clear();
+    session = sessionFactory.openSession();
+    transaction = session.beginTransaction();
+    Department department2 = (Department) session.get(Department.class, 1);
+    System.out.println(department2.getName());
+    System.out.println(department2.getEmployees().size());
+}
+&lt;class-cache usage="read-write" class="org.yang.demo.Employee"/>
+&lt;class-cache usage="read-write" class="org.yang.demo.Department"/>
+&lt;collection-cache usage="read-write" collection="org.yang.demo.Department.employees"/></pre>
+                        </li>
+                        <li>EHCache配置文件详解
+                            <ul>
+                                <li>&lt;diskStore> - 指定一个目录,当EHCache把数据写到硬盘上时,将把数据写到这个目录下</li>
+                                <li>&lt;defaultCache> - 设置缓存的默认数据过期策略</li>
+                                <li>&lt;cache> - 设定具体的命名缓存的数据过期策略,每个命名缓存代表一个缓存区域
+                                    <ul>
+                                        <li>缓存区域：一个具有名称的缓存缓存块，可以给每一个缓存块设置不同的缓存策略，如果没有指明缓存区域的使用默认策略</li>
+                                        <li>Hibernate在不同的缓存区域保存不同的类/集合
+                                            <ul>
+                                                <li>对于类来说，区域的名称是全类名</li>
+                                                <li>对于集合而言，去域名是全类名.属性名</li>
+                                            </ul>
+                                        </li>
+                                        <li>cache元素属性
+                                            <ul>
+                                                <li>name : 设置缓存的名字,它的取值为类的全限定名或类的集合的名字</li>
+                                                <li>maxInMemory : 设置基于内存的缓存中可存放的对象最大数目</li>
+                                                <li>eternal : 设置对象是否为永久的,true表示永不过期,此时将忽略timeToIdleSeconds 和
+                                                    timeToLiveSeconds属性; 默认值是false
+                                                </li>
+                                                <li>timeToIdleSeconds : 设置对象空闲最长时间,以秒为单位,
+                                                    超过这个时间,对象过期。当对象过期时,EHCache会把它从缓存中清除。如果此值为0,表示对象可以无限期地处于空闲状态。
+                                                </li>
+                                                <li>timeToLiveSeconds :
+                                                    设置对象生存最长时间,超过这个时间,对象过期。如果此值为0,表示对象可以无限期地存在于缓存中. 该属性值必须大于或等于
+                                                    timeToIdleSeconds 属性值
+                                                </li>
+                                                <li>overflowToDisk : 设置基于内存的缓存中的对象数目达到上限后,是否把溢出的对象写到基于硬盘的缓存中 </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>查询缓存
+                            <ul>
+                                <li>默认情况下，设置查询缓存对HQL和QBC查询是无效的</li>
+                                <li>开启查询缓存的方法
+                                    <ul>
+                                        <li>在hibernate配置文件中声明开启查询缓存
+                                            <br><code>&lt;property name="cache.use_query_cache">true&lt;/property></code>
+                                        </li>
+                                        <li>调用Query或Criteria的setCacheAble(true)方法</li>
+                                    </ul>
+                                </li>
+                                <li>查询缓存依赖二级缓存</li>
+                                <li>e.g.
+                                    <pre>
+@Test
+public void testQueryCache() {
+    String hql = "from Employee";
+    Query query = session.createQuery(hql);
+    query.setCacheable(true);  //设置该查询允许被缓存
+    List&lt;Employee> employees = query.list();
+    System.out.println(employees.size());
+    List&lt;Employee> employees2 = query.list();
+        System.out.println(employees2.size());
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>时间戳缓存
+                            <br>时间戳缓存区域存放了对于查询结果相关表进行插入，更新，删除操作的时间戳，Hibernate通过时间戳缓存区域来判断被缓存的查询结果是否过期，运行过程如下
+                            <ul>
+                                <li>T1时刻执行查询操作，把查询结果存放到QueryCache区域，记录该区域的时间戳为T1</li>
+                                <li>T2时刻对查询结果相关的表进行更新操作，Hibernate把T2时刻存放在UpdateTimestampCache区域</li>
+                                <li>T3时刻执行查询结果前，先比较QueryCache区域的时间戳和UpdateTimestampCache区域的查询结果，
+                                    若T2 > T1，则丢弃原先存放在QueryCache区域的查询结果，重新导数据库中查询数据，
+                                    若T2 < T1，则直接从QueryCache中获取查询结果</li>
+                            </ul>
+                        </li>
+                        <li>Query接口iterator方法
+                            <ul>
+                                <li>Query接口的iterator方法
+                                    <ul>
+                                        <li>同list()一样执行查询操作</li>
+                                        <li>list()方法执行的SQL语句包含实体类对应的数据表所有字段</li>
+                                        <li>iterator()方法执行SQL语句中仅包含实体类对应数据表的ID字段</li>
+                                        <li>当遍历访问结果集时，该方法先到Session缓存和二级缓存中查看是否存在特定的OID对象，如果存在直接返回，如果不存在就通过相应的SQL Select语句到数据库中加载特定的实体对象</li>
+                                    </ul>
+                                </li>
+                                <li>大多数情况下使用list()方法执行查询操作，iterator()方法在查询表中包含大量字段和启用了二级缓存一集缓存中包含待查询对象的前提下可以稍微提高查询性能
+                                </li>
+                                <li>e.g.
+                                    <pre>
+@Test
+public void testQueryIterate() {
+    Department department = (Department) session.get(Department.class, 4);
+    System.out.println(department.getName());
+    System.out.println(department.getEmployees().size());
+    Query query = session.createQuery("from Employee e where e.department = 4");
+//  List&lt;Employee> employees = query.list();
+//  System.out.println(employees);
+Iterator&lt;Employee> emIterator = query.iterate();
+    while (emIterator.hasNext()) {
+    System.out.println(emIterator.next().getName());
+    }
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page10">3.3 管理Session</h3>
+                    <ol>
+                        <li>Hibernate提供了3种方式管理Session对象
+                            <ul>
+                                <li>Session对象的生命周期与本地线程绑定</li>
+                                <li>Session对象的生命周期与JTA事务绑定</li>
+                                <li>Hibernate委托程序管理Session对象的生命周期</li>
+                            </ul>
+                        </li>
+                        <li>配置管理Session方式
+                            <ul>
+                                <li>在.cfg.xml中的hibernate.current_session_context_class属性用于指定Session管理方式，可选值:
+                                    <ul>
+                                        <li>thread - Session对象的生命周期与本地线程绑定</li>
+                                        <li>jta - Session对象的生命周期与JTA事务绑定</li>
+                                        <li>managed - Hibernate委托程序来管理Session对象的生命周期</li>
+                                    </ul>
+                                </li>
+                                <li>e.g.
+                                    <br><code>&lt;property name="current_session_context_class">thread&lt;/property></code>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Session对象的生命周期与本地线程绑定
+                            <ul>
+                                <li>
+                                    当一个线程(threadA)第一次调用SessionFactory对象的getCurrentSession()方法时，该方法会创建一个新的Session(SessionA)对象，把该对象与threadA绑定，并返回sessionA
+                                </li>
+                                <li>当threadA再次调用sessionFactory对象的getCurrentSession方法时，该方法将返回sessionA对象</li>
+                                <li>当threadA提交sessionA对象关联事务时，Hibernate会自动flush
+                                    sessionA对象的缓存，然后提交事务，关闭sessionA对象；当threadA撤销sessionA对象关联的事务时也会自动关闭sessionA对象
+                                </li>
+                                <li>
+                                    当threadA再次调用sessionFactory对象的getCurrentSession()方法时，该方法会创建一个新的Session(sessionB)对象，并将该对象与threadA绑定，返回sessionB
+                                </li>
+                                <li>e.g.
+                                    <pre>
+public class HibernateUtils {
+    private static HibernateUtils instance = new HibernateUtils();
+    public static HibernateUtils getInstance() {
+        return instance;
+    }
+    private SessionFactory sessionFactory;
+    public SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            Configuration configuration = new Configuration().configure();
+            ServiceRegistry serviceRegistry = new ServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).buildServiceRegistry();
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+        }
+        return sessionFactory;
+    }
+    public Session getSession() {
+        return getSessionFactory().getCurrentSession();
+    }
+}
+public class DepartmentDao {
+    /**
+     * 若需要传入一个Session对象，则意味着上一层(Service)需要获取到Session对象
+     * 说明上一层需要和Hibernate API耦合，不推荐使用传入Session对象的方法
+     * @param session
+     * @param department
+     */
+    public void save(Session session, Department department) {
+        session.save(department);
+    }
+    public void save(Department department) {
+        //内部获取Session对象
+        //获取和当前线程绑定的Session对象
+        //        1. 不需要外部传入session对象
+        //        2. 多个DAO方法可以使用一个事务
+        Session session = HibernateUtils.getInstance().getSession();
+        System.out.println(session.hashCode());
+        session.save(department);
+    }
+}
+@Test
+public void testManageSession() {
+    Session session = HibernateUtils.getInstance().getSession();
+    System.out.println("-->" +session.hashCode());
+    Transaction transaction = session.beginTransaction();
+    DepartmentDao departmentDao = new DepartmentDao();
+    Department department = new Department();
+    department.setName("testManageSession");
+    departmentDao.save(department);
+    transaction.commit();
+    System.out.println(session.isOpen());
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page11">3.4 批量处理数据</h3>
+                    <ol>
+                        <li>批量处理数据指的是在一个事务中处理大量数据</li>
+                        <li>在应用层进行批量操作，主要有4种方式：通过Session, 通过HQL, 通过StatelessSession, 通过JDBC API</li>
+                        <li>推荐使用原生JDBC API进行批量操作
+                            <pre>
+@Test
+public void testBatch() {
+    session.doWork(new Work() {
+        @Override
+        public void execute(Connection connection) throws SQLException {
+            //通过JDBC原生API操作效率最高，速度最快
+        }
+    });
+}</pre>
+                        </li>
+                        <li>通过Session进行批量操作
+                            <ul>
+                                <li>
+                                    Session的save()及update()方法会把处理的对象放入缓存中，如果通过Session对象处理大量持久化对象，应该及时从缓存中清空已处理完毕且不会再被访问的对象
+                                </li>
+                                <li>具体做法：在处理完一个对象或者一小批对象后，立即调用flush()方法刷新缓存，然后调用clear()方法清空缓存</li>
+                                <li>通过Session来处理批量数据收到的约束
+                                    <ul>
+                                        <li>需要在Hibernate配置文件中设置JDBC单次批量处理的数目，应保证每次向数据库发送批量的SQL语句与batch_size属性相一致</li>
+                                        <li>若对象采用"identity"标识符生成器，则Hibernate无法在JDBC层进行批量插入操作</li>
+                                        <li>进行批量操作时，建议关闭二级缓存</li>
+                                    </ul>
+                                </li>
+                                <li>e.g.1 批量插入
+                                    <pre>
+News news = new News();
+for (int i = 0; i < 1000000; ++i) {
+    news = new News();
+    news.setTitle("title : " + i);
+    session.save(news);
+    if ((i + 1) % 20 == 0) {
+        session.flush();
+        session.clear();
+    }
+}</pre>
+                                </li>
+                                <li>批量更新方法：使用可滚动的结果集org.hibernate.ScrollableResults，该对象中实际不包含任何对象
+                                    ，只包含用于在线定位记录的游标，只有当程序遍历访问ScrollableResults对象的待定元素时，
+                                    才会到数据库中加载相应的对象；org.hibernate.ScrollableResults对象由Query的scroll方法返回</li>
+                                <li>e.g.2 批量更新
+                                    <pre>
+ScrollableResults sr = session.createQuery("from News").scroll();
+int count = 0;
+while (sr.next()) {
+    News n = (News) sr.get(0);
+    n.setTitle("test");
+}
+if (((count++) + 1) % 100 == 0) {
+    session.flush();
+    session.clear();
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>通过HQL批量操作：HQL只支持INSERT INTO ... SELECT形式的插入，不支持INSERT INTO VALUES形式的插入语句</li>
+                        <li>通过StatelessSession批量操作
+                            <ul>
+                                <li>形式上StatelessSession与session用法类似</li>
+                                <li>StatelessSession与Session的区别：
+                                    <ul>
+                                        <li>StatelessSession没有缓存，通过StatelessSession来加载，保存，更新后的对象处于游离对象</li>
+                                        <li>StatelessSession不会与Hibernate二级缓存产生交互</li>
+                                        <li>当调用StatelessSession的save(), update(), delete()方法时,这些方法会立即调用相应的sql语句，不会仅计划执行一条语句</li>
+                                        <li>StatelessSession不会对关联的对象两次进行任何级联操作</li>
+                                        <li>StatelessSession不会进行脏数据检查，因此修改对象属性后需要手动调用StatelessSession的update()方法进行更新</li>
+                                        <li>通过一个StatelessSession对象两次加载OID相同的对象，得到的两个对象地址不同</li>
+                                        <li>StatelessSession所做的操作可以被Interceptor拦截器捕获到，但会被Hibernate的事件处理系统忽略</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
                     <!--文章]]-->
                 </div>
             </div>
@@ -951,13 +1754,13 @@ public void testBlob() throws IOException, SQLException {
                     <li><a href="#!" id="btn4">Session & CRUD</a></li>
                     <li class="am-nav-header">映射</li>
                     <li><a href="#!" id="btn5">类与表的映射</a></li>
-                    <li><a href="#!" id="btn7">映射关联关系</a></li>
-                    <li><a href="#!" id="btn8">继承映射</a></li>
+                    <li><a href="#!" id="btn6">映射关联关系</a></li>
+                    <li><a href="#!" id="btn7">继承映射</a></li>
                     <li class="am-nav-header">更多操作</li>
-                    <li><a href="#!" id="btn9">检索</a></li>
-                    <li><a href="#!" id="btn10">缓存</a></li>
-                    <li><a href="#!" id="btn11">管理Session</a></li>
-                    <li><a href="#!" id="btn12">批量处理数据</a></li>
+                    <li><a href="#!" id="btn8">检索</a></li>
+                    <li><a href="#!" id="btn9">缓存</a></li>
+                    <li><a href="#!" id="btn10">管理Session</a></li>
+                    <li><a href="#!" id="btn11">批量处理数据</a></li>
 
                 </ul>
                 <!--导航]]-->
@@ -1015,6 +1818,9 @@ public void testBlob() throws IOException, SQLException {
     navClick($("#btn6"), $("#page6"));
     navClick($("#btn7"), $("#page7"));
     navClick($("#btn8"), $("#page8"));
+    navClick($("#btn9"), $("#page9"));
+    navClick($("#btn10"), $("#page10"));
+    navClick($("#btn11"), $("#page11"));
 
 </script>
 </body>
