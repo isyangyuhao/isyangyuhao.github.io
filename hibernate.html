@@ -546,6 +546,392 @@ public void testDoWork() {
                             </ul>
                         </li>
                     </ol>
+                    <h2>第二部分 映射</h2>
+                    <h3>2.1 类与表的映射</h3>
+                    <ol>
+                        <li>类与表的映射
+                            <table class="am-table am-table-compact">
+                                <tbody>
+                                <tr>
+                                    <td>name</td>
+                                    <td>指定该持久化类映射的持久化类的类名</td>
+                                </tr>
+                                <tr>
+                                    <td>table</td>
+                                    <td>指定该持久化类映射的表名，Hibernate默认支持持久化类名作为表名
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>dynamic-insert</td>
+                                    <td>若设置为true，表示当保存一个对象时，会动态生成一个insert语句，insert语句中仅包含所有取值不为null的字段，默认值为false</td>
+                                </tr>
+                                <tr>
+                                    <td>dynamic-update</td>
+                                    <td>若设置为true，表示当更新一个对象时，会动态生成update语句，update语句中仅包含所有取值需要更新的字段，默认false</td>
+                                </tr>
+                                <tr>
+                                    <td>select-before-update</td>
+                                    <td>设置Hibernate在更新某个持久化对象之前是否需要先执行一次查询，默认值为false</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </li>
+                        <li>映射对象标识符
+                            <ul>
+                                <li>
+                                    Hibernate使用对象标识符(OID)来建立内存中的对象和数据库表中记录的对应关系，对象的OID和数据表的主键对应，Hibernate通过标识符生成器来为主键赋值
+                                </li>
+                                <li>Hibernate推荐在数据表中使用代理主键，即不具备业务逻辑含义的字段，代理逐渐通常为整数类型，因为整数类型比字符串类型要节省更多的数据库空间</li>
+                                <li>在对象-关系映射文件中，&lt;id>元素用来设置对象标识符，&lt;generator>子元素用来设定标识符生成器</li>
+                                <li>Hibernate提供了标识符生成器接口：IdentifierGenerator，并提供了各种实现</li>
+                                <li>hbm.xml中的id元素：设定持久化类的OID和表的主键映射
+                                    <br>属性
+                                    <table class="am-table am-table-compact">
+                                        <tbody>
+                                        <tr>
+                                            <td>name</td>
+                                            <td>标识持久化类OID的属性名</td>
+                                        </tr>
+                                        <tr>
+                                            <td>column</td>
+                                            <td>设置标识属性所映射的数据表的列明(主键字段名)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>unsaved-value</td>
+                                            <td>若设定该属性，Hibernate会通过比较持久化类的OID之和该属性值来区分当前持久化类的对象是否为临时对象</td>
+                                        </tr>
+                                        <tr>
+                                            <td>type</td>
+                                            <td>指定Hibernage映射类型，Hibernate映射类型是Java类型与sql类型的桥梁</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </li>
+                                <li>hbm.xml中的generator元素：设定持久化类标识符生成器
+                                    <br>class属性: 指定使用标识符生成器全限定类名或其缩写
+                                    <br>主键生成策略:
+                                    <ul>
+                                        <li>increment标识符生成器
+                                            <ul>
+                                                <li>increment标识符生成器有Hibernate以递增的方式为代理主键赋值</li>
+                                                <li>Hibernate会先读取表中逐渐的最大值，然后再向表中插入记录时就在max(id)的基础上递增，增量为1</li>
+                                                <li>适用范围
+                                                    <ul>
+                                                        <li>由于increment生成标识符机制不依赖与底层数据库，因此适用于所有数据库系统</li>
+                                                        <li>适用于只有单个Hibernate应用进程访问同一个数据库的场合，在集群环境下不推荐使用</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>identity标识符生成器
+                                            <ul>
+                                                <li>identity标识符生成器由底层数据库来负责生成标识符，它要求底层数据库把主键定义为自动增长字段类型</li>
+                                                <li>适用范围: 由于identity生成标识符的机制依赖于底层数据库，因此要求底层数据库支持自动增长字段类型，支持自动增长类型的数据库包括：DB2,Mysql,MSSQLSever,Sybase等，Oracle数据库不支持</li>
+                                            </ul>
+                                        </li>
+                                        <li>sequence标识符生成器
+                                            <ul>
+                                                <li>sequence标识符生成器利用底层数据库提供的序列来生成标识符
+                                                    <pre>
+&lt;id name="id" type="java.lang.Integer">
+    &lt;column name="ID">&lt;/column>
+    &lt;generator class="sequence">
+        &lt;param name="sequence">tbname_sql&lt;/param>
+    &lt;/generator>
+&lt;/id></pre>
+                                                </li>
+                                                <li>Hibernate在持久化一个对象时，先从底层数据库的序列中获得唯一标识号，再将其作为主键值</li>
+                                                <li>适用范围: 由于sequence生成标识符的机制依赖于底层数据库的序列，因此要求底层数据库必须支持序列，支持的数据库包括：DB2,Oracle等</li>
+                                            </ul>
+                                        </li>
+                                        <li>hilo标识符生成器
+                                            <ul>
+                                                <li>hild标识符生成器有Hibernate按照一种high/low算法生成标识符，它从数据库的特定表的字段中获取high值</li>
+                                                <li>
+                                                    Hibernate在持久化一个对象时，由Hibernate负责生成主键值，hilo标识符生成器在生成标识符时需要读取并修改HI_TABLE表中的NEXT_VALUE值
+                                                </li>
+                                                <li>适用范围: 由于hili标识符机制不依赖底层数据库，因此适用于所有数据库系统</li>
+                                            </ul>
+                                        </li>
+                                        <li>native标识符生成器
+                                            <ul>
+                                                <li>native标识符生成器依据底层数据库对自动生成标识符的支持能力来选择使用identity/sequence/hili标识符生成器</li>
+                                                <li>适用范围: 由于native能根据底层数据库系统的类型自动选择合适的标识符生成器，因此很适合于跨数据库平台开发</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>hbm.xml中的property元素：用于指定类的属性和表的字段的映射
+                                    <br>属性
+                                    <table class="am-table am-table-compact">
+                                        <tbody>
+                                        <tr>
+                                            <td>name</td>
+                                            <td>指定该持久化类的属性的名称</td>
+                                        </tr>
+                                        <tr>
+                                            <td>column</td>
+                                            <td>指定与类属性想映射的表的字段名，如果没有该值，Hibernate将直接使用类的属性名作为字段名</td>
+                                        </tr>
+                                        <tr>
+                                            <td>type</td>
+                                            <td>指定Hibernate映射类型</td>
+                                        </tr>
+                                        <tr>
+                                            <td>not-null</td>
+                                            <td>若该属性值为true，则表明不允许为null，默认为false</td>
+                                        </tr>
+                                        <tr>
+                                            <td>access</td>
+                                            <td>
+                                                指定Hibernate默认的属性访问策略，默认值为porperty，即使用getter,setter方法来访问属性，若指定field，则Hibernate会忽略getter/setter方法，通过反射访问成员变量
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>unique</td>
+                                            <td>设置是否为该属性所映射的数据列添加唯一约束</td>
+                                        </tr>
+                                        <tr>
+                                            <td>index</td>
+                                            <td>指定一个字符的索引名称，当系统需要Hibernate自动建表时，用于为该属性所映射的数据列创建索引，从而加快该数据列的查询</td>
+                                        </tr>
+                                        <tr>
+                                            <td>length</td>
+                                            <td>指定该属性所映射数据列的小数位数，对double, float, decimal等类型数据列有效</td>
+                                        </tr>
+                                        <tr>
+                                            <td>formula</td>
+                                            <td>设置sql表达式，Hibernate将根据它的计算来派生属性的值</td>
+                                        </tr>
+                                        <tr>
+                                            <td>update</td>
+                                            <td>如果设置为true，则当前字段不可以修改</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    使用formula属性:
+                                    <ul>
+                                        <li>formula = "(sql)"的英文括号不可以省略</li>
+                                        <li>sql表达式中的列名和表名都应该和数据库对应，而不是和持久化对象的属性对应</li>
+                                        <li>如果需要在formula属性中使用参数，直接使用"where cur.id=id"形式即可</li>
+                                        <li>e.g.
+                                            <pre>
+&lt;property name="descpt" formula="(SELECT concat(author,':',title) FROM NEWS n WHERE n.id = id)">
+&lt;/property>
+					News news = (News) session.get(News.class, 1);
+System.out.println(news.getDescpt());</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>java类型， Hibernate映射类型，SQL类型对应关系表
+                            <img src="photo/hibernate/hibernate4.emf" class="am-img-responsive">
+                            <img src="photo/hibernate/hibernate5.emf" class="am-img-responsive">
+                        </li>
+                        <li>时间和日期类型映射
+                            <ul>
+                                <li>在java中，代表时间和日期类型包括：java.util.Date, java.util.Calendar，在JDBC
+                                    API中提供了三个扩展java.util.Date的子类：java.sql.Date, java.sql.Time,
+                                    java.sql,Timestamp，这三个类分别与sql类型中的DATE, TIME, TIMESTAMP类型相对应
+                                </li>
+                                <li>在标准sql中，DATE类型代表日期，TIME类型代表时间，TIMESTAMP类型表示时间戳
+                                    <img src="photo/hibernate/hibernate6.png" class="am-img-responsive">
+                                </li>
+                                <li>在开发中，根据持久化属性，使用Hibernate映射类型相与之对应</li>
+                            </ul>
+                        </li>
+                        <li>大对象类型映射
+                            <ul>
+                                <li>在java中，java.lang.String可用于表示长字符串(len>255)，字节数组byte[]可用于存放图片或文件的二进制数据，在JDBC
+                                    API中提供了java.sql.Clob,
+                                    java.sql.Blob类型，分别和标准sql中的CLOB,BLOB类型对应，CLOB表示字符串大对象，BLOB表示二进制大对象
+                                    <img src="photo/hibernate/hibernate7.png" class="am-img-responsive">
+                                </li>
+                                <li>mysql不支持标准sql的CLOB类型，在mysql中用TEXT, MEDIUMTEXT, LONGTEXT类型表示长度大于255的长文本数据</li>
+                                <li>在持久化类中，二进制大对象可以生命为byte[]或java.sql.Blob类型，字符串可以生命为java.lang.String或java.sql.Clob</li>
+                                <li>在开发中处理长度超过255的字符串使用java.lang.String比java.sql.Clob更方便</li>
+                                <li>e.g. 存放大对象数据
+                                    <pre>
+*.hbm.xml
+<!-- 映射大对象 -->
+<!-- 若想要精确映射sql类型，可以使用sql-type类型 -->
+&lt;property name="content" type="clob">
+    &lt;column name="CONTENT" sql-type="mediumtext">&lt;/column>
+&lt;/property>
+&lt;property name="image" type="blob">
+    &lt;column name="IMAGE" sql-type="mediumblob">&lt;/column>
+&lt;/property>
+javaBean.java
+//大文本
+private String content;
+//二进制文件
+private Blob image;
+//getter() & setter() …
+Test.java
+News news = new News("test", "yang", new Date());
+InputStream inputStream = new FileInputStream("photo.jpg");
+Blob image = Hibernate.getLobCreator(session).createBlob(inputStream, inputStream.available());
+news.setImage(image);
+session.save(news);</pre>
+                                </li>
+                                <li>e.g. 读取大对象数据
+                                    <pre>
+@Test
+public void testBlob() throws IOException, SQLException {
+    News news = (News) session.get(News.class, 1);
+    Blob image = news.getImage();
+    InputStream inputStream = image.getBinaryStream();
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3>2.2 映射关联关系</h3>
+                    <ol>
+                        <li>映射组合关联关系
+                            <ul>
+                                <li>域模型：由程序代码组成，通过细化持久化类的粒度提高代码的可重用性；
+                                    在没有数据冗余的情况下尽可能的减少表的数目与参照关系
+                                    <img src="photo/hibernate/hibernate8.png" class="am-img-responsive"></li>
+                                <li>持久化类的属性分类
+                                    <ul>
+                                        <li>值(value)类型：没有OID，不能被单独持久化，生命周期依赖于所属的持久化类的对象的生命周期</li>
+                                        <li>实体(entity)类型：有OID，可以被单独持久化，有独立的生命周期</li>
+                                    </ul>
+                                </li>
+                                <li>组件：类的属性是另一个持久化类的组成部分称为组件，在Hibernate中使用component元素来映射组成关系</li>
+                                <li>e.g.
+                                    <img src="photo/hibernate/hibernate9.png" class="am-img-responsive">
+                                    <img src="photo/hibernate/hibernate10.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>映射单向多对一关联关系
+                            <ul>
+                                <li>双向1-n与双向n-1是完全相同的两种情形，双向1-n可以在一端访问另一端</li>
+                                <li>域模型：从n端到1端的多对一双向关联需要在n端存放一个1端的对象作为属性，在1端存放n端类型的集合属性
+                                    <img src="photo/hibernate/hibernate11.png" class="am-img-responsive">
+                                </li>
+                                <li>关系数据模型：n端的外键参照1端的主键</li>
+                                <li>当Session从数据库中加载java集合时，创建的是Hibernate内置集合类的实例，因此在持久化类中定义集合属性时必须把属性声明为java接口类型
+                                    <ul>
+                                        <li>Hibernate的内置集合类具有集合代理功能，支持延迟检索策略</li>
+                                        <li>事实上，Hibernate的内置集合类封装了JDK集合类，使Hibernate能够对缓存中的集合对象进行脏检查，按照集合对象的状态同步更新数据库</li>
+                                    </ul>
+                                </li>
+                                <li>定义集合属性时，通常把初始化为集合实现类的一个实例，提供程序的健壮性，避免应用程序访问取值为null的集合的方法抛出空指针异常</li>
+                                <li>e.g.
+                                    <img src="photo/hibernate/hibernate12.png" class="am-img-responsive">
+                                    <img src="photo/hibernate/hibernate13.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>映射双向一对多关联关系
+                            <ul>
+                                <li>双向1-n与双向n-1是完全相同的两种情形，双向1-n可以在一端访问另一端</li>
+                                <li>域模型：从n端到1端的多对一双向关联需要在n端存放一个1端的对象作为属性，在1端存放n端类型的集合属性
+                                    <img src="photo/hibernate/hibernate14.png" class="am-img-responsive">
+                                </li>
+                                <li>关系数据模型：n端的外键参照1端的主键</li>
+                                <li>当Session从数据库中加载java集合时，创建的是Hibernate内置集合类的实例，因此在持久化类中定义集合属性时必须把属性声明为java接口类型
+                                    <ul>
+                                        <li>Hibernate的内置集合类具有集合代理功能，支持延迟检索策略</li>
+                                        <li>事实上，Hibernate的内置集合类封装了JDK集合类，使Hibernate能够对缓存中的集合对象进行脏检查，按照集合对象的状态同步更新数据库</li>
+                                    </ul>
+                                </li>
+                                <li>定义集合属性时，通常把初始化为集合实现类的一个实例，提供程序的健壮性，避免应用程序访问取值为null的集合的方法抛出空指针异常</li>
+                                <li>e.g.
+                                    <img src="photo/hibernate/hibernate15.png" class="am-img-responsive">
+                                    <img src="photo/hibernate/hibernate16.png" class="am-img-responsive">
+                                    <img src="photo/hibernate/hibernate17.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>set元素
+                            <ul>
+                                <li>用来映射持久化了类中set类型的属性</li>
+                                <li>set元素的inverse属性
+                                    <ul>
+                                        <li>
+                                            在hibernate中通过对inverse属性来决定是有双向关联的哪一方来维护表和表之间的关系，inverse=false为主动方/inverse=true为被动方，由主动方负责维护关联关系
+                                        </li>
+                                        <li>在没有设置inverse属性的情况下，父子双方都维护父子关系</li>
+                                        <li>在1-n关系中，将n端设置为主动方有助于性能改善，如果将1端设置为主动方，则会发生多余update语句和插入数据时无法同时插入外键列，无法添加非空约束等问题</li>
+                                    </ul>
+                                </li>
+                                <li>cascade属性
+                                    <ul>
+                                        <li>
+                                            在对象-关系映射文件中，用于映射持久化类之间关联的元素set,many-to-one,one-to-one都有cascade属性，用于指定如何操作与当前对象的其他对象
+                                        </li>
+                                        <li>属性
+                                            <img src="photo/hibernate/hibernate18.png" class="am-img-responsive">
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>在数据库中队集合排序
+                                    <ul>
+                                        <li>在set元素中使用order-by属性，使Hibernate通过select语句到数据库检索集合对象时，利用order by语句进行排序</li>
+                                        <li>order-by属性允许使用sql函数 </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>基于外键映射双向一对一关联关系
+                            <ul>
+                                <li>域模型:
+                                    <img src="photo/hibernate/hibernate19.png" class="am-img-responsive">
+                                </li>
+                                <li>关系数据模型：选择其中一个1端设置外键指向另一个1端的主键</li>
+                                <li>对于基于外键的双向一对一关联，其外键可以存放任意一遍，在需要存放外键的一段增加many-to-one元素，并为元素增加unique=true的属性</li>
+                                <li>没有使用外键的一端需要使用one-to-one元素，并为元素增加property-ref属性指定使用被关联实体主键以外的字段作为关联字段</li>
+                                <li>e.g.
+                                    <img src="photo/hibernate/hibernate20.png" class="am-img-responsive">
+                                    <img src="photo/hibernate/hibernate21.png" class="am-img-responsive">
+                                    <img src="photo/hibernate/hibernate22.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>基于主键映射双向一对一关联关系
+                            <ul>
+                                <li>一端的主键生成器使用foreign策略，表名根据对方的主键生成自己的主键，自己不能独立生成主键，param子元素指定当前property使用当前持久化类的哪一个属性作为对方</li>
+                                <li>采用foreign主键生成策略的一段增加one-to-one元素映射关联属性，其one-to-one属性还应增加constrained=true属性，另一端zengjiaone-to-one元素映射关联属性</li>
+                                <li>constrained：指定当前持久化类对应的数据库表的主键添加一个外键约束，引用被关联的对象所对应的数据库主键</li>
+                                <li>e.g.
+                                    <img src="photo/hibernate/hibernate23.png" class="am-img-responsive">
+                                    <img src="photo/hibernate/hibernate24.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>映射单向多对多关联关系
+                            <ul>
+                                <li>域模型
+                                    <img src="photo/hibernate/hibernate25.png" class="am-img-responsive">
+                                </li>
+                                <li>关系数据模型：使用连接表，分别存放两个实体对应主键作为外键</li>
+                                <li>与1-n映射类似，必须为set集合元素添加key子元素，指定参照表的外键名，set中使用many-to-many子元素，class属性制定items集合中存放的Item对象，column属性指定其参照的外键名</li>
+                                <li>e.g.
+                                    <img src="photo/hibernate/hibernate26.png" class="am-img-responsive">
+                                    <img src="photo/hibernate/hibernate27.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>映射双向多对多关联关系
+                            <ul>
+                                <li>域模型
+                                    <img src="photo/hibernate/hibernate28.png" class="am-img-responsive">
+                                </li>
+                                <li>关系数据模型：使用连接表，分别存放两个实体对应主键作为外键</li>
+                                <li>在双向n-n关联的两边都需要指定连接表的表名及外键列的列明，连个集合set元素的taable属性必须指定相同的连接表，两边的key与many-to-many的column属性交叉相同</li>
+                                <li>双向n-n关联，需要在一段将set的inverse属性设置为true，否则两段都维护关系会导致主键冲突</li>
+                                <li>e.g.
+                                    <img src="photo/hibernate/hibernate29.png" class="am-img-responsive">
+                                    <img src="photo/hibernate/hibernate30.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
                     <!--文章]]-->
                 </div>
             </div>
@@ -565,7 +951,6 @@ public void testDoWork() {
                     <li><a href="#!" id="btn4">Session & CRUD</a></li>
                     <li class="am-nav-header">映射</li>
                     <li><a href="#!" id="btn5">类与表的映射</a></li>
-                    <li><a href="#!" id="btn6">类型映射</a></li>
                     <li><a href="#!" id="btn7">映射关联关系</a></li>
                     <li><a href="#!" id="btn8">继承映射</a></li>
                     <li class="am-nav-header">更多操作</li>
