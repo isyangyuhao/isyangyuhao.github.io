@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>杨宇昊的学习笔记-Maven</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <!--Link Web Font-->
+    <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+    <!--代码高亮highlight.js-->
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>-->
+    <!--Link Base Style-->
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css"/>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<!--导航栏 [[-->
+<header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+        <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+</header>
+<!--导航栏 ]]-->
+<div class="am-g am-g-fixed">
+    <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+        <div class="am-g">
+            <div class="am-u-sm-11 am-u-sm-centered">
+                <div class="am-cf am-article am-scrollable-horizontal">
+
+                    <!--文章[[-->
+                    <h2>第一部分 概述</h2>
+                    <h3 id="page1">1.1 未使用构建工具的问题</h3>
+                    <ol>
+                        <li>项目分层
+                            <img src="photo/maven/maven1.png" class="am-img-responsive">
+                        </li>
+                        <li>在开发中存在的问题
+                            <ul>
+                                <li>一个项目就是一个工程
+                                    <br>如果项目非常庞大，不适合使用package划分模块；最好每个模块对应一个工程，利于分工协作；
+                                    通过Maven可以将一个项目拆分成若干个工程
+                                </li>
+                                <li>项目中需要的jar包需要手动放到/WEB-INF/lib目录下
+                                    <br>同样的jar包重复出现在不同的项目之中会浪费存储空间使工程变得臃肿；
+                                    通过Maven可以将jar包保存在仓库中，需要的工程引用即可，不需要将jar包赋值到项目其中
+                                </li>
+                                <li>jar包需要手动准备
+                                    <br>不同技术的官网提供的jar包各式各样，有些技术的官网只能通过专门工具才可以进行下载，非正规途径下载的jar包可能存在问题；
+                                    通过Maven可以通过一种规范的方式下载jar包，所有知名框架或第三方工具按照统一规范存放在Maven中央仓库中
+                                </li>
+                                <li>一个jar包依赖其他的jar包需要手动加入
+                                    <br>例如文件上传下载的组件commons-fileupload.jar需要依赖于commons-io.jar,如果所有jar包之间的依赖都需要了解的话会增加大量学习成本
+                                    通过Maven可以自动将被依赖的jar包导入进来
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page2">1.2 构建</h3>
+                    <ol>
+                        <li>Maven是一款服务于Java平台的自动化构建工具</li>
+                        <li>概念：以java源文件、框架配置文件、JSP、JS、图片等资源为原材料，生产(编译+部署+搭建)出一个可运行的项目的过程
+                            <ul>
+                                <li>编译：Java源文件(User.java) -> 编译 -> Class字节码文件(User.class) -> JVM执行</li>
+                                <li>部署：一个动态b/s项目最终运行的并不是动态WEB工程本身，而是动态WEB工程编译后的结果；当浏览器访问Java程序时就必须将包含Java程序的Web工程编译结果部署到服务器的指定目录下并启动服务器
+                                    <ul>
+                                        <li>运行时环境：一组jar包的集合，对所需的jar包进行引用，并没有将jar包本身复制到工程中，并不是目录
+                                            <img src="photo/maven/maven2.png" class="am-img-responsive">
+                                        </li>
+                                        <li>Web工程与编译结果的目录区别：在开发过程中所有的路径和配置文件都是以便以结果的目录结构为标准的
+                                            <img src="photo/maven/maven3.png" class="am-img-responsive">
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>构建过程中的环节
+                            <ul>
+                                <li>清理：将以前编译的旧class字节码文件删除，为下一次编译做准备</li>
+                                <li>编译：将Java源程序编译成class字节码文件</li>
+                                <li>测试：自动测试，自动调用Junit程序来进行测试</li>
+                                <li>报告：报告测试程序执行的结果</li>
+                                <li>打包：动态Web工程打包为war，Java工程打包为jar</li>
+                                <li>安装：Maven中的特定概念，将打包得到的文件复制到仓库中的指定位置</li>
+                                <li>部署：将动态Web工程生成的war包复制到Servlet容器的指定目录下，使其可以运行</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page3">1.3 安装Maven</h3>
+                    <ol>
+                        <li>检查当前系统环境是否配置JAVA_HOME
+                            <br>输出JAVA_HOME路径：<code>/usr/libexec/java_home</code>
+                        </li>
+                        <li>解压Maven核心压缩包，放到一个非中文无空格目录下</li>
+                        <li>配置Maven环境变量
+                            <ul>
+                                <li>打开Terminal，设置Maven classpath
+                                    <br><code>$ vi ~/.bash_profile</code>
+                                </li>
+                                <li>添加Maven的环境变量后保存退出(:wq!)vi
+                                    <br><code>export M2_HOME=/Users/robbie/apache-maven-3.3.3c</code>
+                                    <br><code>export PATH=$PATH:$M2_HOME/bin</code>
+                                </li>
+                                <li>输入命令使bash_profile生效
+                                    <br><code>$ source ~/.bash_profile</code>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>输出Maven版本信息，查看是否安装成功：<code>mvn -v</code></li>
+                    </ol>
+                    <h2>第二部分 Maven核心</h2>
+                    <h3 id="page4">2.1 约定目录</h3>
+                    <ol>
+                        <li>约定的目录结构
+                            <ul>
+                                <li>根目录：工程名称</li>
+                                <li>src：存放源码
+                                    <ul>
+                                        <li>main：存放主程序
+                                            <ul>
+                                                <li>java：存放java源文件</li>
+                                                <li>resource：存放框架或其他资源文件</li>
+                                            </ul>
+                                        </li>
+                                        <li>test：存放测试程序
+                                            <ul>
+                                                <li>java</li>
+                                                <li>resource</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>pom.xml：Maven工程核心配置文件</li>
+                            </ul>
+                        </li>
+                        <li>创建约定的目录结构原因
+                            <ul>
+                                <li>Maven需要负责项目的自动化构建，Maven需要知道各个文件对应的保存位置</li>
+                                <li>如果自定义内容让框架或工具知道，需要通过配置的方式告诉框架或者遵循框架内部存在的约定(约定优于配置)</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page5">2.2 常用Maven命令</h3>
+                    <ol>
+                        <li>执行与构建过程相应的Maven命令(编译，测试，打包等)，必须进入pom.xml所在的目录</li>
+                        <li>常用命令
+                            <ul>
+                                <li>mvn clean：清理</li>
+                                <li>mvn compile：编译主程序</li>
+                                <li>mvn test-compile：编译测试程序</li>
+                                <li>mvn test：执行测试</li>
+                                <li>mvn package：打包</li>
+                                <li>mvn install：安装</li>
+                                <li>mvn site：生成站点</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page6">2.3 POM与坐标</h3>
+                    <ol>
+                        <li>POM
+                            <ul>
+                                <li>含义：POM(Project Object Model)项目对象模型，是Maven对一个单一项目的描述，POM实现并驱动了以模型来描述的构建方式</li>
+                                <li>pom.xml：是Maven工程的核心配置文件，与构建过程相关的一切设置都在该文件中进行配置</li>
+                            </ul>
+                        </li>
+                        <li>坐标
+                            <ul>
+                                <li>数学中的坐标：在平面上使用x,y两个向量可以唯一的定位平面中的任何一点；在空间中使用x,y,z三个向量可以唯一的定位空间中的任意一点</li>
+                                <li>Maven中的坐标：使用三个向量可以在仓库中定位唯一的一个Maven工程
+                                    <ul>
+                                        <li>groupid:公司或组织域名倒序+项目名
+                                            <br><code>e.g. &lt;groupid>org.yang.demo&lt;/groupid></code>
+                                        </li>
+                                        <li>artifactid:模块名
+                                            <br><code>e.g. &lt;artifactid>hello-maven&lt;artifactid></code>
+                                        </li>
+                                        <li>version:版本名
+                                            <br><code>e.g. &lt;version>1.1.0&lt;/version></code>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>坐标与仓库中的路径保持一致
+                                    <ul>
+                                        <li>坐标
+                                            <pre>
+&lt;groupid>org.yang.demo&lt;/groupid>
+&lt;artifactid>hello-maven&lt;artifactid>
+&lt;version>1.1.0&lt;/version></pre>
+                                        </li>
+                                        <li>仓库中路径
+                                            <code>org/yang/demo/hello-maven/1.1.0.RELEASE/hello-maven-1.0.0.RELEASE.jar</code>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page7">2.4 仓库</h3>
+                    <ol>
+                        <li>Maven联网下载插件与修改本地仓库
+                            <ul>
+                                <li>Maven的核心程序中仅仅定义了抽象的声明周期，但具体的工作必须由特定插件来完成，而插件本身并不包含于Maven程序当中</li>
+                                <li>
+                                    当执行的Maven命令需要使用某些插件时，Maven核心程序首先到本地仓库(系统用户家目录/.m2/repository)中查找，如果本地仓库中不存在则会到中央仓库去下载，如果此时无法连接外网则会构建失败
+                                </li>
+                                <li>修改Maven本地仓库地址
+                                    <ul>
+                                        <li>找到Maven解压目录/conf/settings.xml文件</li>
+                                        <li>找到localRepository标签，将其从注释中取出</li>
+                                        <li>将localRepository标签值设置为本地仓库地址</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>仓库
+                            <ul>
+                                <li>仓库的分类
+                                    <ul>
+                                        <li>本地仓库：当前电脑上部署的仓库目录，为当前系统上所有Maven工程服务</li>
+                                        <li>远程仓库：
+                                            <ul>
+                                                <li>私服：搭建在局域网环境中，为局域网范围内的所有Maven工程服务
+                                                    <img src="photo/maven/maven4.png" class="am-img-responsive">
+                                                </li>
+                                                <li>中央仓库：架设在Internet上，为全世界所有Maven工程服务</li>
+                                                <li>中央仓库镜像：为了分担中央仓库的流量，减轻服务器压力提升用户访问速度，建立若干个镜像的中央仓库</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>仓库中保存的内容：Maven工程
+                                    <ul>
+                                        <li>Maven自身所需要的插件</li>
+                                        <li>第三方框架或工具的jar包</li>
+                                        <li>自己开发的Maven工程</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page8">2.5 依赖</h3>
+                    <ol>
+                        <li>Maven解析依赖信息时回到本地仓库中查找被依赖的jar包</li>
+                        <li>对于自己开发的Maven，需要通过<code>mvn install</code>命令安装到本地仓库之中</li>
+                        <li>依赖的范围
+                            <img src="photo/maven/maven5.png" class="am-img-responsive">
+                        </li>
+                        <li>依赖传递性
+                            <img src="photo/maven/maven6.png" class="am-img-responsive">
+                            <ul>
+                                <li>定义：依赖传递性是在maven2中添加的新特征，作用是不需要考虑依赖的库文件所需要依赖的库文件，能够将依赖模块的依赖自动的引入</li>
+                                <li>优点：避免工程中的各个模块重复声明依赖信息，只需一个模块专门维护依赖关系即可</li>
+                                <li>注意：非compile范围的依赖无法传递，需要重复声明依赖</li>
+                            </ul>
+                        </li>
+                        <li>依赖的排除
+                            <img src="photo/maven/maven7.png" class="am-img-responsive">
+                            <ul>
+                                <li>定义：通过依赖的排除可以取消的传递过来的不需要的依赖</li>
+                                <li>需要设置依赖排除的场合：不稳定的jar包，潜在的威胁等</li>
+                                <li>设置方式：在依赖关系中通过&lt;dependency>的子标签&lt;exclusions>配置不允许该依赖传递过来的依赖
+                                    <pre>
+&lt;exclusions>
+    &lt;exclusion>
+        &lt;groupId>&lt;/groupId>
+            &lt;artifactId>&lt;/artifactId>
+    &lt;/exclusion>
+&lt;/exclusions></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>依赖的原则
+                            <ul>
+                                <li>作用：解决模块工程之间的jar包冲突问题</li>
+                                <li>路径最短原则：当传递过来多个相同jar包的不同版本时，使用传递路径最短的jar包，其他的自动排除
+                                    <img src="photo/maven/maven8.png" class="am-img-responsive">
+                                </li>
+                                <li>先声明者优先原则：当传递过来多个相同jar包的不同版本且传递路径相同时，使用最先声明dependency的依赖传递来的jar包
+                                    <img src="photo/maven/maven9.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>利用自定义标签统一管理依赖信息
+                            <ul>
+                                <li>统一管理版本号
+                                    <ul>
+                                        <li>使用properties标签内使用自定义标签统一声明版本号
+                                            <pre>
+&lt;properties>
+  &lt;org.yang.demo.servlet.version>2.5&lt;/org.yang.demo.servlet.version>
+&lt;/properties></pre>
+                                        </li>
+                                        <li>在需要统一版本的位置通过${自定义标签名}来引用声明的版本号
+                                            <code>&lt;version>${org.yang.demo.servlet.version}&lt;/version></code>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>properties标签配合自定义标签声明凡是先声明后引用的场合都适合使用</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page9">2.6 生命周期</h3>
+                    <ol>
+                        <li>Maven生命周期定义：各个构建环节执行的顺序，不能打乱顺序，需要按照既定的正确顺序来执行</li>
+                        <li>Maven核心程序中定义了抽象的生命周期，生命周期中各个阶段的具体任务由插件来完成</li>
+                        <li>Maven核心程序为了更好的实现自动化构建，无论执行生命周期中的哪一个阶段，都是从生命周期最初的位置开始执行</li>
+                        <li>插件和目标：
+                            <ul>
+                                <li>声明周期的各个阶段只是定义了要执行的任务，各个阶段的插件和目标是对应的，特定的目标由特定的插件来完成</li>
+                                <li>目标可以看做调用插件功能的命令</li>
+                                <table class="am-table am-table-compact">
+                                    <thead>
+                                        <th>声明周期阶段</th>
+                                        <th>插件目标</th>
+                                        <th>插件</th>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>compile</td>
+                                        <td>compile</td>
+                                        <td>maven-compile-plugin</td>
+                                    </tr>
+                                    <tr>
+                                        <td>test-compile</td>
+                                        <td>testCompile</td>
+                                        <td>mevan-compile-plugin</td>
+                                    </tr>
+                                    <tr>
+                                        <td>...</td>
+                                        <td>...</td>
+                                        <td>...</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </ul>
+                        </li>
+                        <li>Clean生命周期
+                            <ul>
+                                <li>pre-clean 执行一些需要在 clean 之前完成的工作</li>
+                                <li>clean 移除所有上一次构建生成的文件</li>
+                                <li>post-clean 执行一些需要在 clean 之后立刻完成的工作</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <ul>
+                                <li>pre-site 执行一些需要在生成站点文档之前完成的工作</li>
+                                <li>site 生成项目的站点文档</li>
+                                <li>post-site 执行一些需要在生成站点文档之后完成的工作,并且为部署做准备</li>
+                                <li>site-deploy 将生成的站点文档部署到特定的服务器上</li>
+                            </ul>
+                        </li>
+                        <li>Default生命周期：Default 生命周期是Maven生命周期中最重要的一个,绝大部分工作都发生在这个生命周期中
+                            <ul>
+                                <li>validate</li>
+                                <li>generate-sources</li>
+                                <li>process-sources</li>
+                                <li>generate-resources</li>
+                                <li>process-resources 复制并处理资源文件,至目标目录,准备打包</li>
+                                <li>compile 编译项目的源代码</li>
+                                <li>process-classes</li>
+                                <li>generate-test-sources</li>
+                                <li>process-test-sources</li>
+                                <li>generate-test-resources</li>
+                                <li>process-test-resources 复制并处理资源文件,至目标测试目录</li>
+                                <li>test-compile 编译测试源代码</li>
+                                <li>process-test-classes</li>
+                                <li>test 使用合适的单元测试框架运行测试。这些测试代码不会被打包或部署</li>
+                                <li>prepare-package</li>
+                                <li>package 接受编译好的代码,打包成可发布的格式,如 JAR</li>
+                                <li>pre-integration-test</li>
+                                <li>integration-test</li>
+                                <li>post-integration-test</li>
+                                <li>verify</li>
+                                <li>install 将包安装至本地仓库,以让其它项目依赖</li>
+                                <li>deploy 将最终的包复制到远程的仓库,以让其它开发人员与项目共享或部署到服务器上运行</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page10">2.7 在eclipse中使用Maven</h3>
+                    <ol>
+                        <li>maven插件：Eclipse内置了Maven插件，不需要额外安装，但需要设置插件的基本属性</li>
+                        <li>maven插件设置
+                            <img src="photo/maven/maven10.png" class="am-img-responsive">
+                            <ul>
+                                <li>installations：指定Maven核心程序的位置，不建议使用插件自带的Maven程序，使用自己下载解压的程序</li>
+                                <li>user settings：指定conf/settings.xml的位置，进而获取本地仓库的位置</li>
+                            </ul>
+                        </li>
+                        <li>
+                            基本操作
+                            <ul>
+                                <li>创建Maven版Java工程
+                                    <ul>
+                                        <li>File -> New -> Maven Project</li>
+                                        <li>勾选Create a simple project(skip archetype selection)->next</li>
+                                        <li>填写groupid, Artifact id, Version->Finish</li>
+                                        <li>将项目JDK从1.5修改为1.8
+                                            <ul>
+                                                <li>Properties for project_name -> Java Build Path -> Libraries ->
+                                                    Remove JRE1.5, Add JRE1.8
+                                                </li>
+                                                <li>Properties for project_name -> Java Compiler -> Compiler compliance level -> 1.8</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>创建Maven版Web工程
+                                    <ul>
+                                        <li>File -> New -> Maven Project</li>
+                                        <li>勾选Create a simple project(skip archetype selection)->next</li>
+                                        <li>填写groupid, Artifact id, Version，将Packaging选项从jar改选为war -> Finish</li>
+                                        <li>将项目JDK从1.5修改为1.8</li>
+                                        <li>Properties for project_name -> Project Facets ->
+                                            取消选择Dynamic Web Module -> Apply -> 再次勾选Dynamic Web Module ->
+                                            点击Further configuration available ->
+                                            将Content Directory改为"src/main/webapp" -> OK -> Apply -> OK</li>
+                                    </ul>
+                                </li>
+                                <li>执行Maven命令: 在pom.xml右键->Run As<br>
+                                    如果需要执行compile则需要点击Maven Build... -> 在Goals中填写compile命令 -> 点击Run按钮
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page11">2.8 继承</h3>
+                    <ol>
+                        <li>统一管理各个模块工程中对不能传递的相同依赖的版本
+                            <ul>
+                                <li>解决方案：将依赖提取到父工程中，在子工程中声明依赖不指定版本，以父工程中设定的版本号为准</li>
+                                <li>操作步骤：
+                                    <img src="photo/maven/maven11.png" class="am-img-responsive">
+                                    <img src="photo/maven/maven12.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>配置继承后需要先安装父工程后安装子工程，否则会安装失败</li>
+                    </ol>
+                    <h3 id="page12">2.9 聚合与自动化构建</h3>
+                    <ol>
+                        <li>聚合
+                            <ul>
+                                <li>作用：一键安装各个模块工程，自动根据依赖顺序逐一安装</li>
+                                <li>配置方式：在一个总的聚合工程中配置各个参与聚合的模块工程
+                                    <pre>
+&lt;modules>
+    &lt;module>../JavaProject01&lt;/module>
+    &lt;module>../JavaProject02&lt;/module>
+&lt;/modules></pre>
+                                </li>
+                                <li>使用方式：在聚合工程的pom.xml上右键 -> Run As -> Maven install</li>
+                            </ul>
+                        </li>
+                        <li>自动化构建
+                            <ul>
+                                <li>编写自动化构建配置信息
+                                    <img src="photo/maven/maven13.png" class="am-img-responsive">
+                                </li>
+                                <li>执行自动化构建: 进入项目目录文件夹，使用 <code>mvn deploy</code> 命令执行自动化构建(在eclipse中使用该命令会导致无法退出和乱码问题，最好在终端使用)
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <!--文章]]-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+        <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+            <div class="am-offcanvas-bar">
+
+                <ul class="am-nav">
+                    <h1>Maven</h1>
+                    <!--导航[[-->
+                    <li class="am-nav-header">概述</li>
+                    <li><a href="#!" id="btn1">未使用构建工具的问题</a></li>
+                    <li><a href="#!" id="btn2">构建</a></li>
+                    <li><a href="#!" id="btn3">安装Maven</a></li>
+                    <li class="am-nav-header">Maven核心</li>
+                    <li><a href="#!" id="btn4">约定目录</a></li>
+                    <li><a href="#!" id="btn5">常用Maven命令</a></li>
+                    <li><a href="#!" id="btn6">POM与坐标</a></li>
+                    <li><a href="#!" id="btn7">仓库</a></li>
+                    <li><a href="#!" id="btn8">依赖</a></li>
+                    <li><a href="#!" id="btn9">生命周期</a></li>
+                    <li><a href="#!" id="btn10">在eclipse中使用Maven</a></li>
+                    <li><a href="#!" id="btn11">继承</a></li>
+                    <li><a href="#!" id="btn12">聚合与自动化构建</a></li>
+
+
+                </ul>
+                <!--导航]]-->
+            </div>
+        </div>
+    </div>
+    <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+        data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+<!--页脚[[-->
+<br><br><br>
+<div class="am-g">
+    <div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+        <br>
+        <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+        <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+    </div>
+</div>
+<br><br><br>
+<!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+    //加载进度条
+    var progress = $.AMUI.progress;
+    $(window).load(function() {
+        progress.done();
+    })
+    $(document).ready(function() {
+        progress.start();
+    })
+    //侧边栏平滑滚动
+    $(window).smoothScroll();
+    function navClick($btnObj, $pageObj) {
+        $btnObj.on("click", function() {
+            var $w = $(window);
+            $w.smoothScroll({position: $pageObj.offset().top});
+        })
+    }
+    navClick($("#btn1"), $("#page1"));
+    navClick($("#btn2"), $("#page2"));
+    navClick($("#btn3"), $("#page3"));
+    navClick($("#btn4"), $("#page4"));
+    navClick($("#btn5"), $("#page5"));
+    navClick($("#btn6"), $("#page6"));
+    navClick($("#btn7"), $("#page7"));
+    navClick($("#btn8"), $("#page8"));
+    navClick($("#btn9"), $("#page9"));
+    navClick($("#btn10"), $("#page10"));
+    navClick($("#btn11"), $("#page11"));
+    navClick($("#btn12"), $("#page12"));
+
+</script>
+</body>
+</html>
