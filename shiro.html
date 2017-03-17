@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>杨宇昊的学习笔记-Shiro</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <!--Link Web Font-->
+    <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+    <!--代码高亮highlight.js-->
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>-->
+    <!--Link Base Style-->
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css"/>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<!--导航栏 [[-->
+<header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+        <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+</header>
+<!--导航栏 ]]-->
+<div class="am-g am-g-fixed">
+    <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+        <div class="am-g">
+            <div class="am-u-sm-11 am-u-sm-centered">
+                <div class="am-cf am-article am-scrollable-horizontal">
+
+                    <!--文章[[-->
+                    <h3 id="page1">1. 概述</h3>
+                    <ol>
+                        <li>Shiro：Apache提供的基于Java的安全框架</li>
+                        <li>传统认证模式：几乎所有项目都会包含登录，权限或角色检测的功能，传统的认证模式
+                            <ul>
+                                <li>用户在进行登录后验证用户名和密码</li>
+                                <li>用户登录后通过登录验证过滤器保证尚未登录的用户无法进行资源访问(过滤器提供的是资源保护)，当权限分等级时需要在过滤器提供复杂的路径</li>
+                                <li>用户在登录后可以进行的操作需要划分角色和权限，需要在控制层进行当前用户角色检测以及权限检测</li>
+                                <li>在开发中业务层的操作可能会单独独立出来成为一个独立的业务接口，通过WebService进行发布，此时业务层需要进行角色和权限检测</li>
+                            </ul>
+                        </li>
+                        <li>目前主流的安全框架：Spring Security, Shiro</li>
+                    </ol>
+                    <h3 id="page2">2. Shiro提供的功能</h3>
+                    <ol>
+                        <li>Authentication : 身份验证/登录，验证用户是否拥有相应的身份</li>
+                        <li>Authorization : 权限验证，验证某个已认证的用户是否拥有某个权限，即判断当前用户可以进行的操作</li>
+                        <li>Session Manager : 会话管理，用户登录就是一次会话，在没有退出之前所有的信息都会在会话中，Shiro可以为JavaSE环境提供Session</li>
+                        <li>Cryptography : 加密，保护数据的安全性</li>
+                        <li>Web Support : Web支持，可以非常容易的集成到Web环境下</li>
+                        <li>Caching : 缓存，比如用户登录后，其用户信息，拥有的角色和权限不必每次查询，以提高效率</li>
+                        <li>Concurrency : Shiro支持多线程应用的并发验证，即如果在一个线程中开辟另一线程，能将权限自动传播过去</li>
+                        <li>Testing : 提供测试支持</li>
+                        <li>Run As : 允许一个用户假装另一个用户的身份进行登录</li>
+                        <li>Remember Me : 记住我，一次登录后下次会话不用登录  </li>
+                    </ol>
+                    <h3 id="page3">3. Shiro架构</h3>
+                    <ol>
+                        <li>Subject : 应用代码直接交互的对象，Subject代表当前用户，与Subject的所有交互都会委托给SecurityManager</li>
+                        <li>SecurityManager :
+                            安全管理器，所有与安全相关的操作都会与SecurityManager交互，且其管理着所有Subject，可以看做是Shiro的核心，负责与Shiro的其他组件进行交互
+                        </li>
+                        <li>Realm :
+                            Shiro从Realm获取安全数据(如用户,角色,权限)，就是说SecurityManager要验证用户身份，需要通过Realm获取相应的用户进行比较以确定用户身份是否合法，也需要从Realm得到用户相应的角色/权限进行验证用户是否可以进行从操作
+                        </li>
+                        <li>Authenticator : 负责Subject认证，是一个扩展点，可以自动以实现，可以使用认证策略，即什么情况算用户认证通过了</li>
+                        <li>Authorizer : 授权器，即访问控制器，用来决定主题是否有权限进行相应的操作，即控制这用户能访问应用中的哪写功能</li>
+                        <li>SessionManager : 管理Session声明周期的组件，而Shiro并不仅仅可以在Web环境中使用，也可以在普通javaSE中使用</li>
+                        <li>CacheManager：缓存控制器，来管理用户，角色，权限等的缓存</li>
+                        <li>Cryptography : 密码模块，Shiro提供了一些常见的加密组件用于加密和解密</li>
+                    </ol>
+                    <h3 id="page4">4. 环境搭建</h3>
+                    <ol>
+                        <li>加入Shiro需要的jar包 : log4j.jar, shiro-all.jar, slf4j-api.jar, slf4j-log4j.jar</li>
+                        <li>参照shiro-root/sameples/quickstart/src/main/*创建配置文件</li>
+                        <li>主函数
+                            <img src="photo/shiro/shiro1.png" class="am-img-responsive">
+                            <img src="photo/shiro/shiro2.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3 id="page5">5. Spring整合Shiro</h3>
+                    <ol>
+                        <li>加入Spring和Shiro的jar包</li>
+                        <li>配置Spring和Spring MVC</li>
+                        <li>在web.xml中配置ShiroFilter
+                            <img src="photo/shiro/shiro3.png" class="am-img-responsive">
+                        </li>
+                        <li>在applicationContext.xml中配置Shiro
+                            <img src="photo/shiro/shiro4.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3 id="page6">6. url匹配</h3>
+                    <ol>
+                        <li>通过url配置可以指定特定页面受到保护，只有通过某种权限才可以进行访问</li>
+                        <li>配置格式 : 路径 = 权限[参数]</li>
+                        <li>anno表示可以被匿名访问,authc表示必须经过认证才可以访问</li>
+                        <li>url模式使用Ant风格模式
+                            <br>Ant路径通配符支持?, *, **，通配符匹配不包含/
+                            <ul>
+                                <li>? - 匹配一个字符 e.g. /admin?可以匹配/admin1但不可以匹配/admin/</li>
+                                <li>* - 匹配0个或多个字符串</li>
+                                <li>** - 匹配0个或多个路径</li>
+                            </ul>
+                        </li>
+                        <li>url匹配顺序：url采用第一次匹配优先的顺序</li>
+                    </ol>
+                    <h3 id="page7">7. 认证</h3>
+                    <ol>
+                        <li>认证思路分析
+                            <ul>
+                                <li>获取当期Subject : 调用SecurityUtils.getSubject()方法</li>
+                                <li>测试当前用户是否已被验证 : 调用Subject的isAuthenticated()方法</li>
+                                <li>若没有验证，则将用户名和密码封装为UsernamePasswordToken对象</li>
+                                <li>执行登录 : 调用Subject的login(Authenticated)方法</li>
+                                <li>自定义Realm方法，从数据库中获取对应安全记录，返回给Shiro
+                                    <ul>
+                                        <li>实现org.apache.shiro.realm.AuthenticatingRealm类</li>
+                                        <li>实现doGetAuthenticationInfo(AuthenticationToken)方法</li>
+                                    </ul>
+                                </li>
+                                <li>由Shiro完成对密码的比对</li>
+                            </ul>
+                        </li>
+                        <li>认证的实现
+                            <ul>
+                                <li>登录表单
+                                    <img src="photo/shiro/shiro5.png" class="am-img-responsive">
+                                </li>
+                                <li>登录控制器
+                                    <img src="photo/shiro/shiro6.png" class="am-img-responsive">
+                                </li>
+                                <li>Realm
+                                    <img src="photo/shiro/shiro7.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>盐值加密
+                            <ul>
+                                <li>在Spring的Realm配置中，配置匹配的凭证
+                                    <img src="photo/shiro/shiro8.png" class="am-img-responsive">
+                                </li>
+                                <li>在Realm的实现类中，返回带有盐值加密的账户信息
+                                    <img src="photo/shiro/shiro9.png" class="am-img-responsive">
+                                </li>
+                                <li>在单元测试类中生成盐值加密后的字符
+                                    <img src="photo/shiro/shiro10.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>多Realm验证
+                            <ul>
+                                <li>在Spring中配置认证器和Realm
+                                    <img src="photo/shiro/shiro11.png" class="am-img-responsive">
+                                </li>
+                                <li>将SecurityManager配置中的Realm改为认证器
+                                    <img src="photo/shiro/shiro12.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>多Realm下的认证策略
+                            <ul>
+                                <li>FirstSuccessfulStrategy : 只要一个Realm验证成功即可，只返回第一个Realm身份验证成功的信息，其他的忽略</li>
+                                <li>AtLeastOneSuccessStrategy(default) : 只有一个Realm验证成功即可，将返回所有身份验证成功的认证信息</li>
+                                <li>AllSuccessfulStrategy : 所有Realm全部验证成功才算成功，如果有一个验证失败则失败</li>
+                                <li>配置验证策略的方法
+                                    <img src="photo/shiro/shiro13.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page8">8. 授权</h3>
+                    <ol>
+                        <li>授权的基本概念
+                            <ul>
+                                <li>授权：也成为访问控制，即在应用中控制谁访问哪些资源(访问页面/编辑数据/页面操作等)</li>
+                                <li>主体(Subject) : 访问应用的用户，在Shiro中使用Subject代表用户，用户只能授权后才能允许访问相应资源</li>
+                                <li>资源(Resource) : 在应用中用户可以访问的URL，比如访问JSP页面、查看或编辑数据、访问某个业务逻辑、打印文本等</li>
+                                <li>权限(Permission) : 安全策略中的原子授权单位，通过授权我们可以表示在应用中用户是否有操作某个资源的权力</li>
+                                <li>权限的粒度：粗粒度权限-功能模块的权限; 细粒度权限-实例级别的权限(操作某个用户)</li>
+                                <li>角色(Role) : 权限的集合，一般情况下会赋予用户角色而不是权限，使用户拥有一组权限</li>
+                            </ul>
+                        </li>
+                        <li>URL的角色检测 : 在Spring中配置Shiro的过滤器中配置，格式： url = roles[角色]
+                            <img src="photo/shiro/shiro14.png" class="am-img-responsive">
+                        </li>
+                        <li>授权的实现
+                            <br>将自定义的Realm继承AuthorizingRealm，在doGetAuthorizationInfo方法中实现授权，该方法将会自动被Shiro回调
+                            <img src="photo/shiro/shiro15.png" class="am-img-responsive">
+                        </li>
+                        <li>Shiro标签
+                            <ul>
+                                <li>导入标签库 : <code><%@ taglib uri="http://shiro.apache.org/tags" prefix="shiro"%></code></li>
+                                <li>常用标签
+                                    <img src="photo/shiro/shiro16.png" class="am-img-responsive">
+                                    <img src="photo/shiro/shiro17.png" class="am-img-responsive">
+                                </li>
+                                <li>e.g. <pre>
+&lt;h2>用户 : &lt;shiro:principal>&lt;/shiro:principal>&lt;/h2>
+&lt;shiro:hasRole name="user">
+    您的角色是用户,享有用户的操作权限
+&lt;/shiro:hasRole>
+&lt;shiro:hasRole name="admin">
+    您的角色是管理员,享有用户和管理员的操作权限
+&lt;/shiro:hasRole></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>权限注解
+                            <ul>
+                                <li>常用注解
+                                    <ul>
+                                        <li>@RequiresAuthentication : 表示当前Subject已经通过Login进行身份验证</li>
+                                        <li>@RequiresUser : 表示当前Subject已经身份验证或者通过记住我登录</li>
+                                        <li>@RequiresGuest : 表示当前Subject已经没有身份验证或通过记住我登录，即是游客身份</li>
+                                        <li>@RequiresRoles(value={"admin", "user"}, Logical.AND) :
+                                            表示当前Subject需要admin和user角色
+                                        </li>
+                                        <li>@RequiresPermissions(value={"user:a", "user:b"}) : 表示当前Subject需要权限user:a或user:b</li>
+                                    </ul>
+                                </li>
+                                <li>e.g.
+                                    <pre>
+@RequiresRoles({"user", "admin"})
+    public void testMethod() {
+    System.out.println("test Shiro Service; Time : " + new Date());
+}</pre>
+                                </li>
+                                <li>如果没有对应的访问权限去访问，则会发生error500错误，需要通过异常处理器去处理异常</li>
+                                <li>不要在Service层使用权限注解，因为通常需要在Service层使用声明式事务，将会生成Service的代理对象，而权限注解同样需要生成代理对象，因此无法使用，通常将权限注解加到Controller层</li>
+                            </ul>
+                        </li>
+                        <li>通过数据表初始化资源和权限
+                            <ul>
+                                <li>新建FilterChainDefinitionMapBuilder,通过数据库调用将权限信息动态插入LinkedHashMap并返回
+                                    <img src="photo/shiro/shiro18.png" class="am-img-responsive">
+                                </li>
+                                <li>在配置文件中配置
+                                    <img src="photo/shiro/shiro19.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page9">9. 会话控制</h3>
+                    <ol>
+                        <li>概述 :
+                            Shiro提供了完整的企业级会话管理功能，不依赖于底层容器，不管JavaSE还是JavaEE环境都可以使用，提供了会话管理、会话事件舰艇、会话存储/持久化、容器无关的集群、失效/过期的支持、对Web的透明支持、SSO单点登录的支持等特性
+                        </li>
+                        <li>会话相关API
+                            <ul>
+                                <li><code>Subject.getSession();<br>
+                                    //获取会话，默认为Subject.getSession(true)即当前没有创建Session则会创建，
+                                    <br>Subject.getSession(false)即当前没有Session返回NULL</code>
+                                </li>
+                                <li><code>session.getId();  //获取当前会话的唯一标示</code></li>
+                                <li><code>session.getHost();  //获取当前Subject的主机地址</code></li>
+                                <li><code>session.getTimeout() & session.setTimeout(毫秒); <br> //获取/设置当前Session的过期时间</code></li>
+                                <li><code>session.getStartTimestamp() & session.getListAccessTime(); <br>
+                                    //获取会话的启动时间以及最后访问时间，如果是JavaSE应用需要手动定期调用session.touch<br>去更新最后访问时间，
+                                    如果是Web应用每次进入ShiroFIlter会自动调用session.touch()<br>进行更新最后访问时间</code></li>
+                            </ul>
+                        </li>
+                        <li>会话监听器：SessionListener
+                            <ul>
+                                <li><code>onStart(Session); //Session启动时被调用</code></li>
+                                <li><code>onStop(Session); //Session销毁时被调用</code></li>
+                                <li><code>onExpiration(Session);  //Session过期时被调用</code></li>
+                            </ul>
+                        </li>
+                        <li>在Service层使用Session
+                            <pre>
+@RequiresRoles({"user", "admin"})
+public void testMethod() {
+    Session session = SecurityUtils.getSubject().getSession();
+    Object value = session.getAttribute("key");
+    System.out.println("* service session : key - " + value);
+}</pre>
+                        </li>
+                        <li>SessionDAO
+                            <ul>
+                                <li>AbstractSessionDAO : 提供了SessionDao的基本实现</li>
+                                <li>CachingSessionDao : 提供了对开发者透明的会话缓存功能，需要设置对应的CacheManager</li>
+                                <li>MemorySessionDao : 直接在内存中进行会话维护</li>
+                                <li>EnterpriseCacheSessionDAO : 提供了缓存功能的会话维护，默认情况下使用MapCache实现，内部使用ConcurrenthashMap保存缓存的会话</li>
+                            </ul>
+                        </li>
+                        <li>会话验证
+                            <ul>
+                                <li>Shiro提供了会话验证调度器，用于定期验证会话是否已过期，如果过期则停止会话</li>
+                                <li>
+                                    处于性能考虑，一般情况下都是获取会话时验证会话是否过期并退出会话，但如果在Web环境中，如果用户不主动退出时不知道会话是否过期的，需要定时检测会话是否过期，需要使用Shiro提供的会话验证调度器SessionValidationScheduler
+                                </li>
+                                <li>Shiro也提供了使用Quartz的会话调度验证器SessionQuartzValidationScheduler</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page10">10. 缓存</h3>
+                    <ol>
+                        <li>CacheManagerAware接口
+                            <ul>
+                                <li>Shiro内部相应的组件(DefaultSecurityManager)会自动检测对应的对象是否实现了CacheManagerAware并自动注入相应的CacheManager</li>
+                            </ul>
+                        </li>
+                        <li>Realm缓存
+                            <ul>
+                                <li>Shiro提供了CachingRealm，其实现了CacheManagerAware接口，提供了缓存的基础实现</li>
+                                <li>AuthenticatingRealm及AuthorizingRealm也分别提供了对AuthenticationInfo和AuthorizationInfo信息的缓存</li>
+                            </ul>
+                        </li>
+                        <li>Session缓存
+                            <ul>
+                                <li>
+                                    如SecurityManager实现了SessionSecurityManager，其会判断SessionManager是否实现了CacheManagerAware接口，如果实现了会把CacheManager设置给它
+                                </li>
+                                <li>SessionManager也会判断相应的SessionDAO是否实现了CacheManagerAware，如果实现了会把CacheManager设置给它</li>
+                                <li>设置了缓存的SessionManager，查询时会先查询缓存，如果找不到才查数据库</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page11">11. RememberMe</h3>
+                    <ol>
+                        <li>Shiro提供了记住我的功能，比如访问一些网站时，关闭了浏览器后再次打开依然可以被记住身份</li>
+                        <li>RememberMe的基本流程
+                            <ul>
+                                <li>在登录页面选中RememberMe后登录成功，如果是浏览器登录一般会将RememberMe的Cookie写到客户端保存下来</li>
+                                <li>关闭浏览器后重新打开，浏览器依旧可以记住用户信息</li>
+                                <li>访问一般网页服务器是知道身份的，并且可以进行正常访问</li>
+                                <li>当访问敏感信息时需要再次进行身份确认确保当前用户依旧是本人</li>
+                            </ul>
+                        </li>
+                        <li>使用拦截器进行验证
+                            <ul>
+                                <li>访问一般网页：使用user拦截器，保证用户登录即可</li>
+                                <li>访问特殊网页：使用authc拦截器，判断用户是否通过Subject.login(isAuthenticated==true)登录的，如果是才放行，否则重新登录</li>
+                            </ul>
+                        </li>
+                        <li>修改记住我的时间 : 在配置securityManager中配置RememberMeManager.cookie.maxAge属性
+                            <br><code>&lt;property name="rememberMeManager.cookie.maxAge" value="100">&lt;/property></code>
+                        </li>
+                    </ol>
+                    <!--文章]]-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+        <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+            <div class="am-offcanvas-bar">
+
+                <ul class="am-nav">
+                    <h1>Shiro</h1>
+                    <!--导航[[-->
+                    <li><a href="#!" id="btn1">概述</a></li>
+                    <li><a href="#!" id="btn2">Shiro提供的功能</a></li>
+                    <li><a href="#!" id="btn3">Shiro架构</a></li>
+                    <li><a href="#!" id="btn4">环境搭建</a></li>
+                    <li><a href="#!" id="btn5">Spring整合Shiro</a></li>
+                    <li><a href="#!" id="btn6">url匹配</a></li>
+                    <li><a href="#!" id="btn7">认证</a></li>
+                    <li><a href="#!" id="btn8">授权</a></li>
+                    <li><a href="#!" id="btn9">会话控制</a></li>
+                    <li><a href="#!" id="btn10">缓存</a></li>
+                    <li><a href="#!" id="btn11">RememberMe</a></li>
+                </ul>
+                <!--导航]]-->
+            </div>
+        </div>
+    </div>
+    <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+        data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+<!--页脚[[-->
+<br><br><br>
+<div class="am-g">
+    <div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+        <br>
+        <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+        <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+    </div>
+</div>
+<br><br><br>
+<!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+    //加载进度条
+    var progress = $.AMUI.progress;
+    $(window).load(function() {
+        progress.done();
+    })
+    $(document).ready(function() {
+        progress.start();
+    })
+    //侧边栏平滑滚动
+    $(window).smoothScroll();
+    function navClick($btnObj, $pageObj) {
+        $btnObj.on("click", function() {
+            var $w = $(window);
+            $w.smoothScroll({position: $pageObj.offset().top});
+        })
+    }
+    navClick($("#btn1"), $("#page1"));
+    navClick($("#btn2"), $("#page2"));
+    navClick($("#btn3"), $("#page3"));
+    navClick($("#btn4"), $("#page4"));
+    navClick($("#btn5"), $("#page5"));
+    navClick($("#btn6"), $("#page6"));
+    navClick($("#btn7"), $("#page7"));
+    navClick($("#btn8"), $("#page8"));
+    navClick($("#btn9"), $("#page9"));
+    navClick($("#btn10"), $("#page10"));
+    navClick($("#btn11"), $("#page11"));
+
+</script>
+</body>
+</html>
