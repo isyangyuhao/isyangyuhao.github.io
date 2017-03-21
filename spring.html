@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>杨宇昊的学习笔记-Spring</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+  <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+  <!--Link Web Font-->
+  <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+  <!--代码高亮highlight.js-->
+  <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+  <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>-->
+  <!--Link Base Style-->
+  <link rel="stylesheet" type="text/css" href="css/base.css">
+  <link rel="stylesheet" type="text/css" href="css/page.css"/>
+  <style type="text/css">
+  </style>
+</head>
+<body>
+  <!--导航栏 [[-->
+  <header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+      <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+  </header>
+  <!--导航栏 ]]-->
+  <div class="am-g am-g-fixed">
+  <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+    <div class="am-g">
+      <div class="am-u-sm-11 am-u-sm-centered">
+        <div class="am-cf am-article am-scrollable-horizontal">
+
+         <!--文章[[-->
+            <h2>第一部分 概述与Spring IOC</h2>
+            <h3>1.1 概述</h3>
+            <ol>
+                <li>Spring概述
+                    <ul>
+                        <li>Spring为简化企业级应用开发，使用Spring可以使简单的JavaBean实现以前只有EJB才可以实现的功能</li>
+                        <li>Spring是一个IOC(DI)和AOP容器框架</li>
+                        <li>Spring具体描述
+                            <ul>
+                                <li>轻量级 - Spring是非侵入性的，基于Spring开发的应用中的对象不依赖于Spring API</li>
+                                <li>依赖注入(DI - dependency injection, IOC)</li>
+                                <li>面向切面编程(AOP - aspect oriented programming)</li>
+                                <li>容器 - Spring是一个容器，包含并且管理应用对象的生命周期</li>
+                                <li>框架 - Spring实现了简单的组件配置合成复杂的应用，在Spring中可以使用XML和Java注解组合对象</li>
+                                <li>一站式 - 在IOC和AOP的基础上可以整合各种企业应用的开源框架和优秀的第三方类库(Spring自身也提供了展示层Spring MVC和持久层Spring JDBC)</li>
+                            </ul>
+                        </li>
+                        <li>Spring模块
+                            <img src="photo/spring/spring1.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>安装 SPRING TOOL SUITE
+                    <br>SPRING TOOL SUITE是一个Eclipse插件，利用该插件可以方便的在Eclipse平台开发基于Spring应用
+                    <ul>
+                        <li>Help --> Install New Software...</li>
+                        <li>Click Add...</li>
+                        <li>In dialog Add Site dialog, click Archive...</li>
+                        <li>Navigate to springsource-tool-suite-3.4.0.RELEASE-e4.3.1-updatesite.zip and click Open</li>
+                        <li>Clicking OK in the Add Site dialog will bring you back to the dialog 'Install'</li>
+                        <li>Select the xxx/Spring IDE that has appeared </li>
+                        <li>Click Next and then Finish</li>
+                        <li>Approve the license</li>
+                        <li>Restart eclipse when that is asked</li>
+                    </ul>
+                </li>
+                <li>搭建Spring开发环境
+                    <ul>
+                        <li>将以下jar包导入工程下
+                            <ul>
+                                <li>commons-logging.jar</li>
+                                <li>spring-beans-RELEASE.jar</li>
+                                <li>spring-context-RELEASE.jar</li>
+                                <li>spring-core-RELEASE.jar</li>
+                                <li>spring-expression-RELEASE.jar</li>
+                            </ul>
+                        </li>
+                        <li>加入Spring配置文件：一个Spring项目需要创建一个或多个Bean配置文件，这些配置文件用于Spring
+                            IOC容器里配置Bean，Bean的配置文件放在classpath或其他目录下
+                        </li>
+                        <li>e.g.
+                            <img src="photo/spring/spring2.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+            <h3>1.2 IOC</h3>
+            <ol>
+                <li>IOC(Inversion of Control)反转控制：反转资源获取方向
+                    <ul>
+                        <li>传统的资源查找方式要求组件想容器发起请求查询资源，作为回应容器适时的返回资源</li>
+                        <li>IOC是容器主动的将资源推送给它所管理的组件，组件所做的仅是选择一种合适的方式来接收资源，这种行为也称查找的被动形式</li>
+                    </ul>
+                </li>
+                <li>DI(Dependency Injection)依赖注入：IOC的另一种表述方式
+                    <ul>
+                        <li>组件以一些预先定义好的方式(例如setter方法)接收来自容器的资源注入</li>
+                    </ul>
+                </li>
+                <li>降低耦合度的过程
+                    <ul>
+                        <li>分离接口与实现
+                            <img src="photo/spring/spring3.png" alt="" class="am-img-responsive">
+                        </li>
+                        <li>工厂设计模式
+                            <img src="photo/spring/spring4.png" alt="" class="am-img-responsive">
+                        </li>
+                        <li>反转控制
+                            <img src="photo/spring/spring5.png" alt="" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+            <h3>1.3 Bean配置</h3>
+            <ol>
+                <li>在Spring的IOC容器中配置Bean
+                    <ul>
+                        <li>在xml文件中tongguobean结点来配置bean
+                            <br><code>&lt;bean id="person" class="org.yang.demo.beans.Person">&lt;/bean></code>
+                        </li>
+                        <li>bean中的id属性代表bean的名称
+                            <ul>
+                                <li>在IOC容器中的id值必须唯一</li>
+                                <li>若id没有指定，Spring自动将权限定性类名作为Bean的名字</li>
+                                <li>id可以指定多个名字，名字间用逗号，分号，空格分隔</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>Spring容器
+                    <ul>
+                        <li>在Srping IOC容器读取Bean配置创建Bean实例之前必须对其进行初始化，只有容器实例化后才可以从IOC容器中获取实例并使用</li>
+                        <li>Spring提供了2种类型的IOC容器实现
+                            <ul>
+                                <li>BeanFactory - IOC容器的基本实现
+                                    <br>BeanFactory是Spring框架的基础设施，面向Spring本身
+                                </li>
+                                <li>ApplicationContext - 提供了更多高级的特性，是BeanFactory的子接口
+                                    <ul>
+                                        <li>
+                                            ApplicationContext面向Spring框架的开发者，几乎所有应用场合都直接使用ApplicationContext而非底层BeanFactory
+                                        </li>
+                                        <li>ApplicationContext主要实现类
+                                            <ul>
+                                                <li>ClassPathXmlApplicationContext : 从类路径下加载配置文件</li>
+                                                <li>FileSystemXmlApplicationContext : 从文件系统中加载配置文件</li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            ConfigurableApplicationContext扩展与ApplicationContext，新增两个主要方法:refresh()和close()，让ApplicationContext具有启动，刷新，关闭上下文功能
+                                        </li>
+                                        <li>ApplicationContext在初始化上下文时实例化所有单例Bean</li>
+                                        <li>WebApplicationContext是专门为Web应用而准备的，允许从相对于Web根目录的路径中完成初始化</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>从IOC容器中获取Bean
+                    <br>调用ApplicationContext的getBean()方法
+                    <ul>
+                        <li>getBean(String)</li>
+                        <li>getBean(Class&lt;T>)</li>
+                    </ul>
+                </li>
+                <li>依赖注入的方式
+                    <ul>
+                        <li>属性注入
+                            <ul>
+                                <li>属性注入即通过setter方法注入Bean属性值或依赖的对象</li>
+                                <li>属性注入使用
+                                    &lt;property>元素，使用name属性指定Bean的属性名，value属性或
+                                        &lt;value>子元素指定属性值
+                                </li>
+                                <li>属性注入式实际应用中最常用的注入方式</li>
+                                <li>e.g.
+                                    <pre>
+&lt;bean id="test" class="org.yang.demo.beans.Test">
+    &lt;property name="name" value="yang">&lt;/property>
+&lt;/bean></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>构造器注入
+                            <ul>
+                                <li>通过构造方法注入Bean的属性值和依赖的对象，它保证了Bean实例在实例化后就可以使用</li>
+                                <li>构造器注入在
+                                    &lt;constructor-arg>元素里声明属性，
+                                    &lt;constructor-arg>中没有name属性
+                                </li>
+                                <li>e.g.1 按照索引匹配入参
+                                    <pre>
+&lt;bean id="person" class="org.yang.demo.beans.Person">
+    &lt;constructor-arg value="yang" index="0">&lt;/constructor-arg>
+    &lt;constructor-arg value="20" index="1">&lt;/constructor-arg>
+    &lt;constructor-arg value="185.5" index="2">&lt;/constructor-arg>
+&lt;/bean></pre>
+                                </li>
+                                <li>e.g.2 按照类型匹配入参
+                                    <pre>
+&lt;bean id="person" class="org.yang.demo.beans.Person">
+    &lt;constructor-arg value="yang" type="java.lang.String">&lt;/constructor-arg>
+    &lt;constructor-arg value="20" type="int">&lt;/constructor-arg>
+    &lt;constructor-arg value="185.5" type="double">&lt;/constructor-arg>
+&lt;/bean></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>工厂方式注入(不推荐)</li>
+                    </ul>
+                </li>
+                <li>字面值
+                    <ul>
+                        <li>字面值：可以用字符串表示的值，可以通过
+                            &lt;value>元素或者value属性进行注入
+                        </li>
+                        <li>基本数据类型及封装类，String等类型可以采用字面值注入的方式</li>
+                        <li>若字面值中包含特殊字符，可以使用<![CDATA[]]>方式将字面值包裹起来</li>
+                        <li>e.g.
+                            <br><code>&lt;property name="username" value="yang"></code>
+                        </li>
+                    </ul>
+                </li>
+                <li>引用其他Bean
+                    <ul>
+                        <li>组成应用程序的Bean经常需要相互协作以完成应用程序的功能，要使Bean能够相互访问，就需要在Bean中配置指定Bean的引用</li>
+                        <li>在Bean的配置文件中，可以通过
+                            &lt;ref>元素或ref属性对Bean属性或构造器参数指明对Bean的应用
+                            <pre>
+&lt;bean id="car1" class="org.yang.demo.beans.Car"> ... &lt;/bean>
+&lt;bean id="user" class="org.yang.demo.beans.User">
+    ...
+    &lt;property name="car" ref="car1">&lt;/property>
+    ...
+&lt;/bean></pre>
+                        </li>
+                        <li>通过内部Bean方式为Bean声明：在属性或构造器里包含Bean声明
+                            <pre>
+&lt;bean id="user" class="org.yang.demo.beans.User">
+    ...
+    &lt;property name="car">
+        &lt;bean class="org.yang.demo.beans.Car">
+            ...
+        &lt;/bean>
+    &lt;/property>
+    ...
+&lt;/bean></pre>
+                        </li>
+                    </ul>
+                </li>
+                <li>注入空值与级联属性
+                    <ul>
+                        <li>可以使用
+                            &lt;null/>
+                            元素为Bean的字符串或者其他对象类的属性注入空值null
+                            <br><code>&lt;construct-arg>&lt;null/>&lt;/construct-arg></code>
+                        </li>
+                        <li>Spring支持为级联属性赋值
+                            <br><code>&lt;property name="car.name" value="carName">&lt;/property></code>
+                        </li>
+                    </ul>
+                </li>
+                <li>注入集合属性
+                    <ul>
+                        <li>注入List和Array：使用&lt;list>标签，在标签内部通过&lt;value>指明常量，&lt;ref>指明引用
+                            <pre>
+&lt;property name="cars">
+    &lt;list>
+        &lt;ref bean="car1"/>
+        &lt;ref bean="car2"/>
+        &lt;ref bean="car3"/>
+    &lt;/list>
+&lt;/property></pre>
+                        </li>
+                        <li>注入Map：使用&lt;map>标签，在标签内部使用entry子元素的key属性和value/value-ref属性为其赋值，也可以直接使用&lt;bean>
+                            <pre>
+&lt;property name="cars">
+    &lt;map>
+        &lt;entry key="A" value-ref="car1"/>
+        &lt;entry key="B" value-ref="car2"/>
+        &lt;entry key="C" value-ref="car3"/>
+    &lt;/map>
+&lt;/property></pre>
+                        </li>
+                        <li>注入Properties：使用&lt;props>定义Java.util.Prperties，该标签使用多个&lt;prop>作为子标签，每个&lt;prop>需要定义key属性
+                            <pre>
+&lt;property name="dataSource">
+    &lt;props>
+        &lt;prop key="username">root&lt;/prop>
+        &lt;prop key="password">root&lt;/prop>
+        &lt;prop key="url">jdbc:mysql:///test&lt;/prop>
+    &lt;/props>
+&lt;/property></pre>
+                        </li>
+                    </ul>
+                </li>
+                <li>定义集合Bean
+                    <ul>
+                        <li>使用基本的集合标签定义集合时，不能将集合作为独立的Bean定义，导致其他的Bean无法引用该集合，无法在不同Bean间共享集合</li>
+                        <li>使用util schema中的集合标签定义独立的集合Bean，使用时需要引入util的命名空间</li>
+                        <li>使用util schema里的集合标签作为独立的集合Bean</li>
+                        <li>e.g.
+                            <pre>
+&lt;!-- 配置单例的集合bean，以供多个bean进行引用 -->
+&lt;util:list id="cars">
+    &lt;ref bean="car"/>
+    &lt;ref bean="car2"/>
+    &lt;ref bean="car3"/>
+&lt;/util:list>
+&lt;!-- 使用时直接将集合Bean当作Bean来应用即可 -->
+&lt;bean id="person111" class="org.yang.demo.beans.Person">
+    &lt;property name="name" value="yang">&lt;/property>
+    &lt;property name="cars" ref="cars">&lt;/property>
+&lt;/bean></pre>
+                        </li>
+                    </ul>
+                </li>
+                <li>p命名空间
+                    <br>用于简化XML文件的配置，使xml采用非子元素形式配置文件
+                    <img src="photo/spring/spring6.png" alt="" class="am-img-responsive">
+                </li>
+                <li>自动装配
+                    <ul>
+                        <li>Spring IOC容器可以自动装配Bean，需要在bean中的autowire属性指定自动装配的模式</li>
+                        <li>自动装配模式
+                            <ul>
+                                <li>byType : 根据类型自动匹配，若IOC容器中有多个与目标Bean类型一直的Bean，Spring则无法自动装配</li>
+                                <li>byName : 根据名称自动装配，必须将目标Bean的名称与属性名设置相同则可以自动装配</li>
+                                <li>constructor : 通过构造器自动装配，当Bean中存在多个构造器时会很复杂，不推荐使用</li>
+                            </ul>
+                        </li>
+                        <li>自动装配的缺点
+                            <ul>
+                                <li>在Bean配置文件中设置autowire属性进行自动装配将会装配Bean的所有属性，只需要装配部分属性时则不灵活</li>
+                                <li>autowire属性只能根据名称或类型自动匹配，不能同时兼顾</li>
+                                <li>一般情况下很少用自动装配，明确清晰的配置文档优于自动装配带来的好处</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>bean之间的关系
+                    <ul>
+                        <li>继承关系
+                            <ul>
+                                <li>Spring允许继承bean的配置，被继承的bean成为父bean，继承这个bean的bean成为子bean</li>
+                                <li>子bean从父bean中继承配置，包括bean的属性配置</li>
+                                <li>子bean也可以覆盖从父bean继承过来的配置</li>
+                                <li>父bean可以作为配置模板，也可以作为bean示例，若只想将父bean作为模板，则需要设置bean的abstract属性为true，这样Spring不会实例化这个bean</li>
+                                <li>并不是bean中的所有属性都会被继承，例如autowire, abstract等就不会被继承</li>
+                                <li>可以忽略父bean中的class属性，让子bean指定自己的类，而共享相同的配置，此时父bean必须设置为true</li>
+                                <li>e.g.
+                                    <img src="photo/spring/spring7.png" alt="" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>依赖关系
+                            <ul>
+                                <li>Spring允许用户通过depends-on属性设定Bean前置依赖的Bean，前置依赖的Bean会在本Bean实例化之后创建好</li>
+                                <li>前置依赖于多个Bean，可以通过逗号，空格的方式配置Bean的名称</li>
+                                <li>e.g.
+                                    <pre>
+&lt;bean id="person" class="org.yang.demo.beans2.Person"
+      p:name="yang" p:address-ref="address" depends-on="car">&lt;/bean></pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>bean的作用域
+                    <ul>
+                        <li>在Spring中，可以在&lt;bean>元素的scope属性里设置Bean的作用域
+                        </li>
+                        <li>默认情况下，Spring置为每个IOC容器里声明的Bean创建唯一实例，整个IOC容器范围内都能共享该实例(单例对象)</li>
+                        <li>bean的作用域
+                            <table class="am-table am-table-compact">
+                                <thead>
+                                    <th>类别</th>
+                                    <th>说明</th>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>singleton</td>
+                                    <td>在SpringIOC容器中仅存在一个Bean实例，Bean以单例的方式存在 (默认)</td>
+                                </tr>
+                                <tr>
+                                    <td>prototype</td>
+                                    <td>每次调用getBean()方法都会创建一个新的实例</td>
+                                </tr>
+                                <tr>
+                                    <td>request</td>
+                                    <td>每次HTTP请求都会创建一个新的Bean，该作用域仅限于WebApplicationContext环境</td>
+                                </tr>
+                                <tr>
+                                    <td>session</td>
+                                    <td>同一个HTTP Session共享一个Bean，不同的HTTP Session使用不同的Bean，该作用域仅限于WebApplicationContext</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </li>
+                    </ul>
+                </li>
+                <li>使用外部属性文件
+                    <ul>
+                        <li>在配置文件中配置Bean，有时需要在Bean配置里混入系统部署的细节信息(文件路径，数据源配置信息等)，而这些配置信息实际上需要和Bean相分离</li>
+                        <li>
+                            Spring提供了PropertyPlaceholderConfigurer的BeanFactory后置处理器，这个处理器允许用户将Bean配置的部分内容移到属性文件当中，在Bean配置文件中以${var}的变量形式在PropertyPlaceholderConfigurer从属性文件中加载属性，并替换对应变量
+                        </li>
+                        <li>Spring允许在属性文件中使用${propName}来实现属性间的相互作用</li>
+                        <li>使用外部属性文件需要引入context命名空间</li>
+                        <li>e.g.
+                            <pre>
+&lt;!-- 导入属性文件 -->
+&lt;context:property-placeholder location="classpath:db.properties" />
+&lt;bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+    &lt;property name="user" value="${user}">&lt;/property>
+    &lt;property name="password" value="${password}">&lt;/property>
+    &lt;property name="driverClass" value="${driverClass}">&lt;/property>
+    &lt;property name="jdbcUrl" value="${url}">&lt;/property>
+&lt;/bean></pre>
+                        </li>
+                    </ul>
+                </li>
+                <li>SpEL : Spring表达式语言
+                    <ul>
+                        <li>Spring表达式语言(SpEL)：是一个支持运行时查询和操作对象图的表达式语言</li>
+                        <li>SpEL使用#{...}作为定界符，所有大括号中的字符都被认为是SpEL</li>
+                        <li>SpEL为bean的属性的动态赋值提供便利</li>
+                        <li>SpEL语法
+                            <ul>
+                                <li>字面量表示 - #{...}直接在大括号中书写，字符串需要用单引号或双引号包裹</li>
+                                <li>引用Bean - #{object}</li>
+                                <li>引用Bean的属性 - #{object.field}</li>
+                                <li>调用其它方法，允许链式操作 - #{objcec.toString()}</li>
+                                <li>支持算数运算符 ： +, -, *, /, &, ^</li>
+                                <li>字符串连接 - #{str1 + str2}</li>
+                                <li>支持比较运算符 ： <, >, ==, <=, >=, lt, gt, eq, le, ge</li>
+                                <li>支持逻辑运算符号 ： and, or, not, |</li>
+                                <li>支持if-else运算符 - #{num1 > 10 ?: 'yes'}  #{num1 > 10 ? 'yes' : 'no'}</li>
+                                <li>支持正则表达式 - #{admin.email matches '[a-zA-Z0-9._%+=]+@[a-zA-Z0-9]+\\.[a-zA-Z]{2,4}'}</li>
+                                <li>调用静态方法或静态属性 - #{T(java.lang.Math).PI}</li>
+                            </ul>
+                        </li>
+                        <li>e.g.
+                            <img src="photo/spring/spring8.png" alt="" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>IOC容器中Bean的生命周期
+                    <ul>
+                        <li>Spring IOC容器可以管理Bean的生命周期，Spring允许在Bean生命周期的特定点执行定制任务</li>
+                        <li>Spring容器对Bean的生命周期进行管理的过程
+                            <ul>
+                                <li>通过构造器或工厂方式发创建Bean实例</li>
+                                <li>为Bean的属性设置值和对其他Bean的引用</li>
+                                <li>调用Bean的初始化方法</li>
+                                <li>允许Bean被使用</li>
+                                <li>容器关闭时，调用Bean销毁方法</li>
+                            </ul>
+                        </li>
+                        <li>声明初始化和销毁方法
+                            <ul>
+                                <li>在Bean中编写初始化和销毁方法</li>
+                                <li>在Bean声明中设置init-method和destroy-method属性，为Bean指定初始化和销毁方法</li>
+                                <li>e.g.
+                                    <img src="photo/spring/spring9.png" alt="" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Bean后置处理器
+                            <ul>
+                                <li>Bean后置处理器允许在调用初始化方法前后对Bean进行额外处理</li>
+                                <li>Bean后置处理器对IOC容器里的所有Bean实例逐一处理而非单一实例</li>
+                                <li>使用步骤
+                                    <ul>
+                                        <li>创建Bean后置处理器类实现BeanPostProcessor接口</li>
+                                        <li>在配置文件中配置后置处理器</li>
+                                    </ul>
+                                </li>
+                                <li>Srping IOC容器对Bean生命周期的管理过程(包含后置处理器)
+                                    <ul>
+                                        <li>通过构造器或工厂方式发创建Bean实例</li>
+                                        <li>为Bean的属性设置值和对其他Bean的引用</li>
+                                        <li>将Bean实例传递给Bean后置处理器的postProcessBeforeInitialization方法</li>
+                                        <li>调用Bean的初始化方法</li>
+                                        <li>将Bean实例传递给Bean后置处理器的postProcessAfterInitialization方法</li>
+                                        <li>允许Bean被使用</li>
+                                        <li>容器关闭时，调用Bean销毁方法</li>
+                                    </ul>
+                                </li>
+                                <li>e.g.
+                                    <img src="photo/spring/spring10.png" alt="" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>通过静态工厂方法创建Bean
+                    <ul>
+                        <li>静态工厂方法：调用静态工厂方法创建Bean将对象创建的过程封装到静态方法中，当客户端需要对象时，只需要调用静态方法即可创建实例Bean</li>
+                        <li>需要生命通过静态方法创建的Bean，在Bean的class属性指定拥有该工厂方法的类，同时在factory-method属性中指定工厂方法的名称，使用
+                            &lt;constrctor-arg>子元素为该方法传递方法参数
+                        </li>
+                        <li>e.g.
+                            <img src="photo/spring/spring11.png" alt="" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>通过实例工厂方法创建Bean
+                    <ul>
+                        <li>实例工厂方法：将对象的创建过程封装到另一个对象的实例，当客户端需要请求对象时，需要调用该实例方法即可</li>
+                        <li>配置步骤
+                            <ul>
+                                <li>在bean的factory-bean属性里指定拥有工厂方法的bean</li>
+                                <li>在factory-method属性中指定工厂方法名称</li>
+                                <li>使用construtor-arg子元素为工厂方法传递方法参数</li>
+                            </ul>
+                        </li>
+                        <li>e.g.
+                            <img src="photo/spring/spring12.png" alt="" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>通过FactroyBean配置Bean
+                    <ul>
+                        <li>Spring有两种类型Bean，普通Bean和FactoryBean，FactoryBean的返回对象不是类的而是返回工厂Bean的getObject方法返回的对象</li>
+                        <li>e.g.
+                            <img src="photo/spring/spring13.png" alt="" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>通过注解配置Bean
+                    <h4>(1) 组件扫描</h4>
+                    <ul>
+                        <li>组件扫描：Spring能够从classPath下自动扫描，侦测和实例化具有特定注解的组件</li>
+                        <li>特定组件包括
+                            <ul>
+                                <li>@Component - 基本注解，表示一个受Spring管理的组件</li>
+                                <li>@Respository - 标识持久层组件</li>
+                                <li>@Service - 标识服务层(业务层)组件</li>
+                                <li>@Controller - 标识表示层组件</li>
+                            </ul>
+                        </li>
+                        <li>组件类的默认id为驼峰命名法的类名，如果是实现类则默认去掉"Impl"后缀
+                            <br>e.g.
+                            <pre>
+@Repository("userRepository")
+public class UserRepositoryImpl implements UserRepository {
+    public void save() {
+        System.out.println("UserRepository Save ...");
+    }
+}
+public static void main(String args[]) {
+    ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans-annotation.xml");
+    UserRepositoryImpl userRepository = (UserRepositoryImpl) applicationContext.getBean("userRepository");
+    System.out.println(userRepository);
+}</pre>
+                        </li>
+                        <li>在组件类使用特定注解后需要在Spring中配置&lt;context:component-scan>
+                            <ul>
+                                <li>base-package属性指定一个需要扫描的基类包，Spring容器将会扫描这个基类包里及其子包中的所有类
+                                    <br><code>&lt;context:component-scan base-package="org.yang.demo.basePackage">&lt;
+                                        <br>/context:component-scan></code>
+                                </li>
+                                <li>当需要扫描多个包时，可以使用逗号分隔</li>
+                                <li>如果仅希望扫描特定的类而非基包中的所有类，可以使用resource-pattern属性过滤特定得类
+                                    <br><code>&lt;context:component-scan base-package="org.yang.demo.basePackage"
+                                             <br>resource-pattern="autowire/*.class">&lt;/context:component-scan></code>
+                                </li>
+                                <li>&lt;context:include-filter>子节点表示要包含的目标类
+                                    <pre>
+&lt;context:component-scan
+        base-package="org.yang.demo.beans.annotation"
+        use-default-filters="false">
+    &lt;context:include-filter
+            type="annotation"
+            expression="org.yang.demo.beans.annotation.service.UserService"/>
+&lt;/context:component-scan></pre>
+                                </li>
+                                <li>&lt;context:exclude-filter>子节点表示要排除在外的目标类</li>
+                                <li>&lt;context:include-filter>和&lt;context:exclude-filter>子结点支持多种类型的过滤表达式
+                                    <img src="photo/spring/spring14.png" alt="" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <h4>(2) 组件装配</h4>
+                    <ul>
+                        <li>&lt;context:component-scan>元素会自动注册AutowiredAnnotationBeanPostProcessor实例，该实例可以自动装配具有
+                            @Autowired, @Resource, @Inject注解的属性
+                        </li>
+                        <li>使用@Autowired自动装配Bean：@autowired注解自动装配具有兼容类型的单个Bean属性
+                            <ul>
+                                <li>构造器，普通字段(非public)，一切具有参数地方法都可以应用@Autowired注解</li>
+                                <li>
+                                    默认情况下，所有使用@Authwired注解的属性都需要被设置，当Spring找不大哦匹配的Bean装配属性时，会抛出异常，可以设置@Authwired(required=false)方式返回null而不抛出异常
+                                </li>
+                                <li>默认情况下当IOC容器中存在多个类型兼容的Bean时，通过类型自动装配将无法工作，需要加上@Qualifiter指定注入Bean的名称</li>
+                                <li>@Authwired注解也可以应用在数组类型上，此时Spring将会把所有匹配的Bean进行自动装配</li>
+                                <li>@Authwired注解也可以应用在集合属性上，此时Spring读取该集合的类型信息，然后自动装配所有与之兼容的Bean</li>
+                                <li>
+                                    @Authwired注解用在java.util.Map上时，若Map的键值为String，那么Spring将自动装配与Map值类型兼容的Bean，此时Bean的名称作为键值
+                                </li>
+                                <li>e.g.
+                                    <pre>
+@Controller
+public class UserController {
+    @Autowired
+    private UserService userService;
+    public void setUserService(@Qualifier("userService") UserService userService) {
+        this.userService = userService;
+    }
+    public void execute() {
+        System.out.println("UserController execute ...");
+        userService.add();
+    }
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>使用@Resource和@Inject自动装配Bean
+                            <ul>
+                                <li>Spring支持@Resource和@Inject注解</li>
+                                <li>@Resource注解要求提供一个Bean的名称的属性，若该属性为空则自动采用标注的变量或方法作为Bean的名称</li>
+                                <li>@Inject和@Autowired注解功能相同，但是没有reqired属性</li>
+                                <li>建议使用@Autowired注解</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>泛型依赖注入
+                    <ul>
+                        <li>Spring4.x中可以为子类注入子类对应的泛型类型的成员变量的引用
+                            <img src="photo/spring/spring15.png" alt="" class="am-img-responsive">
+                        </li>
+                        <li>e.g.
+                            <img src="photo/spring/spring16.png" alt="" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+            <h2>第二部分 Spring AOP</h2>
+            <h2>第三部分 Spring应用</h2>
+         <!--文章]]-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+    <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+      <div class="am-offcanvas-bar">
+
+        <ul class="am-nav">
+        	<h1>Spring</h1>
+        	<!--导航[[-->
+          <li class="am-nav-header">概述与Spring IOC</li>
+            <li><a href="#!" id="btn1">概述</a></li>
+            <li><a href="#!" id="btn2">IOC</a></li>
+            <li><a href="#!" id="btn3">Bean配置</a></li>
+            <li class="am-nav-header">Spring AOP</li>
+            <li><a href="#!" id="btn4">动态代理</a></li>
+            <li><a href="#!" id="btn5">AOP</a></li>
+            <li><a href="#!" id="btn6">Spring AOP</a></li>
+            <li class="am-nav-header">Spring应用</li>
+            <li><a href="#!" id="btn7">Spring JdbcTemplate</a></li>
+            <li><a href="#!" id="btn8">Spring事务管理</a></li>
+            <li><a href="#!" id="btn9">Spring整合Hibernate</a></li>
+            <li><a href="#!" id="btn10">Spring整合Struts2</a></li>
+
+        </ul>
+        <!--导航]]-->
+      </div>
+    </div>
+  </div>
+  <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+  	data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+  <!--页脚[[-->
+  <br><br><br>
+  <div class="am-g">
+  	<div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+  	  <br>
+  	  <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+  	  <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+  	</div>
+  </div>
+  <br><br><br>
+  <!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+	//加载进度条
+	var progress = $.AMUI.progress;
+	$(window).load(function() {
+		progress.done();
+	})
+	$(document).ready(function() {
+		progress.start();
+	})
+	//侧边栏平滑滚动
+	$(window).smoothScroll();
+	function navClick($btnObj, $pageObj) {
+		$btnObj.on("click", function() {
+			var $w = $(window);
+			$w.smoothScroll({position: $pageObj.offset().top});
+		})
+	}
+	navClick($("#btn1"), $("#page1"));
+	navClick($("#btn2"), $("#page2"));
+	navClick($("#btn3"), $("#page3"));
+	navClick($("#btn4"), $("#page4"));
+	navClick($("#btn5"), $("#page5"));
+	navClick($("#btn6"), $("#page6"));
+  navClick($("#btn7"), $("#page7"));
+  navClick($("#btn8"), $("#page8"));
+
+</script>
+</body>
+</html>
