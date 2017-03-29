@@ -649,6 +649,58 @@ public class UserController {
                 </li>
             </ol>
             <h2>第二部分 Spring AOP</h2>
+            <h3>2.1 动态代理</h3>
+            <ol>
+                <li>需求：实现整数类型的加减乘除类型运算，在运算前后需要加入日志记录</li>
+                <li>运算接口
+                    <pre>
+public interface ArithmeticCalculator {
+    int add(int i, int j);
+    int sub(int i, int j);
+    int mul(int i, int j);
+    int div(int i, int j);
+}</pre>
+                </li>
+                <li>不通过动态代理方式实现需求
+                    <img src="photo/spring/spring17.png" alt="" class="am-img-responsive">
+                </li>
+                <li>通过动态代理实现需求
+                    <img src="photo/spring/spring18.png" alt="" class="am-img-responsive">
+                    <img src="photo/spring/spring19.png" alt="" class="am-img-responsive">
+                </li>
+                <li>不使用动态代理的缺点
+                    <ul>
+                        <li>代码混乱：越来越多的非业务需求加入后，原有的业务方法急剧膨胀，每个方法在处理核心逻辑的同时还必须兼顾其他多个关注点</li>
+                        <li>代码分散：例如想要向业务中加入日志需求，需要在多个模块和方法中多次重复相同的日志代码，如果日志发生变化需要修改全部模块</li>
+                    </ul>
+                </li>
+                <li>代理设计模式原理: 使用一个代理将对象包装起来，然后用该代理对象取代原始对象，任何对原始对象的调用都要通过代理对象，代理对象决定是否以及何时调用到原始对象上</li>
+            </ol>
+            <h3>2.2 AOP</h3>
+            <ol>
+                <li>AOP(Aspect-Oriented Programming)面向切面编程，是对于传统OOP(Object-Oriented Programming)面向对象编程的一种补充</li>
+                <li>AOP的好处
+                    <ul>
+                        <li>每个事务逻辑位于一个位置，代码不分散，便于维护和升级</li>
+                        <li>业务模块更简洁，只包含核心业务代码</li>
+                    </ul>
+                </li>
+                <li>图解
+                    <img src="photo/spring/spring20.emf" alt="" class="am-img-responsive">
+                </li>
+                <li>AOP概念
+                    <ul>
+                        <li>切面(Aspect) - 横切关注点(跨越应用程序多个模块的功能)被模块化的特殊对象</li>
+                        <li>通知(Advice) - 切面必须完成的工作</li>
+                        <li>目标(Target) - 被通知的对象</li>
+                        <li>代理(Proxy) - 向目标对象应用通知之后创建的对象</li>
+                        <li>连接点(Joinpoint) - 程序执行某个特定的位置，连接点由两个信息确定：方法表示的程序执行点和相对点表示的方位
+                            <br>e.g. UserService#add()方法执行点为UserService#add()方法，方位为UserService#add()方法执行前的位置</li>
+                        <li>切点(Pointcut) - 每个类拥有多个连接点，AOP通过切点定位特定的连接点，一个切点可以匹配多个连接点</li>
+                    </ul>
+                </li>
+            </ol>
+            <h3>2.3 Spring AOP</h3>
             <h2>第三部分 Spring应用</h2>
          <!--文章]]-->
         </div>
