@@ -701,6 +701,177 @@ public interface ArithmeticCalculator {
                 </li>
             </ol>
             <h3>2.3 Spring AOP</h3>
+            <ol>
+                <li>在Spring中启用AspectJ注解支持
+                    <ul>
+                        <li>在Spring中使用AspectJ注解，需要在classPath中导入AspcetJ类库：
+                            aopalliance.jar、aspectj.weaver.jar 和 spring-aspects.jar
+                        </li>
+                        <li>在配置文件中导入aop命名空间</li>
+                        <li>将横切关注点的代码抽象到切面类中
+                            <ul>
+                                <li>切面需要时一个IOC中的bean，即使用@Component注解</li>
+                                <li>切面需要加入@Aspect注解</li>
+                            </ul>
+                        </li>
+                        <li>在切面类中声明通知</li>
+                        <li>在配置文件中加入&lt;aop:aspectj-autoproxy>&lt;/aop:aspectj-autoproxy></li>
+                        <li>e.g. 创建记录整数四则运算的日志切面
+                            <pre>
+//把该类声明为一个切面: 1.将该类放入到IOC容器中  2.声明为切面
+@Aspect
+@Component
+public class LoggingAspect {
+    //声明该方法是要给前置通知：在目标方法开始之前执行
+    @Before("execution(public int org.yang.demo.aop.ArithmeticCalculatorImpl.*(int, int))")
+    public void beforeMethod(JoinPoint joinPoint) {
+        String methodName = joinPoint.getSignature().getName();
+        List&lt;Object> args = Arrays.asList(joinPoint.getArgs());
+        System.out.println("The method " + methodName + " begins with" + args);
+}</pre>
+                        </li>
+                    </ul>
+                </li>
+                <li>通知
+                    <ul>
+                        <li>前置通知 - 在方法执行之前执行的通知
+                            <ul>
+                                <li>使用@Before注解，并将切入点表达式的值作为注解值</li>
+                                <li>e.g.
+                                    <pre>
+//声明该方法是要给前置通知：在目标方法开始之前执行
+@Before("execution(public int org.yang.demo.aop.ArithmeticCalculatorImpl.*(int, int))")
+public void beforeMethod(JoinPoint joinPoint) {
+    //通过joinPoint对象的getSignature().getName方法获取执行的方法名
+    String methodName = joinPoint.getSignature().getName();
+    //通过jointPoint对象的getArgs()方法获取参数值
+    List&lt;Object> args = Arrays.asList(joinPoint.getArgs());
+    System.out.println("The method " + methodName + " begins with" + args);
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>后置通知 - 在目标方法执行后，无论是否发生异常，都执行的通知，在后置通知不能访问目标方法执行的结果
+                            <ul>
+                                <li>使用@After注解，并将切入点表达式的值作为注解值</li>
+                                <li>e.g.
+                                    <pre>
+@After("execution(public int org.yang.demo.aop.ArithmeticCalculatorImpl.*(int, int))")
+public void afterMethod(JoinPoint joinPoint) {
+    String methodName = joinPoint.getSignature().getName();
+    List&lt;Object> args = Arrays.asList(joinPoint.getArgs());
+    System.out.println("The method " + methodName + " ends with" + args);
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>返回通知 - 在方法正常结束后执行，可以访问到方法的返回值
+                            <ul>
+                                <li>使用@AfterRetruning注解，该注解有2个参数，value=切入点表达式，returning=承载返回值的变量名</li>
+                                <li>e.g.
+                                    <pre>
+@AfterReturning(value = "execution(public int org.yang.demo.aop.ArithmeticCalculatorImpl.*(int, int))",
+        returning="result")
+public void afterReturning(JoinPoint joinPoint, Object result) {
+    String methodName = joinPoint.getSignature().getName();
+    List&lt;Object> args = Arrays.asList(joinPoint.getArgs());
+    System.out.println("The method " + methodName + " ends with" + args);
+    System.out.println("result is " + result);
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>异常通知 - 在方法发生异常的时候执行，可以访问到异常对象，可以指定出现特定异常时执行通知代码
+                            <ul>
+                                <li>使用@AfterThrowing注解，该注解有2个参数，value=切入点表达式，throwing=承载异常对象的变量名</li>
+                                <li>e.g.
+                                    <pre>
+@AfterThrowing(value="execution(public int org.yang.demo.aop.ArithmeticCalculatorImpl.*(int, int))",
+        throwing="exception")
+public void afterThrowing(JoinPoint joinPoint, Exception exception) {
+    String methodName = joinPoint.getSignature().getName();
+    List&lt;Object> args = Arrays.asList(joinPoint.getArgs());
+    System.out.println("The method " + methodName + " ends with" + args);
+    System.out.println("exception is " + exception);
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>环绕通知 - 全面的控制连接点
+                            <ul>
+                                <li>使用@Around注解，并将切入点表达式的值作为注解值</li>
+                                <li>对于环绕通知来说，连接点的参数类型必须是ProceedingJoinPoint，它是JoinPoint的子接口，允许控制何时执行，是否执行连接点</li>
+                                <li>在环绕通知中需要明确ProceedingJoinPoint的proceed()方法来执行被代理方法</li>
+                                <li>e.g
+                                    <img src="photo/spring/spring21.png" alt="" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>方法签名实例
+                    <ul>
+                        <li>execution * packageName.className.*(...)
+                            <br>匹配在packageName包下className类中任意修饰符任意返回值的任意方法匹配任意数量的参数
+                        </li>
+                        <li>execution public * interfaceName.*(...)
+                            <br>匹配interface接口下的所有公共方法
+                        </li>
+                        <li>execution public double interfaceName.*(...)
+                            <br>匹配interface接口下所有返回值为double类型的公共方法
+                        </li>
+                        <li>execution public double interfaceName.*(double, ...)
+                            <br>匹配interface接口下所有返回值为double类型的第一个参数为double，其他参数任意的公共方法
+                        </li>
+                        <li>execution public double interfaceName.*(double, double)
+                            <br>匹配interace接口中参数类型为double, double的返回值为double类型的公共方法
+                        </li>
+                    </ul>
+                </li>
+                <li>切面优先级
+                    <ul>
+                        <li>在同一个连接点上应用不止一个切面时，在未明确的情况下优先级是不确定的</li>
+                        <li>使用@Order()注解指定切面优先级，数字越小级别越高</li>
+                        <li>e.g.
+                            <pre>
+@Order(1)
+@Aspect
+@Component
+public class LoggingAspect {...}  //首先被执行的切面
+
+@Order(2)
+@Aspect
+@Component
+public class VlidationAspect {...}  //其次被执行的切面</pre>
+                        </li>
+                    </ul>
+                </li>
+                <li>重用切面表达式
+                    <ul>
+                        <li>编写AspectJ切面时，可以直接在通知注解中书写切入点表达式，但同一个切入点表达式可能会在多个通知中重复出现</li>
+                        <li>在AspectJ切面中，通过@Pointcut注解将一个切入点声明称简单的方法，切入点的方法通常为空</li>
+                        <li>切入点方法的访问控制符同时控制着切入点的可见性</li>
+                        <li>其他通知可以通过方法名称引入切入点</li>
+                        <li>e.g.
+                            <pre>
+/**
+ * 定义一个方法，用于声明切入点表达式，该方法添加其他代码
+ */
+@Pointcut("execution(public int org.yang.demo.aop.ArithmeticCalculatorImpl.*(int, int))")
+public void declareJoinPointExpression() {...}
+
+/**
+ * 通过方法名称引入切入点
+ */
+@Before("declareJoinPointExpression()")
+public void beforeMethod(JoinPoint joinPoint) {...}</pre>
+                        </li>
+                    </ul>
+                </li>
+                <li>基于配置文件方式配置AOP
+                    <img src="photo/spring/spring22.png" alt="" class="am-img-responsive">
+                </li>
+            </ol>
             <h2>第三部分 Spring应用</h2>
          <!--文章]]-->
         </div>
