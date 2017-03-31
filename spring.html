@@ -38,7 +38,7 @@
 
          <!--文章[[-->
             <h2>第一部分 概述与Spring IOC</h2>
-            <h3>1.1 概述</h3>
+            <h3 id="page1">1.1 概述</h3>
             <ol>
                 <li>Spring概述
                     <ul>
@@ -93,7 +93,7 @@
                     </ul>
                 </li>
             </ol>
-            <h3>1.2 IOC</h3>
+            <h3 id="page2">1.2 IOC</h3>
             <ol>
                 <li>IOC(Inversion of Control)反转控制：反转资源获取方向
                     <ul>
@@ -120,7 +120,7 @@
                     </ul>
                 </li>
             </ol>
-            <h3>1.3 Bean配置</h3>
+            <h3 id="page3">1.3 Bean配置</h3>
             <ol>
                 <li>在Spring的IOC容器中配置Bean
                     <ul>
@@ -649,7 +649,7 @@ public class UserController {
                 </li>
             </ol>
             <h2>第二部分 Spring AOP</h2>
-            <h3>2.1 动态代理</h3>
+            <h3 id="page4">2.1 动态代理</h3>
             <ol>
                 <li>需求：实现整数类型的加减乘除类型运算，在运算前后需要加入日志记录</li>
                 <li>运算接口
@@ -676,7 +676,7 @@ public interface ArithmeticCalculator {
                 </li>
                 <li>代理设计模式原理: 使用一个代理将对象包装起来，然后用该代理对象取代原始对象，任何对原始对象的调用都要通过代理对象，代理对象决定是否以及何时调用到原始对象上</li>
             </ol>
-            <h3>2.2 AOP</h3>
+            <h3 id="page5">2.2 AOP</h3>
             <ol>
                 <li>AOP(Aspect-Oriented Programming)面向切面编程，是对于传统OOP(Object-Oriented Programming)面向对象编程的一种补充</li>
                 <li>AOP的好处
@@ -700,7 +700,7 @@ public interface ArithmeticCalculator {
                     </ul>
                 </li>
             </ol>
-            <h3>2.3 Spring AOP</h3>
+            <h3 id="page6">2.3 Spring AOP</h3>
             <ol>
                 <li>在Spring中启用AspectJ注解支持
                     <ul>
@@ -873,6 +873,205 @@ public void beforeMethod(JoinPoint joinPoint) {...}</pre>
                 </li>
             </ol>
             <h2>第三部分 Spring应用</h2>
+            <h3 id="page7">3.1 Spring JdbcTemplate</h3>
+            <ol>
+                <li>为了使JDBC更加易于使用，Spring在JDBC API上定义了抽象层，依次建立了JDBC存取框架</li>
+                <li>作为Spring
+                    JDBC框架的核心，JDBC模板的设计目的是为不同类型的JDBC操作提供模板方法，每个模板方法都能控制整个过程，并允许覆盖过程中特定的任务，通过这种方式，可以尽可能的保留灵活性的情况下，将数据库存取的工作量降到最低
+                </li>
+                <li>在配置文件中配置数据库
+                    <img src="photo/spring/spring23.png" alt="" class="am-img-responsive">
+                </li>
+                <li>使用JdbcTemplate执行更新
+                    <img src="photo/spring/spring24.png" alt="" class="am-img-responsive">
+                </li>
+                <li>使用JdbcTemplate批量更新
+                    <img src="photo/spring/spring25.png" alt="" class="am-img-responsive">
+                </li>
+                <li>使用JdbcTemplate获取一条记录对应的对象
+                    <img src="photo/spring/spring26.png" alt="" class="am-img-responsive">
+                </li>
+                <li>使用JdbcTemplate查询实体类集合
+                    <img src="photo/spring/spring27.png" alt="" class="am-img-responsive">
+                </li>
+                <li>使用JdbcTemplate获取单列值或进行统计查询
+                    <img src="photo/spring/spring28.png" alt="" class="am-img-responsive">
+                </li>
+                <li>使用JdbcTemplate编写DAO
+                    <img src="photo/spring/spring29.png" alt="" class="am-img-responsive">
+                </li>
+                <li>在JDBC模板中使用具名参数
+                    <ul>
+                        <li>在经典的JDBC用法中，SQL参数是占位符?表示的，在Spring JDBC中绑定SQL的另一个形式是使用具名参数，占位符表示为":fieldName"</li>
+                        <li>通过NamedParameterJdbcTemplate形式使用具名参数赋值</li>
+                        <li>配置方式
+                            <img src="photo/spring/spring30.png" alt="" class="am-img-responsive">
+                        </li>
+                        <li>通过Map方式赋值
+                            <img src="photo/spring/spring31.png" alt="" class="am-img-responsive">
+                        </li>
+                        <li>通过对象方式赋值
+                            <img src="photo/spring/spring32.png" alt="" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+            <h3 id="page8">3.2 Spring事务管理</h3>
+            <ol>
+                <li>配置事务管理器
+                    <pre>
+&lt;!-- 配置事务管理器 -->
+&lt;bean id="transactionManager"
+      class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    &lt;property name="dataSource" ref="dataSource">&lt;/property>
+&lt;/bean>
+&lt;!-- 启动事务注解 -->
+&lt;tx:annotation-driven transaction-manager="transactionManager"/></pre>
+                </li>
+                <li>声明式事务：直接在需要执行事务的方法上加入@Transactional注解
+                    <pre>
+@Transactional
+public void purchase(String username, Integer isbn) {
+    ... ...
+}</pre>
+                </li>
+                <li>Spring管理事务传播行为
+                    <ul>
+                        <li>事务传播属性：当事务方法被另一个事务方法调用时，必须指定事务应该如何传播</li>
+                        <li>事务的传播行为
+                            <img src="photo/spring/spring33.png" alt="" class="am-img-responsive">
+                        </li>
+                        <li>使用@Transactional注解的propagation属性可以设置传播行为</li>
+                        <li>常用的两种传播行为
+                            <img src="photo/spring/spring34.png" alt="" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>Spring管理事务隔离级别
+                    <img src="photo/spring/spring35.png" alt="" class="am-img-responsive">
+                </li>
+                <li>Spring设置回滚事务属性
+                    <ul>
+                        <li>默认情况下只有未检查异常(RuntimeException和Error类型)会导致事务回滚，受检查异常不会回滚</li>
+                        <li>事务的回滚规则可以通过@Transactional注解的rollbackFor和noRollbackFor属性定义，这两个属性被声明为Class[]类型，可以为这两个属性指定多个异常类</li>
+                    </ul>
+                </li>
+                <li>Spring管理超时和只读
+                    <ul>
+                        <li>由于事务可以在行和表上获得锁，因此长事务会占用资源，并对整体性能产生影响</li>
+                        <li>如果一个事务只读取数据但不做修改，数据库引擎可以对这个事务进行优化</li>
+                        <li>超时事务属性：事务在强制回滚之前可以保持的时间，防止长期运行的事务占用资源，在@Transactional注解中readOnly=true设置</li>
+                        <li>只读事务属性：表示这个事务只读取数据但不更新数据，帮着数据库引擎优化事务，在@Transactional注解中timeout属性设置值</li>
+                    </ul>
+                </li>
+                <li>使用xml配置Spring事务管理
+                    <img src="photo/spring/spring36.png" alt="" class="am-img-responsive">
+                </li>
+            </ol>
+            <h3 id="page9">3.3 Spring整合Hibernate</h3>
+            <ol>
+                <li>需要整合的内容
+                    <ul>
+                        <li>由IOC容器管理Hibernate的SessionFactory</li>
+                        <li>让Hibernate使用上Spring的声明式事务</li>
+                    </ul>
+                </li>
+                <li>整合步骤
+                    <ul>
+                        <li>加入Hibernate
+                            <ul>
+                                <li>导入Hibernate的jar包</li>
+                                <li>添加Hibernate配置文件 : hibernate.cfg.xml
+                                    <img src="photo/spring/spring37.png" alt="" class="am-img-responsive">
+                                </li>
+                                <li>编写持久化类对应.hbm.xml文件</li>
+                            </ul>
+                        </li>
+                        <li>加入Spring
+                            <ul>
+                                <li>加入Spring的jar包</li>
+                                <li>加入Spring配置文件
+                                    <img src="photo/spring/spring38.png" alt="" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>整合
+                            <ul>
+                                <li>通过自动装配获取SessionFactory
+                                    <pre>
+@Autowired
+private SessionFactory sessionFactory;</pre>
+                                </li>
+                                <li>获取与当前线程绑定的Session
+                                    <pre>
+//获取和当前线程绑定的Session
+private Session getSession() {
+    return sessionFactory.getCurrentSession();
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+            <h3 id="page10">3.4 Spring整合Struts2</h3>
+            <ol>
+                <li>在WEB应用中使用Spring
+                    <ul>
+                        <li>额外加入jar包：spring-web.RELEASE.jar, spring-webmvc.RELEASE.jar</li>
+                        <li>在WEB中创建IOC容器
+                            <ul>
+                                <li>非WEB应用在main方法中创建</li>
+                                <li>WEB应用被服务器加载时创建IOC容器
+                                    <br>在ServlceContextListener#contextInitialized(ServletContextEvent sce)方法中创建IOC容器
+                                </li>
+                                <li>在WEB应用中使用IOC容器：在创建容器后，将其放在ServletContext(application域)中的一个属性
+                                    <pre>
+&lt;!-- 配置 Spring 配置文件的名称和位置 -->
+&lt;context-param>
+    &lt;param-name>contextConfigLocation&lt;/param-name>
+    &lt;param-value>classpath:applicationContext.xml&lt;/param-value>
+&lt;/context-param>
+&lt;!-- 启动 IOC 容器的 ServletContextListener -->
+&lt;listener>
+    &lt;listener-class>org.springframework.web.context.ContextLoaderListener&lt;/listener-class>
+&lt;/listener></pre>
+                                </li>
+                                <li>e.g.
+                                    <img src="photo/spring/spring39.png" alt="" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>使用Spring提供的内置监听器配置WEB应用
+                    <ul>
+                        <li>在web.xml中配置Spring提供的内置监听器</li>
+                        <li>在web中使用Spring提供的帮助类获取ApplicationContext
+                            <br>ApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(application);
+                        </li>
+                    </ul>
+                </li>
+                <li>Spring整合Struts2
+                    <ul>
+                        <li>加入struts2-spring-plugin.jar包</li>
+                        <li>在IOC中配置Strust2需要的Action，并且指定scope属性为prototype
+                            <pre>
+&lt;bean id="personAction"
+      class="org.yang.demo.action.PersonAction" scope="prototype">
+    &lt;property name="personService" ref="personService">&lt;/property>
+&lt;/bean></pre>
+                        </li>
+                        <li>在Struts配置文件中将Action的class属性设置为对应IOC容器的id值
+                            <pre>
+&lt;!-- Spring整合Struts2时，Struts2中配置Spring的Action的class需要指向IOC容器中该bean的id -->
+&lt;action name="person-save" class="personAction">
+    &lt;result name="success">/success.jsp&lt;/result>
+&lt;/action></pre>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
          <!--文章]]-->
         </div>
       </div>
@@ -953,8 +1152,10 @@ public void beforeMethod(JoinPoint joinPoint) {...}</pre>
 	navClick($("#btn4"), $("#page4"));
 	navClick($("#btn5"), $("#page5"));
 	navClick($("#btn6"), $("#page6"));
-  navClick($("#btn7"), $("#page7"));
-  navClick($("#btn8"), $("#page8"));
+    navClick($("#btn7"), $("#page7"));
+    navClick($("#btn8"), $("#page8"));
+    navClick($("#btn9"), $("#page9"));
+    navClick($("#btn10"), $("#page10"));
 
 </script>
 </body>
