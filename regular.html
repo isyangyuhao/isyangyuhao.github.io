@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>杨宇昊的学习笔记-正则表达式与文本操作</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <!--Link Web Font-->
+    <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+    <!--代码高亮highlight.js-->
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>-->
+    <!--Link Base Style-->
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css"/>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<!--导航栏 [[-->
+<header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+        <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+</header>
+<!--导航栏 ]]-->
+<div class="am-g am-g-fixed">
+    <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+        <div class="am-g">
+            <div class="am-u-sm-11 am-u-sm-centered">
+                <div class="am-cf am-article am-scrollable-horizontal">
+
+                    <!--文章[[-->
+                    <h3 id="page1">1. 概述</h3>
+                    <ol>
+                        <li>正则表达式(Regular Expression)的用途:
+                            <br>用于文本的复杂操作，是一种强大而灵活的文本处理语言，大部分编程语言、数据库、开发环境都支持正则表达式
+                        </li>
+                        <li>使用正则表达式的流程
+                            <ul>
+                                <li>分析所要匹配的数据，写出测试用的典型数据</li>
+                                <li>在工具软件中进行匹配测试</li>
+                                <li>在程序中调用通过测试的正则表达式</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page2">2. 正则表达式语法</h3>
+                    <ol>
+                        <li>普通字符
+                            <br>字母、数字、汉字、下划线、没有特殊定义的标点符号都属于普通字符，表达式中的普通字符在匹配字符串时匹配与之相同的一个字符
+                        </li>
+                        <li>转义字符
+                            <img src="photo/regular/regular1.png" class="am-img-responsive">
+                        </li>
+                        <li>标准字符集合
+                            <ul>
+                                <li>能够与"多种字符"匹配的一个字符，区分大小写，大写则是不匹配对应的多种字符的一个字符
+                                    <img src="photo/regular/regular2.png" class="am-img-responsive">
+                                </li>
+                            </ul></li>
+                        <li>自定义字符集合
+                            <ul>
+                                <li>[]方括号匹配方式，能够匹配方括号中的任意一个字符
+                                    <img src="photo/regular/regular3.png" class="am-img-responsive">
+                                </li>
+                                <li>正则表达式中的特殊符号，被包含到中括号中则会失去特殊意义，处理"^"和"-"</li>
+                                <li>标准字符集合除小数点外，如果被包含于中括号，自定义字符集合将包含该集合
+                                    <br>e.g. [\d.\-+] - 匹配数字、小数点、"+"、"-"
+                                </li>
+                            </ul>
+                        </li>
+                        <li>量词(Quantifier)
+                            <ul>
+                                <li>修饰匹配次数的特殊符号
+                                    <img src="photo/regular/regular4.png" class="am-img-responsive">
+                                </li>
+                                <li>e.g.1 匹配4位数字: \d\d\d\d === \d{4}</li>
+                                <li>e.g.2 匹配4位"字母+数字": ([a-z A-z]\d){4}</li>
+                                <li>贪婪模式与非贪婪模式
+                                    <ul>
+                                        <li>贪婪模式: 匹配字符越多越好,默认为贪婪模式
+                                            <br>e.g. \d{3,4} - "1234"字符被匹配结果为"1234"
+                                        </li>
+                                        <li>非贪婪模式: 匹配字符越少越好,修饰匹配次数的特殊符号后再加一个?即可以设置非贪婪模式
+                                            <br>e.g. \d{3,4}? - "1234"字符被匹配结果为"123"
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>字符边界
+                            <ul>
+                                <li>字符边界匹配 的不是字符而是位置，匹配符合某种条件的位置
+                                    <img src="photo/regular/regular5.png" class="am-img-responsive">
+                                </li>
+                                <li>e.g.1 ^a - "abcdaefga"该字符第一个"a"被匹配</li>
+                                <li>e.g.2 b$ - "babcdefgb" 该字符最后一个"b"被匹配</li>
+                                <li>e.g.3 abc\b - "abc abc2 abc111 222abc" "abc"是单词边界的被匹配</li>
+                            </ul>
+                        </li>
+                        <li>匹配模式
+                            <img src="photo/regular/regular6.png" class="am-img-responsive">
+                        </li>
+                        <li>选择符和分组
+                            <img src="photo/regular/regular7.png" class="am-img-responsive">
+                            <br>反向引用(\nn):每一对()会分配一个编号,使用()的捕获根据左括号的顺序从1开始自动编号;通过反向引用可以对分组已捕获的内容进行引用
+                            <br>e.g. e.g. ([a-z]{2})\1 - goto <strong>gogo toto dodo</strong> todo
+                        </li>
+                        <li>零宽断言(环视)
+                            <ul>
+                                <li>只进行子表达式的匹配，匹配内容不计入最终匹配结果，是零宽度的</li>
+                                <li>这个位置应该符合某个条件，判断当前位置的前后字符是否符合指定的条件，但不匹配前后的字符，是相对位置的匹配</li>
+                                <li>
+                                    正则表达式匹配过程中，如果字表达是匹配的是字符内容而非位置，并被保存到最终匹配结果中，那么就认为这个子表达式是占有字符的；如果子表达式匹配的仅仅是位置或者匹配的内容并不保存到最终的匹配结果中，那么就认为这个子表达式是零宽度的，占有字符还是零宽度，是针对匹配的内容是否保存到最终匹配结果而定的
+                                </li>
+                                <li><img src="photo/regular/regular8.png" class="am-img-responsive"></li>
+                                <li>e.g. [a-z]+(?=ing) - <strong>go</strong>ing <strong>do</strong>ing <strong>eat</strong>ing</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page3">3. 正则表达式应用</h3>
+                    <ol>
+                        <li>电话号码的验证
+                            <ul>
+                                <li>规则
+                                    <ul>
+                                        <li>电话号码由数字和"-"构成</li>
+                                        <li>电话号码为7位到8位</li>
+                                        <li>如果电话号码中包含有区号，那么区号为三位或四位，首位是0</li>
+                                        <li>移动电话号码为11位</li>
+                                        <li>11位移动电话号码的第一位和第二位为"13" / "15" / "17" / "18" / "19"</li>
+                                    </ul>
+                                </li>
+                                <li>表达式: (0\d{2,3}-\d{7,9})|(1[35789]\d{9})</li>
+                            </ul>
+                        </li>
+                        <li>邮箱的验证
+                            <ul>
+                                <li>规则
+                                    <ul>
+                                        <li>用户名: 由字母、数字、中划线、下划线组成</li>
+                                        <li>@</li>
+                                        <li>网址: 字母、数字组成</li>
+                                        <li>小数点: .</li>
+                                        <li>组织域名: 2-4位字母组成</li>
+                                        <li>不区分大小写</li>
+                                    </ul>
+                                </li>
+                                <li>表达式: [\w\-]+@[a-z0-9A-Z]+(\.[a-zA-Z]{2,4}){1,2}</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page4">4. 在Java中使用正则表达式</h3>
+                    <ol>
+                        <li>尝试将整个字符串进行匹配
+                            <pre>
+//"abcde&&edcba"是否符合指定的正则表达式"\w+";
+//正则表达式对象("\"要变为"\\")
+Pattern pattern = Pattern.compile("\\w+");
+//匹配对象
+Matcher matcher = pattern.matcher("abcde&&edcba");
+//尝试将整个字符序列与该模式匹配
+boolean result = matcher.matches();
+//打印匹配结果
+System.out.println(result);</pre>
+                        </li>
+                        <li>扫描字符序列,查询符合的子字符段
+                            <pre>
+Pattern pattern = Pattern.compile("\\w+");
+Matcher matcher = pattern.matcher("abcde&&edcba");
+//扫描字符序列,查找与该模式匹配的下一个子序列
+while (matcher.find()) {
+//打印匹配的字符内容
+    System.out.println(matcher.group());
+}</pre>
+                        </li>
+                        <li>分组输出匹配结果
+                            <pre>
+Pattern pattern = Pattern.compile("([a-z]+)([0-9]+)");
+Matcher matcher = pattern.matcher("aa232**ssd445*sds223");
+while (matcher.find()) {
+    //分组显示匹配的字符串
+    System.out.println(matcher.group());
+    System.out.println(matcher.group(1));  //([a-z]+)
+    System.out.println(matcher.group(2));  //([0-9]+)
+}</pre>
+                        </li>
+                        <li>字符串替换操作
+                            <pre>
+Pattern pattern = Pattern.compile("([0-9]+)");
+Matcher matcher = pattern.matcher("aa232**ssd445*sds223");
+//替换操作
+String str1 = matcher.replaceAll("#");
+System.out.println(str1);</pre>
+                        </li>
+                        <li>字符串分割操作
+                            <pre>
+//字符串分割操作
+String str = "aa232**ssd445*sds223";
+String [] arrs = str.split("\\d+");
+System.out.println(Arrays.toString(arrs));</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page5">5. 爬虫实例</h3>
+                    <img src="photo/regular/regular9.png" class="am-img-responsive">
+                    <!--文章]]-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+        <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+            <div class="am-offcanvas-bar">
+
+                <ul class="am-nav">
+                    <h1>正则表达式与文本操作</h1>
+                    <!--导航[[-->
+                    <li><a href="#!" id="btn1">概述</a></li>
+                    <li><a href="#!" id="btn2">正则表达式语法</a></li>
+                    <li><a href="#!" id="btn3">正则表达式应用</a></li>
+                    <li><a href="#!" id="btn4">在Java中使用正则表达式</a></li>
+                    <li><a href="#!" id="btn5">爬虫实例</a></li>
+                </ul>
+                <!--导航]]-->
+            </div>
+        </div>
+    </div>
+    <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+        data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+<!--页脚[[-->
+<br><br><br>
+<div class="am-g">
+    <div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+        <br>
+        <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+        <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+    </div>
+</div>
+<br><br><br>
+<!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+    //加载进度条
+    var progress = $.AMUI.progress;
+    $(window).load(function() {
+        progress.done();
+    })
+    $(document).ready(function() {
+        progress.start();
+    })
+    //侧边栏平滑滚动
+    $(window).smoothScroll();
+    function navClick($btnObj, $pageObj) {
+        $btnObj.on("click", function() {
+            var $w = $(window);
+            $w.smoothScroll({position: $pageObj.offset().top});
+        })
+    }
+    navClick($("#btn1"), $("#page1"));
+    navClick($("#btn2"), $("#page2"));
+    navClick($("#btn3"), $("#page3"));
+    navClick($("#btn4"), $("#page4"));
+    navClick($("#btn5"), $("#page5"));
+    navClick($("#btn6"), $("#page6"));
+    navClick($("#btn7"), $("#page7"));
+    navClick($("#btn8"), $("#page8"));
+    navClick($("#btn9"), $("#page9"));
+    navClick($("#btn10"), $("#page10"));
+
+</script>
+</body>
+</html>
