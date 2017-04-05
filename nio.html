@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>杨宇昊的学习笔记-NIO</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+  <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+  <!--Link Web Font-->
+  <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+  <!--代码高亮highlight.js-->
+  <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+  <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>-->
+  <!--Link Base Style-->
+  <link rel="stylesheet" type="text/css" href="css/base.css">
+  <link rel="stylesheet" type="text/css" href="css/page.css"/>
+  <style type="text/css">
+  </style>
+</head>
+<body>
+  <!--导航栏 [[-->
+  <header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+      <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+  </header>
+  <!--导航栏 ]]-->
+  <div class="am-g am-g-fixed">
+  <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+    <div class="am-g">
+      <div class="am-u-sm-11 am-u-sm-centered">
+        <div class="am-cf am-article am-scrollable-horizontal">
+
+         <!--文章[[-->
+         <h3>1. 概述</h3>
+            <ol>
+                <li>Java NIO(new IO):
+                    从Java1.4版本后引入的一个新的API,可以替代原来标准的IO;NIO与IO有同样的功能与作用,
+                    但是使用方式完全不同;Nio支持面向缓冲区、基于通道的IO操作,将会用更加高效的方式进行文件的读写操作
+                </li>
+                <li>IO与NIO区别
+                    <img src="photo/nio/nio1.png" alt="" class="am-img-responsive">
+                </li>
+                <li>面向流和面向缓冲区的区别
+                    <img src="photo/nio/nio2.png" alt="" class="am-img-responsive">
+                </li>
+                <li>通道(Channel)和缓冲区(Buffer)
+                    <br>通道表示打开到IO设备的连接,如果需要使用NIO则需要获取用于连接IO设备的通道以及用于容纳数据的缓冲区,
+                    然后操作缓冲区对数据进行处理;Channel负责传输,Buffer负责存储
+                </li>
+            </ol>
+         <h3>2. 缓冲区</h3>
+            <ol>
+                <li>缓冲区是一个用于存储特定基本数据类型的容器,由java.nio包定义,所有缓冲区都是Buffer类的子类,缓冲区的底层是数组</li>
+                <li>根据数据类型不同(boolean除外),提供了相应类型的缓冲区
+                    <br>ByteBuffer/CharBuffer/ShortBuffer/IntBuffer/LongBuffer/DoubleBuffer/FloatBuffer...
+                </li>
+                <li>缓冲区四大基本属性
+                    <ul>
+                        <li>capacity: 容量,缓冲区中最大存储数据的容量,一旦声明不能改变</li>
+                        <li>limit: 界限,表示缓冲区中可以操作数据的大小(limit后的数据是不能读写的)</li>
+                        <li>position: 位置,表示缓冲区中正在操作的数据的位置(0 <= mark <= position <= limit <= capacity)</li>
+                        <li>mark: 标记,记录当前position的位置,通过reset()恢复到mark的位置</li>
+                    </ul>
+                    <img src="photo/nio/nio3.png" alt="" class="am-img-responsive">
+                </li>
+                <li>缓冲区的创建与读写
+                    <pre>
+@Test
+public void test1() {
+    String str = "abcde";
+    //1. 分配一个指定大小的缓冲区
+    ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+    System.out.println("--- allocate ---");
+    System.out.println("position: " + byteBuffer.position());  //0
+    System.out.println("limit: " + byteBuffer.limit());  //1024
+    System.out.println("capacity: " + byteBuffer.capacity());  //1024
+    //2. 向缓冲区中存入数据
+    byteBuffer.put(str.getBytes());
+    System.out.println("--- put ---");
+    System.out.println("position: " + byteBuffer.position());  //5
+    System.out.println("limit: " + byteBuffer.limit());  //1024
+    System.out.println("capacity: " + byteBuffer.capacity());  //1024
+    //3. 切换到读取数据模式
+    byteBuffer.flip();
+    System.out.println("--- flip ---");
+    System.out.println("position: " + byteBuffer.position());  //0
+    System.out.println("limit: " + byteBuffer.limit());  //5
+    System.out.println("capacity: " + byteBuffer.capacity());  //1024
+    //4. 使用get方法读取缓冲区中的数据
+    byte [] dst = new byte[byteBuffer.limit()];
+    byteBuffer.get(dst);
+    System.out.println("--- get ---");
+    System.out.println("position: " + byteBuffer.position());  //5
+    System.out.println("limit: " + byteBuffer.limit());  //5
+    System.out.println("capacity: " + byteBuffer.capacity());  //1024
+    System.out.println("get dst: " + new String(dst, 0, dst.length));  //abcde
+    //5. 重新读取数据,将position指针指向数组首元素
+    byteBuffer.rewind();
+    System.out.println("--- rewind ---");
+    System.out.println("position: " + byteBuffer.position());  //0
+    System.out.println("limit: " + byteBuffer.limit());  //5
+    System.out.println("capacity: " + byteBuffer.capacity());  //1024
+    //6. 清空缓冲区,缓冲区中的数据不会被清除,只是处于"被遗忘"状态
+    byteBuffer.clear();
+    System.out.println("--- clear ---");
+    System.out.println("position: " + byteBuffer.position());  //0
+    System.out.println("limit: " + byteBuffer.limit());  //1024
+    System.out.println("capacity: " + byteBuffer.capacity());  //1024
+}</pre>
+                </li>
+                <li>缓冲区的标记
+                    <pre>
+@Test
+public void test2() {
+    String str = "abcde";
+    ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+    byteBuffer.put(str.getBytes());
+    byteBuffer.flip();
+    byte [] dst = new byte[byteBuffer.limit()];
+    byteBuffer.get(dst, 0, 2);
+    System.out.println(new String(dst, 0, dst.length));  //ab
+    System.out.println(byteBuffer.position());  //2
+    byteBuffer.mark();  //标记当前position
+    byteBuffer.get(dst, 0, 3);
+    System.out.println(new String(dst, 0, dst.length));  //cde
+    System.out.println(byteBuffer.position());  //5
+    byteBuffer.reset();  //恢复到mark的position位置
+    System.out.println(byteBuffer.position());  //2
+    //判断缓冲区是否还存在元素
+    if (byteBuffer.hasRemaining()) {
+        //输出缓冲区剩余元素数量
+        System.out.println(byteBuffer.remaining());  //3
+    }
+}</pre>
+                </li>
+                <li>非直接缓冲区与直接缓冲区
+                    <ul>
+                        <li>非直接缓冲区: 通过allocate()分配缓冲区,将缓冲区建立在JVM之中
+                            <img src="photo/nio/nio4.png" alt="" class="am-img-responsive">
+                        </li>
+                        <li>直接缓冲区: 通过allocateDirect()分配直接缓冲区,将缓冲区建立在操作系统的物理内存中,可以提高效率
+                            <img src="photo/nio/nio5.png" alt="" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+         <h3>3. 通道</h3>
+            <ol>
+                <li>通道Channel: 负责源节点与目标节点的连接,在NIO中负责缓冲区中数据的传输
+                    <img src="photo/nio/nio6.png" alt="" class="am-img-responsive">
+                </li>
+                <li>Java为Channel接口提供的实现类
+                    <ul>
+                        <li>FileChannel: 用于读取、写入、映射和操作文件的tong通道</li>
+                        <li>DatagramChannel: 通过UDP读写网络中的数据通道</li>
+                        <li>SocketChannel: 通过TCP读取网络中的数据</li>
+                        <li>ServerSocketChannel: 可以监听新来的TCP连接,对每一个新来的连接创建SocketChannel</li>
+                    </ul>
+                </li>
+                <li>获取方式
+                    <ul>
+                        <li>Java针对支持通道的类提供了getChannel()方法
+                            <ul>
+                                <li>本地IO: FileInputStream/FileOutputStream/RandomAccessFile</li>
+                                <li>网络IO: Socket/ServerSocket/DatagramSocket</li>
+                            </ul>
+                        </li>
+                        <li>JDK1.7中的NIO2提供了针对各个通道的静态方法open()</li>
+                        <li>JDK1.7中的NIO2提供了File工具类newByteChannel()</li>
+                    </ul>
+                </li>
+                <li>使用非直接缓冲区进行数据传输
+                    <pre>
+@Test
+public void test1() throws IOException {
+    //创建输入输出流
+    FileInputStream fileInputStream = new FileInputStream("1.png");
+    FileOutputStream fileOutputStream = new FileOutputStream("2.png");
+    //通过流获取通道
+    FileChannel fileInputChannel = fileInputStream.getChannel();
+    FileChannel fileOutputChannel = fileOutputStream.getChannel();
+    //分配指定大小的缓冲区
+    ByteBuffer buffer = ByteBuffer.allocate(1024);
+    //将通道中的数据存入缓冲区
+    while ((fileInputChannel.read(buffer)) != -1) {
+        buffer.flip();  //切换到读取数据模式
+        fileOutputChannel.write(buffer);  //向通道中写数据
+        buffer.clear();  //清空缓冲区
+    }
+    //关闭通道和流
+    fileInputChannel.close();
+    fileOutputChannel.close();
+    fileInputStream.close();
+    fileOutputStream.close();
+}</pre>
+                </li>
+                <li>使用直接缓冲区进行文件传输
+                    <pre>
+@Test
+public void test2() throws IOException {
+    //读模式通道
+    FileChannel inChannel = FileChannel.open(Paths.get("1.png"), StandardOpenOption.READ);
+    //写模式通道
+    FileChannel outChannel = FileChannel.open(Paths.get("3.png"), StandardOpenOption.WRITE, StandardOpenOption.READ, StandardOpenOption.CREATE_NEW);
+    //内存映射文件
+    MappedByteBuffer inMappedByteBuffer = inChannel.map(MapMode.READ_ONLY, 0, inChannel.size());
+    MappedByteBuffer outMappedByteBuffer = outChannel.map(MapMode.READ_WRITE, 0, inChannel.size());
+    //直接对缓冲区进行数据读写操作
+    byte [] dst = new byte[inMappedByteBuffer.limit()];
+    inMappedByteBuffer.get(dst);
+    outMappedByteBuffer.put(dst);
+    //关闭通道
+    inChannel.close();
+    outChannel.close();
+}</pre>
+                </li>
+                <li>通道间的文件传输
+                    <pre>
+@Test
+public void test3() throws IOException {
+    //读模式通道
+    FileChannel inChannel = FileChannel.open(Paths.get("1.png"), StandardOpenOption.READ);
+    //写模式通道
+    FileChannel outChannel = FileChannel.open(Paths.get("4.png"), StandardOpenOption.WRITE, StandardOpenOption.READ, StandardOpenOption.CREATE_NEW);
+    inChannel.transferTo(0, inChannel.size(), outChannel);
+    inChannel.close();
+    outChannel.close();
+    // outChannel.transferFrom(inChannel, 0, inChannel.size());
+}</pre>
+                </li>
+                <li>分散与聚集
+                    <ul>
+                        <li>分散读取: 将通道中的数据存放到多个缓冲区中</li>
+                        <li>聚集写入: 将多个缓冲区的数据聚集到通道中</li>
+                    </ul>
+                    <br>
+                    <pre>
+@Test
+public void test4() throws IOException {
+    RandomAccessFile randomAccessFile = new RandomAccessFile("1.txt", "rw");
+    //获取通道
+    FileChannel inChannel = randomAccessFile.getChannel();
+    //分散指定的缓冲区
+    ByteBuffer buffer1 = ByteBuffer.allocate(100);
+    ByteBuffer buffer2 = ByteBuffer.allocate(1024);
+    //分散读取
+    ByteBuffer [] buffers = {buffer1, buffer2};
+    inChannel.read(buffers);
+    //切换到读模式
+    for (ByteBuffer buffer : buffers) {
+        buffer.flip();
+    }
+    //读取数据
+    System.out.println(new String(buffers[0].array(), 0, buffers[0].limit()));
+    System.out.println(new String(buffers[1].array(), 0, buffers[1].limit()));
+    //聚集写入
+    RandomAccessFile randomAccessFile2 = new RandomAccessFile("2.txt", "rw");
+    FileChannel outChannel = randomAccessFile2.getChannel();
+    outChannel.write(buffers);
+}</pre>
+                </li>
+                <li>字符集
+                    <ul>
+                        <li>编码: 字符串转化为字符数组</li>
+                        <li>解码: 字符数组转化为字符串</li>
+                        <li>e.g.
+                            <pre>
+@Test
+public void test6() throws CharacterCodingException {
+    Charset charset = Charset.forName("UTF-8");
+    CharsetEncoder charsetEncoder = charset.newEncoder();
+    CharsetDecoder charsetDecoder = charset.newDecoder();
+    CharBuffer charBuffer = CharBuffer.allocate(100);
+    charBuffer.put("abcde");
+    charBuffer.flip();
+    //编码
+    ByteBuffer byteBuffer = charsetEncoder.encode(charBuffer);
+    for (int i = 0; i < 5; ++i) {
+        System.out.println(byteBuffer.get());
+    }
+    System.out.println("=======");
+    //解码
+    byteBuffer.flip();
+    CharBuffer charBuffer2 = charsetDecoder.decode(byteBuffer);
+    System.out.println(charBuffer2.toString());
+}</pre>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+         <h3>4. 网络IO</h3>
+            <ol>
+                <li>阻塞IO与非阻塞IO
+                    <img src="photo/nio/nio7.png" alt="" class="am-img-responsive">
+                </li>
+                <li>非阻塞IO实现
+                    <pre>
+//客户端
+@Test
+public void client() throws IOException {
+    //1. 获取通道
+    SocketChannel sChannel = SocketChannel.open(new InetSocketAddress("127.0.0.1", 9898));
+    FileChannel fileInChannel = FileChannel.open(Paths.get("1.txt"), StandardOpenOption.READ);
+    //2. 分配指定大小的缓冲区
+    ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+    //3. 读取本地文件并发送到服务端
+    while (fileInChannel.read(byteBuffer) != -1) {
+        byteBuffer.flip();
+        sChannel.write(byteBuffer);
+        byteBuffer.clear();
+    }
+    sChannel.shutdownOutput();
+    //接收服务端的反馈
+    int len = 0;
+    while ((len = sChannel.read(byteBuffer)) != -1) {
+        byteBuffer.flip();
+        System.out.println(new String(byteBuffer.array(), 0, len));
+        byteBuffer.clear();
+    }
+    //4. 关闭通道
+    fileInChannel.close();
+    sChannel.close();
+}
+//服务端
+@Test
+public void server() throws IOException {
+    //1. 获取通道
+    ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+    FileChannel fileOutChannel = FileChannel.open(Paths.get("111.txt"), StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+    //2. 绑定连接
+    serverSocketChannel.bind(new InetSocketAddress(9898));
+    //3. 获取连接通道
+    SocketChannel sChannel = serverSocketChannel.accept();
+    //4. 分配缓冲区
+    ByteBuffer byteBuffer =ByteBuffer.allocate(1024);
+    //5. 接受客户端信息并保存到本地
+    while (sChannel.read(byteBuffer) != -1) {
+        byteBuffer.flip();
+        fileOutChannel.write(byteBuffer);
+        byteBuffer.clear();
+    }
+    //向客户端发送信息
+    byteBuffer.put("服务端接收成功!".getBytes());
+    byteBuffer.flip();
+    sChannel.write(byteBuffer);
+    //6. 关闭通道
+    serverSocketChannel.close();
+    sChannel.close();
+    fileOutChannel.close();
+}</pre>
+                </li>
+                <li>非阻塞IO实现
+                    <pre>
+//客户端
+@Test
+public void client() throws IOException {
+    //1. 获取通道
+    SocketChannel sChannel = SocketChannel.open(new InetSocketAddress("127.0.0.1", 9898));
+    //2. 切换为非阻塞模式
+    sChannel.configureBlocking(false);
+    //3. 分配指定大小的缓冲区
+    ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+    //4. 发送数据给服务器
+    byteBuffer.put(new Date().toString().getBytes());
+    byteBuffer.flip();
+    sChannel.write(byteBuffer);
+    //5. 关闭通道
+    sChannel.close();
+}
+//服务端
+@Test
+public void server() throws IOException {
+    //1. 获取通道
+    ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+    //2. 切换为非阻塞模式
+    serverSocketChannel.configureBlocking(false);
+    //3. 绑定连接
+    serverSocketChannel.bind(new InetSocketAddress(9898));
+    //4. 获取选择器
+    Selector selector = Selector.open();
+    //5. 将通道注册到选择器上,指定监听事件为接受事件
+    serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+    //6. 轮巡获取选择器中已准备就绪的连接
+    while (selector.select() > 0) {
+        //7. 获取当前选择器中所有注册的选择键(已就绪的监听事件)
+        Iterator&lt;SelectionKey> iterator = selector.selectedKeys().iterator();
+        while (iterator.hasNext()) {
+            //8. 获取准备就绪的事件
+            SelectionKey selectionKey = iterator.next();
+            //9. 判断什么事件准备就绪
+            if (selectionKey.isAcceptable()) {
+                //10. 若接受就绪则获取客户端的连接
+                SocketChannel sChannel =  serverSocketChannel.accept();
+                //11. 客户端连接通道切换为非阻塞模式
+                sChannel.configureBlocking(false);
+                //12. 将该通道注册到选择器中,指定监听事件为读事件
+                sChannel.register(selector, SelectionKey.OP_READ);
+            } else if (selectionKey.isReadable()) {
+                //13. 获取当前选择器读状态的通道
+                SocketChannel sChannel = (SocketChannel) selectionKey.channel();
+                //14. 读取数据
+                ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+                int len = 0;
+                while ((len = sChannel.read(byteBuffer)) > 0) {
+                    byteBuffer.flip();
+                    System.out.println(new String(byteBuffer.array(), 0, len));
+                    byteBuffer.clear();
+                }
+            }
+            //取消选择键
+            iterator.remove();
+        }
+    }
+}</pre>
+                </li>
+                <li>DatagramChannel
+                    <pre>
+//客户端
+@Test
+public void client() throws IOException {
+    DatagramChannel datagramChannel = DatagramChannel.open();
+    datagramChannel.configureBlocking(false);
+    ByteBuffer buffer = ByteBuffer.allocate(1024);
+    Scanner scanner = new Scanner(System.in);
+    while (scanner.hasNext()) {
+        String string = scanner.next();
+        buffer.put((new Date().toString() + "\n" + string).getBytes());
+        buffer.flip();
+        datagramChannel.send(buffer, new InetSocketAddress("127.0.0.1", 9898));
+        buffer.clear();
+    }
+    datagramChannel.close();
+}
+//服务端
+@Test
+public void server() throws IOException {
+    DatagramChannel datagramChannel = DatagramChannel.open();
+    datagramChannel.configureBlocking(false);
+    datagramChannel.bind(new InetSocketAddress(9898));
+    Selector selector = Selector.open();
+    datagramChannel.register(selector, SelectionKey.OP_READ);
+    while (selector.select() > 0) {
+        Iterator&lt;SelectionKey> iterator = selector.selectedKeys().iterator();
+        while (iterator.hasNext()) {
+            SelectionKey selectionKey = iterator.next();
+            if (selectionKey.isReadable()) {
+                ByteBuffer buffer = ByteBuffer.allocate(1024);
+                datagramChannel.receive(buffer);
+                buffer.flip();
+                System.out.println(new String(buffer.array(), 0, buffer.limit()));
+                buffer.clear();
+            }
+        }
+        iterator.remove();
+    }
+}</pre>
+                </li>
+            </ol>
+         <h3>5. 管道</h3>
+            <ol>
+                <li>Java NIO管道用于两个线程之间的单向数据连接,Pipe有一个source通道和sink通道,数据会被写入到sink通道,通过source通道获取数据</li>
+                <li>e.g.
+                    <pre>
+@Test
+public void test() throws IOException {
+    //1. 获取管道
+    Pipe pipe = Pipe.open();
+    //2. 将缓冲区中的数据写入管道
+    ByteBuffer buffer = ByteBuffer.allocate(1024);
+    Pipe.SinkChannel sinkChannel = pipe.sink();
+    buffer.put("通过单向管道发送数据".getBytes());
+    buffer.flip();
+    sinkChannel.write(buffer);
+    //3. 读取缓冲区的数据
+    Pipe.SourceChannel sourceChannel = pipe.source();
+    buffer.flip();
+    int len = sourceChannel.read(buffer);
+    System.out.println(new String(buffer.array(), 0, len));
+    //4. 关闭管道
+    sinkChannel.close();
+    sourceChannel.close();
+}</pre>
+                </li>
+            </ol>
+         <!--文章]]-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+    <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+      <div class="am-offcanvas-bar">
+
+        <ul class="am-nav">
+        	<h1>Java NIO</h1>
+        	<!--导航[[-->
+          <li><a href="#!" id="btn1">概述</a></li>
+          <li><a href="#!" id="btn2">缓冲区</a></li>
+          <li><a href="#!" id="btn3">通道</a></li>
+          <li><a href="#!" id="btn4">网络IO</a></li>
+          <li><a href="#!" id="btn5">管道</a></li>
+
+        </ul>
+        <!--导航]]-->
+      </div>
+    </div>
+  </div>
+  <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+  	data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+  <!--页脚[[-->
+  <br><br><br>
+  <div class="am-g">
+  	<div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+  	  <br>
+  	  <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+  	  <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+  	</div>
+  </div>
+  <br><br><br>
+  <!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+	//加载进度条
+	var progress = $.AMUI.progress;
+	$(window).load(function() {
+		progress.done();
+	})
+	$(document).ready(function() {
+		progress.start();
+	})
+	//侧边栏平滑滚动
+	$(window).smoothScroll();
+	function navClick($btnObj, $pageObj) {
+		$btnObj.on("click", function() {
+			var $w = $(window);
+			$w.smoothScroll({position: $pageObj.offset().top});
+		})
+	}
+	navClick($("#btn1"), $("#page1"));
+	navClick($("#btn2"), $("#page2"));
+	navClick($("#btn3"), $("#page3"));
+	navClick($("#btn4"), $("#page4"));
+	navClick($("#btn5"), $("#page5"));
+
+</script>
+</body>
+</html>
