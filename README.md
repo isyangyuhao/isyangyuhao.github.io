@@ -6,9 +6,13 @@ Java基础知识和语法
 
 + [注解与反射](#)
 
++ [正则表达式与文本操作](http://yangyuhao.org/regular)
+
++ [Java NIO](http://yangyuhao.org/nio)
+
 + [JDBC](#)
 
-+ [Maven](#)
++ [GoF23设计模式](#)
 
 JavaWeb部分
 --------------------
@@ -34,9 +38,9 @@ JavaEE框架与组件
 
 + [Hibernate](http://yangyuhao.org/hibernate)
 
-+ [Spring](#)
++ [Spring](http://yangyuhao.org/spring)
 
-+ [Spring MVC](#)
++ [Spring MVC](http://yangyuhao.org/springmvc)
 
 + [JPA](#)
 
@@ -44,7 +48,7 @@ JavaEE框架与组件
 
 + [MyBatis](#)
 
-+ [Shiro](#)
++ [Shiro](http://yangyuhao.org/shiro)
 
 + [webService](http://yangyuhao.org/upload)
 
@@ -73,3 +77,5 @@ Javascript部分
 + [Git](http://yangyuhao.org/git)
 
 + [Markdown](http://yangyuhao.org/markdown)
+
++ [Maven](#)
