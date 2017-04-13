@@ -44,7 +44,7 @@ JavaEE框架与组件
 
 + [JPA](#)
 
-+ [SpringData JPA](#)
++ [SpringData JPA](http://yangyuhao.org/springDataJPA)
 
 + [MyBatis](#)
 

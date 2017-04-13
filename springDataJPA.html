@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>杨宇昊的学习笔记-SpringData JPA</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <!--Link Web Font-->
+    <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+    <!--代码高亮highlight.js-->
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>-->
+    <!--Link Base Style-->
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css"/>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<!--导航栏 [[-->
+<header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+        <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+</header>
+<!--导航栏 ]]-->
+<div class="am-g am-g-fixed">
+    <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+        <div class="am-g">
+            <div class="am-u-sm-11 am-u-sm-centered">
+                <div class="am-cf am-article am-scrollable-horizontal">
+                    <!--文章[[-->
+                    <h3 id="page1">1. SpringData概述</h3>
+                    <ol>
+                        <li>SpringData：Spring的一个子项目，用于简化数据库的访问，支持noSql和关系型数据存储，使数据库访问更便捷</li>
+                        <li>SpringData项目所支持的noSql
+                            <ul>
+                                <li>MongoDB(文档型数据库)</li>
+                                <li>Neo4j(图形数据库)</li>
+                                <li>Redis(键值对数据库)</li>
+                                <li>Hbase(列族数据库)</li>
+                            </ul>
+                        </li>
+                        <li>SpringData支持的关系数据存储技术</li>
+                    </ol>
+                    <h3 id="page2">2. SpringData JPA概述</h3>
+                    <ol>
+                        <li>SpringData JAP：致力于减少数据访问层(DAO)开发量，使开发者只需要在DAO层声明持久层接口即可</li>
+                        <li>SpringData会根据符合规范的方法名确定需要实现的逻辑</li>
+                    </ol>
+                    <h3 id="page3">3. 开发步骤</h3>
+                    <ol>
+                        <li>配置Spring整合JPA</li>
+                        <li>在Spring配置文件中配置SpringData
+                            <ul>
+                                <li>让Spring为声明的接口创建代理对象，配置了&lt;jpa:repositiories>后，Spring初始化容器时将会扫描base-pakcage指定的包目录以及子目录，为继承Repository或其子接口创建代理对象，并将代理对象注册为Spring Bean，业务层变可以通过Spring自动封装特性直接使用该对象</li>
+                            </ul>
+                        </li>
+                        <li>声明持久层接口，继承Repository
+                            <ul>
+                                <li>Repository是一个标记型接口，它不包含任何方法， 如必要SpringData可以实现Repository其他子接口，其中定义了一些常用的CURD，以及分页等常用方法</li>
+                            </ul>
+                        </li>
+                        <li>在接口中声明需要的方法
+                            <ul>
+                                <li>SpringData将根据给定的策略，为方法生成实现的代码</li>
+                            </ul>
+                        </li>
+                        <li>开发实例
+                            <ul>
+                                <li>导入需要的jar包
+                                    <ul>
+                                        <li>加入Hibernate-lib-required-*.jar</li>
+                                        <li>加入Hibernate-lib-jpa-*.jar</li>
+                                        <li>加入Hibernate-lib-optional-c3p0-*.jar</li>
+                                        <li>加入数据库驱动包</li>
+                                        <li>加入Spring-required-*.jar</li>
+                                        <li>加入SpringDataCommons.jar</li>
+                                        <li>加入SpringDataJpa.jar</li>
+                                        <li>加入slf4j.jar</li>
+                                    </ul>
+                                </li>
+                                <li>编写Spring配置文件
+                                    <img src="photo/datajpa/datajpa1.png" class="am-img-responsive">
+                                </li>
+                                <li>编写实体类
+                                    <pre>
+@Table(name="JPA_PERSONS")
+@Entity
+public class Person {
+    private Integer id;
+    private String name;
+    @GeneratedValue
+    @Id
+    public Integer getId() {
+        return id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    @Override
+    public String toString() {
+        return "Person [id=" + id + ", name=" + name + "]";
+    }
+}</pre>
+                                </li>
+                                <li>编写持久层接口
+                                    <pre>
+public interface PersonRepository extends Repository&lt;Person, Integer> {
+    //根据指定的name获取实体类
+    Person getByName(String name);
+}</pre>
+                                </li>
+                                <li>使用持久层
+                                    <pre>
+@Test
+public void testSpringData() {
+    PersonRepository personRepository = applicationContext.getBean(PersonRepository.class);
+    Person person = personRepository.getByName("p1");
+    System.out.println(person);
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page4">4. Repository</h3>
+                    <ol>
+                        <li>Repository是一个空接口，即为一个标记接口</li>
+                        <li>若定义的接口继承了Repository接口，则该接口会被IOC容器识别为一个Repository Bean，纳入到IOC容器中进而可以在该接口中定义满足规范的方法</li>
+                        <li>Repository接口的编写方式
+                            <ul>
+                                <li>通过继承Repository - 泛型传入实体类与主键类
+                                    <pre>
+public interface PersonRepository extends Repository&lt;Person, Integer> {</pre>
+                                </li>
+                                <li>通过@RepositoryDefinition注解
+                                    <pre>
+@RepositoryDefinition(domainClass=Person.class, idClass=Integer.class)
+public interface PersonRepository {</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Repository的子接口
+                            <ul>
+                                <li>Repository：一个标记，表名任何继承它的均为仓库接口类</li>
+                                <li>CrudRepository：继承Repository，实现了一组CRUD相关的方法</li>
+                                <li>PagingAndSortingRepository：继承CrudRepository，实现了一组分页排序相关的方法</li>
+                                <li>JPARepository：继承PagingAndSortRepository，实现了一组JPA规范的相关方法</li>
+                                <li>自定义XxxRepository：需要继承JPARepository，使XXXRepository具备通用的数据访问控制层的能力</li>
+                                <li>JPASpecificationExecutor：不属于Repository体系，实现了一组JPA Criteria查询相关的方法</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page5">5. SpringData方法定义规范</h3>
+                    <ol>
+                        <li>简单条件查询
+                            <ul>
+                                <li>简单条件查询：查询一个实体类或者集合</li>
+                                <li>按照SpringData规范，查询方法以find/read/get开头；涉及条件查询时，条件的属性用条件关键字连接，条件属性的首字母需要大写</li>
+                                <li>支持关键字
+                                    <img src="photo/datajpa/datajpa2.png" class="am-img-responsive">
+                                    <img src="photo/datajpa/datajpa3.png" class="am-img-responsive">
+                                </li>
+                                <li>查询实例
+                                    <img src="photo/datajpa/datajpa4.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>@Query
+                            <ul>
+                                <li>使用@Query注解通过JPQL语句对方法进行修饰，使方法取消默认的简单查询关键字，执行注入的JPQL查询
+                                    <pre>
+//查询id最大的Person
+//使用@Query注解自定义JPQL语句实现更加灵活的查询
+@Query("select p from Person p where p.id = (select max(p2.id) from Person p2)")
+Person getMaxIdPerson();</pre>
+                                </li>
+                                <li>@Query注解传递参数方式
+                                    <ul>
+                                        <li>通过占位符传递参数
+                                            <pre>
+//为@Query注解传递参数的方式1：使用占位符(参数表位置不可以更改)
+@Query("select p from Person p where p.id = ?1 and p.name = ?2")
+Person useQueryGetPersonByIdAndName1(Integer id, String name);</pre>
+                                        </li>
+                                        <li>通过命名参数传递
+                                            <pre>
+//为@Query注解传递参数的方式2：使用命名参数(参数表位置可以更改)
+@Query("select p from Person p where p.id = :id and p.name = :name")
+Person useQueryGetPersonByIdAndName2(@Param("id") Integer id, @Param("name") String name);</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>SpringData允许在LIKE语句内部使用占位符
+                                    <pre>
+//SpringData允许在LIKE语句中使用占位符
+@Query("select p from Person p where p.name like %?1%")
+List&lt;Person> useQueryGetPersonByNameLike(String name);</pre>
+                                </li>
+                                <li>@Query支持注入原生SQL
+                                    <pre>
+//使用nativeQuery属性标记@Query中的value为原生SQL
+@Query(value="select count(*) from JPA_PERSONS", nativeQuery=true)
+long useQueryGetPersonCount();</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>@Modifying
+                            <ul>
+                                <li>通过@Query注解自定义JPQL完成Update和Delete操作，不支持Insert操作</li>
+                                <li>在定义更新的@Query注解上方使用@Modifying注解实现更新</li>
+                                <li>被@Modifying注解和@Query注解注入的更新操作方法不可以直接调用，必须定义Service层，在对应方法上添加事务才可以使用；因为SpringData默认为所有方法添加只读事务，所以执行更新是必须在Service添加可读可写的事务</li>
+                                <li>e.g.
+                                    <ul>
+                                        <li>DAO层
+                                            <pre>
+@Modifying
+@Query(value="update Person p set p.age = :age where p.id = :id")
+void updatePersonAgeById(@Param("id") Integer id, @Param("age") int age);</pre>
+                                        </li>
+                                        <li>Service层
+                                            <pre>
+@Transactional
+public void updateAgeById(Integer id, int age) {
+    personRepository.updatePersonAgeById(id, age);
+}</pre>
+                                        </li>
+                                        <li>Test层
+                                            <pre>
+@Test
+public void testModifying() {
+    personService.updateAgeById(1, 111);
+}</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <h3 id="page6">6. CurdRepository</h3>
+                    <ol>
+                        <li>该接口是Repository接口的子接口，实现了一组CRUD的操作</li>
+                        <li>使用CrudRepository接口的save方法执行保存操作
+                            <ul>
+                                <li>PersonRepository
+                                    <pre>
+public interface PersonRepository extends CrudRepository&lt;Person, Integer> {}
+                                    </pre>
+                                </li>
+                                <li>PersonService
+                                    <pre>
+@Transactional
+public void savePerson(Person person) {
+    personRepository.save(person);
+}</pre>
+                                </li>
+                                <li>Test
+                                    <pre>
+@Test
+public void testSave() {
+    Person person = new Person();
+    person.setName("p3");
+    person.setAge(33);
+    person.setBirth(new Date());
+    personService.savePerson(person);
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page7">7. PagingAndSortingRepository</h3>
+                    <ol>
+                        <li>该接口是Repository接口的子接口,继承CrudRepository，实现了分页和排序的功能</li>
+                        <li>使用findAll()方法实现排序与分页
+                            <pre>
+@Test
+public void testPagingAndSortingRepository() {
+    //pageNo:页码，从0开始
+    int pageNo = 3 - 1;  //第三页是3-1
+    //pageSize:每页分的内容数
+    int pageSize = 10;
+    //排序相关
+    Order order1 = new Order(Direction.DESC, "id");  //按照id号降序排列
+    Order order2 = new Order(Direction.ASC, "age");  //按照age升序排列
+    Sort sort = new Sort(order1, order2);
+    //pageRequest通常使用其PageRequest实现类，其中封装了分页信息
+    PageRequest pageRequest = new PageRequest(pageNo, pageSize, sort);
+    //获取对应的页面对象page
+    Page&lt;Person> page = personRepository.findAll(pageRequest);
+    //通过page对象可以获取页面的信息与内容
+    System.out.println("总记录数:" + page.getTotalElements());
+    System.out.println("当前页数:" + (page.getNumber()+1));  //当前页数从0开始，需要+1
+    System.out.println("总页数:" + page.getTotalPages());
+    System.out.println("当前页面的记录数" + page.getNumberOfElements());
+    System.out.println("当前页面的List" + page.getContent());
+}</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page8">8. JpaRepository</h3>
+                    <ol>
+                        <li>是Repository的子接口，继承PagingAndSortingRepository，实现了一组JPA规范的方法</li>
+                        <li>使用saveAndFlush方法实现类似于JPA的merge方法
+                            <pre>
+@Test
+public void testJpaRepository() {
+    Person person = new Person();
+    person.setName("$$p");
+    person.setAge(20);
+    person.setBirth(new Date());
+    personRepository.saveAndFlush(person);
+}</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page9">9. JPASpecificationExecutor</h3>
+                    <ol>
+                        <li>不属于Repository体系，实现了一组JPA Criteria查询相关的方法</li>
+                        <li>实现带查询条件的分页
+                            <img src="photo/datajpa/datajpa5.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <!--文章]]-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+        <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+            <div class="am-offcanvas-bar">
+
+                <ul class="am-nav">
+                    <h1>SpringData JPA</h1>
+                    <!--导航[[-->
+                    <li><a href="#!" id="btn1">SpringData概述</a></li>
+                    <li><a href="#!" id="btn2">SpringData JPA概述</a></li>
+                    <li><a href="#!" id="btn3">开发步骤</a></li>
+                    <li><a href="#!" id="btn4">Repository</a></li>
+                    <li><a href="#!" id="btn5">SpringData方法定义规范</a></li>
+                    <li><a href="#!" id="btn6">CurdRepository</a></li>
+                    <li><a href="#!" id="btn7">PagingAndSortingRepository</a></li>
+                    <li><a href="#!" id="btn8">JpaRepository</a></li>
+                    <li><a href="#!" id="btn9">JPASpecificationExecutor</a></li>
+                </ul>
+                <!--导航]]-->
+            </div>
+        </div>
+    </div>
+    <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+        data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+<!--页脚[[-->
+<br><br><br>
+<div class="am-g">
+    <div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+        <br>
+        <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+        <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+    </div>
+</div>
+<br><br><br>
+<!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+    //加载进度条
+    var progress = $.AMUI.progress;
+    $(window).load(function() {
+        progress.done();
+    })
+    $(document).ready(function() {
+        progress.start();
+    })
+    //侧边栏平滑滚动
+    $(window).smoothScroll();
+    function navClick($btnObj, $pageObj) {
+        $btnObj.on("click", function() {
+            var $w = $(window);
+            $w.smoothScroll({position: $pageObj.offset().top});
+        })
+    }
+    navClick($("#btn1"), $("#page1"));
+    navClick($("#btn2"), $("#page2"));
+    navClick($("#btn3"), $("#page3"));
+    navClick($("#btn4"), $("#page4"));
+    navClick($("#btn5"), $("#page5"));
+    navClick($("#btn6"), $("#page6"));
+    navClick($("#btn7"), $("#page7"));
+    navClick($("#btn8"), $("#page8"));
+    navClick($("#btn9"), $("#page9"));
+
+</script>
+</body>
+</html>
