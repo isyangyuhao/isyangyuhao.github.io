@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>杨宇昊的学习笔记-Express</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <!--Link Web Font-->
+    <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+    <!--代码高亮highlight.js-->
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>-->
+    <!--Link Base Style-->
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css"/>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<!--导航栏 [[-->
+<header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+        <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+</header>
+<!--导航栏 ]]-->
+<div class="am-g am-g-fixed">
+    <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+        <div class="am-g">
+            <div class="am-u-sm-11 am-u-sm-centered">
+                <div class="am-cf am-article am-scrollable-horizontal">
+
+                    <!--文章[[-->
+                    <h2>第一部分 Node.js基础</h2>
+                    <h3 id="page1">1.1 概述与模块化开发</h3>
+                    <ol>
+                        <li>概述
+                            <ul>
+                                <li>Node.js 就是运行在服务端的 JavaScript</li>
+                                <li>Node.js 是一个基于Chrome JavaScript 运行时建立的一个平台</li>
+                                <li>Node.js是一个事件驱动I/O服务端JavaScript环境，基于Google的V8引擎，V8引擎执行Javascript的速度非常快，性能非常好</li>
+                            </ul>
+                        </li>
+                        <li>环境搭建
+                            <ul>
+                                <li>下载并安装node.js: <a href="https://nodejs.org/en/download/">https://nodejs.org/en/download/</a></li>
+                                <li>在bash中使用node -v命令查看node版本号</li>
+                                <li>建立项目文件夹: <code>mkdir nodeDemo</code></li>
+                                <li>初始化项目文件: <code>npm init</code></li>
+                                <li>导入需要的资源库: <code>npm i [packageName] --save</code></li>
+                                <li>运行程序: <code>node index.js</code></li>
+                                <li>在监听的端口下打开程序</li>
+                            </ul>
+                        </li>
+                        <li>模块化开发
+                            <ul>
+                                <li>为了让Node.js的文件可以相互调用，Node.js提供了一个简单的模块系统。
+                                    模块是Node.js 应用程序的基本组成部分，文件和模块是一一对应的。换言之，一个 Node.js 文件就是一个模块，这个文件可能是JavaScript 代码、JSON 或者编译过的C/C++ 扩展。</li>
+                                <li>创建模块
+                                    <ul>
+                                        <li>方法1:
+                                            <pre>
+//module1.js
+module.exports = function() {
+  console.log('hello!');
+}</pre>
+                                        </li>
+                                        <li>方法2:
+                                            <pre>
+//module2.js
+exports.hello = function() {
+  console.log('hello!');
+}</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>使用模块
+                                    <pre>
+var module1 = require('./module1');
+var module2 = require('./module2');
+module1();
+module2.hello();</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page2">1.2 统一事件驱动与HTTP API</h3>
+                    <ol>
+                        <li>统一事件驱动EventEmitter
+                            <ul>
+                                <li>Node.js 所有的异步 I/O 操作在完成时都会发送一个事件到事件队列。
+                                    Node.js里面的许多对象都会分发事件：一个net.Server对象会在每次有新连接时分发一个事件， 一个fs.readStream对象会在文件被打开的时候发出一个事件。 所有这些产生事件的对象都是 events.EventEmitter 的实例。</li>
+                                <li>引入EventEmitter模块
+                                    <pre>
+// 引入 events 模块
+var events = require('events');
+// 创建 eventEmitter 对象
+var eventEmitter = new events.EventEmitter();</pre>
+                                </li>
+                                <li>相关方法
+                                    <img src="photo/express/express1.png" class="am-img-responsive">
+                                    <img src="photo/express/express2.png" class="am-img-responsive">
+                                </li>
+                                <li>继承EventEmitter
+                                    <ul>
+                                        <li>大多数时候我们不会直接使用 EventEmitter，而是在对象中继承它。包括 fs、net、 http 在内的，只要是支持事件响应的核心模块都是
+                                            EventEmitter 的子类
+                                        </li>
+                                        <li>原因有两点
+                                            <br>首先，具有某个实体功能的对象实现事件符合语义， 事件的监听和发射应该是一个对象的方法。
+                                            <br>其次 JavaScript 的对象机制是基于原型的，支持 部分多重继承，继承 EventEmitter 不会打乱对象原有的继承关系。
+                                        </li>
+                                        <li>e.g.
+                                            <pre>
+//引入EventEmitter模块,用于响应事件驱动
+const EventEmitter = require('events').EventEmitter;
+//引入util模块,用户实现继承
+const util = require('util');
+//定义MyEmitter类,继承于EventEmitter
+function MyEmitter() {
+    EventEmitter.call(this);
+}
+//将EventEmitter中的原型指向自定义MyEmitter
+util.inherits(MyEmitter, EventEmitter);
+//实例化MyEmitter类
+const emitter = new MyEmitter();
+//为emitter添加监听事件
+emitter.on("change", function(name) {
+    console.log("change is on, name is " + name);
+});
+//触发emitter的change事件
+emitter.emit("change", "yang");</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>HTTP API
+                            <ul>
+                                <li>作为客户端发送请求
+                                    <pre>
+'use strict';  //使用es6严格模式
+const http = require('http');  //声明http模块
+//作为客户端发送请求
+http.get({
+    hostname : 'baidu.com',
+    port : 80,
+    path : '/'
+}, function callback(res) {
+    const buflist = [];
+    //监听如果为可读的则读取流
+    res.on("readable", function() {
+        let buffer = res.read();
+        if (buffer) {
+            buflist.push(buffer);
+        } else {
+            let result = Buffer.concat(buflist);
+            console.log(result.toString());
+        }
+
+    })
+})</pre>
+                                </li>
+                                <li>作为服务端处理请求
+                                    <ul>
+                                        <li>通过回调函数方式执行
+                                            <pre>
+'use strict';
+const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer(function(req, res) {
+    res.writeHead('200', {'Content-Type': 'text/html'});
+    fs.readFile('me.html', function(err, data) {
+        res.end(data);
+    });
+});
+server.listen(3000);</pre>
+                                        </li>
+                                        <li>通过监听方式执行(推荐)
+                                            <pre>
+'use strict';
+const http = require('http');
+const fs = require('fs');
+const server = http.createServer();
+server.on("request", function(req, res) {
+    res.writeHead('200', {'Content-Type': 'text/html'});
+    fs.readFile('me.html', function(err, data) {
+        res.end(data);
+    });
+})
+server.listen(3000);</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page3">1.3 文件系统/数据流/集群</h3>
+                    <ol>
+                        <li>文件系统与数据流应用实例
+                            <ul>
+                                <li>发送请求 - 上传文件
+                                    <pre>
+&lt;!-- 发送请求(提交文件) -->
+&lt;form action="/" method="post" enctype="multipart/form-data">
+    &lt;input type="file" name="file">
+    &lt;input type="submit">
+&lt;/form></pre>
+                                </li>
+                                <li>接收请求 - 显示表单，并将上传文件信息存放到本地文本中
+                                    <pre>
+'use strict';
+const http = require('http');
+const fs = require('fs');
+const server = http.createServer();
+server.on("request", function(req, res) {
+    res.writeHead('200', {'Content-Type': 'text/html'});
+    fs.readFile('me.html', function(err, data) {
+        res.end(data);
+    });
+    //创建可写流
+    let writeStream = fs.createWriteStream("me.txt");
+    //将请求输入到可写流当中
+    req.pipe(writeStream);
+})
+server.listen(3000);</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>集群
+                            <ul>
+                                <li>Node.js 是以单线程的模式运行的，但它使用的是事件驱动来处理并发，这样有助于我们在多核 cpu 的系统上创建多个子进程，从而提高性能</li>
+                                <li>e.g.
+                                    <pre>
+const cluster = require('cluster');
+const http = require('http');
+const numCPUs = require('os').cpus().length;  //获取cpu核数
+
+if (cluster.isMaster) {
+  for (var i = 0; i < numCPUs; i++) {
+    cluster.fork();  //创建子进程,再一次调用该js文件
+  }
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`worker ${worker.process.pid} died`);
+  });
+} else {
+  http.createServer((req, res) => {
+    res.writeHead(200);
+    res.end('hello world\n');
+  }).listen(8000);
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h2>第二部分 Express</h2>
+                    <h3 id="page4">2.1 Express安装</h3>
+                    <ol>
+                        <li>手工安装和使用express
+                            <ul>
+                                <li>使用<code>npm init</code>初始化项目</li>
+                                <li>使用<code>npm i express -save</code>命令安装express</li>
+                                <li>新建app.js
+                                    <pre>
+var express = require("express");
+var app = express();
+app.get('/', function(req, res) {
+    res.send(`
+        &lt;div>hello world&lt;/div>
+    `);
+});</pre>
+                                </li>
+                                <li>使用<code>node app</code>命令运行项目</li>
+                                <li>访问localhost:3000/</li>
+                            </ul>
+                        </li>
+                        <li>通过生成器生成express
+                            <ul>
+                                <li>在工作空间使用<code>npm i express-generator</code>命令安装express生成器</li>
+                                <li>在工作空间下新建项目文件夹,通过<code>../node_modules/.bin/express -e .</code>命令创建express项目</li>
+                                <li>使用<code>npm i</code>命令安装项目依赖的模块</li>
+                                <li>进入bin文件夹,通过node www命令运行项目</li>
+                                <li>访问localhost:3000/</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page5">2.2 入门实例</h3>
+                    <ol>
+                        <li>db.js
+                            <pre>
+//内存数据库,将数据存储在data.json文件中
+const repos = require("./data");
+//引入文件系统
+const fs = require("fs");
+module.exports = {
+    //持久化方法,将数据保存在物理文件中
+    store() {
+        fs.writeFileSync(__dirname + '/data.json', JSON.stringify(repos));
+    },
+    //根据index获取指定文章
+    get(index) {
+        return repos[index];
+    },
+    //获取全部文章
+    get list() {
+        return repos;
+    },
+    //添加文章
+    add(article) {
+        repos.push(article);
+        this.store();
+    },
+    //删除文章
+    del(index) {
+        repos.splice(index, 1);
+        this.store();
+    },
+    //更新文章
+    update(index, newArticle) {
+        repos.splice(index, 1, newArticle);
+        this.store();
+    }
+};</pre>
+                        </li>
+                        <li>app.js
+                            <pre>
+"use strict";
+var express = require('express');
+var path = require('path');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var session = require("express-session");
+var bodyParser = require('body-parser');
+var index = require('./routes/index');
+var users = require('./routes/users');
+var db = require('./db');
+var app = express();
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+// uncomment after placing your favicon in /public
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(session({
+  secret: 'keyboard cat'
+}));
+app.use(express.static(path.join(__dirname, 'public')));
+//首页
+app.get("/", function(req, res) {
+  //渲染方法, 第一个参数为views文件夹下的模板名, 第二个参数为传递模板的值
+  res.render("index", {list:db.list, logined:req.session.logined});
+});
+//添加文章
+app.post("/add", function(req, res) {
+  //调用db的添加文章方法
+  db.add({title: req.body.title});
+  //重定向到"/"
+  res.redirect("/");
+});
+//删除文章
+app.get("/del", function(req, res) {
+  let index = req.query.index;
+  db.del(index);
+  res.redirect("/");
+});
+//获取指定文章
+app.get("/get/:index", function(req, res) {
+  var index = req.params.index;
+  var article = db.get(index);
+  res.send(article);
+});
+//更新文章
+app.post("/update", function(req, res) {
+  var index = req.body.index;
+  var title = req.body.title;
+  db.update(index, {title});
+  res.redirect("/");
+});
+//登录
+app.post("/login", function(req, res) {
+  var username = req.body.username;
+  var password = req.body.password;
+  if (username === "yang" && password === "root") {
+    req.session.logined = true;
+    res.redirect("/");
+  } else {
+    res.redirect("/");
+  }
+});
+//退出
+app.get("/logout", function(req, res) {
+  req.session.logined = false;
+  res.redirect("/");
+});
+module.exports = app;</pre>
+                        </li>
+                        <li>index.ejs
+                            <img src="photo/express/express3.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3 id="page6">2.3 框架基础运行原理</h3>
+                    <ol>
+                        <li>框架组件
+                            <img src="photo/express/express4.png" class="am-img-responsive">
+                        </li>
+                        <li>基本运行流程
+                            <img src="photo/express/express5.png" class="am-img-responsive">
+                        </li>
+                        <li>e.g.
+                            <pre>
+var express = require("express");
+//创建路由对象
+var router = express.Router();
+//创建子路由的子路由
+var subRouter = express.Router();
+//定义中间件
+function testMiddle(req, res, next) {
+    console.log("test middle");
+    next();
+}
+//定义子路由中间件
+function testMiddle2(req, res, next) {
+    console.log("test middle2");
+    next();
+}
+var app = express();
+//使用中间件
+app.use(testMiddle);
+//使用子路由的中间件
+router.use(testMiddle2);
+//单独定义并使用某个路由的中间件
+app.use("/my", function(req, res, next) {
+    req.name = "yang";
+    next();
+});
+//默认路由
+app.get("/", function(req, res) {
+    res.send("this is /");
+});
+app.get("/my", function(req, res) {
+    res.send(req.name);
+});
+//使用路由对象
+app.use("/route1", router);
+router.use("/route2", subRouter);
+//通过路由对象创建路由,路径由使用路由对象时的路径后继续追加
+router.get("/", function(req, res) {
+    res.send("this is /route1/");
+});
+//子路由的子路由
+subRouter.get("/", function(req, res) {
+    res.send("this is /route1/route2");
+});
+app.listen(3000);</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page7">2.4 路由</h3>
+                    <ol>
+                        <li>使浏览器支持多种请求方式
+                            <ul>
+                                <li>通常浏览器仅支持GET/POST方式请求</li>
+                                <li>编写中间件重写request.method实现多种请求方式的处理
+                                    <pre>
+//在前端的提交表单中加入隐藏域&lt;input type="hidden" name="__method" value="xxx">,提交方式设置为get
+&lt;form action="" method=""get>
+    &lt;input type="hidden" name="__method" value="search">
+    &lt;input type="submit" value="submit">
+&lt;/form>
+//重写req.method实现对多种请求的支持
+app.use(function(req, res, next) {
+  req.oldMethod = req.method;
+  req.method = req.query.__method;
+  next();
+});
+//使用search请求
+app.search("/", function(req, res) {
+  res.send("this is search method!");
+});</pre>
+                                </li>
+                                <li>
+                                    <pre>
+【方式1 通过ajax】
+    &lt;button id="btn">submit&lt;/button>
+    &lt;script>
+        document.getElementById("btn").onclick = function() {
+            var xhr = new XMLHttpRequest();
+            xhr.onload = function(result) {
+                console.log(result);
+            };
+            xhr.open("post", "/", true);
+            xhr.setRequestHeader("X-HTTP-Method-Override", "search");
+            xhr.send();
+        }
+    &lt;/script>
+    //引入method-override模块
+    var methodOverride = require("method-override");
+    //使用method-override
+    app.use(methodOverride());
+    //处理请求
+    app.search("/", function(req, res) {
+      res.send("this is search method!");
+    });
+【方式2 通过表单提交】
+    &lt;form action="/?__method=search" method="post">
+        &lt;input type="submit" value="submit">
+    &lt;/form>
+    //引入method-override模块
+    var methodOverride = require("method-override");
+    //使用method-override
+    app.use(methodOverride("__method"));
+    //处理请求
+    app.search("/", function(req, res) {
+      res.send("this is search method!");
+    });</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>获取路由参数
+                            <pre>
+app.get("/test/:name/:group", function(req, res, next) {
+  var name = req.params.name;
+  var group = req.params.group;
+  res.send("name:" + name + " group:" + group);
+});</pre>
+                        </li>
+                        <li>创建路由对象
+                            <pre>
+//创建路由对象,并配置该路由的基本信息(配置信息不会影响该路由的子路由)
+var router = express.Router({
+  mergeParams: true,  //父路由的参数会导入到该路由之中
+  caseSensitive: true,  //路由区分大小写
+  strict: false  //非严格模式
+});</pre>
+                        </li>
+                        <li>适配路由器的快捷写法
+                            <pre>
+router.get("/test", function(req, res, next) {
+  console.log("test1");
+  next();
+});
+router.get("/test", function(req, res, next) {
+  console.log("test2");
+  res.send("ok");
+});
+==================================
+router.route("/test")
+    .get(function(req, res, next) {
+      console.log("test1");
+      next();
+    })
+    .get(function(req, res, next) {
+      console.log("test2");
+      res.send("ok");
+});</pre>
+                        </li>
+                        <li>请求参数处理器
+                            <ul>
+                                <li>不使用请求参数处理器
+                                    <pre>
+app.get("/user/:id", function(req, res) {
+    if (req.params.id != 1) {
+        res.send(404);
+    } else {
+        res.send("hello");
+    }
+});</pre>
+                                </li>
+                                <li>使用请求参数处理器
+                                    <pre>
+app.param("id", function(req, res, next, id) {
+    if (id != 1) {
+        res.send(404);
+    } else {
+        next();
+    }
+});
+app.get("/user/:id", function(req, res) {
+    res.send("hello");
+});</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>路由处理器组链
+                            <ul>
+                                <li>组链的第一种写法
+                                    <pre>
+app.get("/", function(req, res, next) {
+    console.log("1");
+    next();
+});
+app.get("/", function(req, res, next) {
+    console.log("2");
+    next();
+});
+app.get("/", function(req, res) {
+    console.log("3");
+    res.send("end");
+});</pre>
+                                </li>
+                                <li>组链的第二种写法
+                                    <pre>
+app.get("/", function(req, res, next) {
+    console.log(1);
+    next();
+}, function(req, res, next) {
+    console.log(2);
+    next();
+}, function (req, res) {
+    console.log(3);
+    res.send("end");
+});</pre>
+                                </li>
+                                <li>利用处理器组链实现业务逻辑与路由相分离
+                                    <pre>
+//action.js
+"use strict";
+module.exports = {
+
+    indexAction(req, res, next) {
+        let username = req.params.username;
+        let password = req.params.password;
+        console.log("user info : " + username + " / " + password);
+        req.userInfo = {username: username, password: password};
+        next();
+    }
+
+};
+//===================================================
+//app.js
+"use strict";
+const express = require("express");
+const app = express();
+const action = require("./action");
+app.get("/:username/:password", action.indexAction, (req, res) => {
+    res.send(`
+        this is index page.
+        username is ${req.userInfo.username}.
+        password is ${req.userInfo.password}.
+    `);
+});
+app.listen(3000);</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>.use和.http动词的区别
+                            <ul>
+                                <li>.use适用于为当前路由加入中间件和子路由</li>
+                                <li>.http适用于为当前路由器添加路径处理器</li>
+                                <li>使用.all匹配任意http动词方法
+                                    <pre>
+app.all("/", function(req, res) {
+    console.log("this is all method...");
+});</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>路由路径模式
+                            <ul>
+                                <li>/abc?d - c可以有也可以没有</li>
+                                <li>/abc+d - c至少出现一次</li>
+                                <li>/abc\*d - c和d之间可以加入任意字符</li>
+                                <li>/a(bc)?d - bc可以有也可以没有</li>
+                                <li>/a(bc)+d - bc至少出现一次</li>
+                                <li>/\/6\/ab[1,2]cd/ - 匹配正则表达式</li>
+                                <li>['/a(bc)+d', '/abc?d'] - 同时匹配两个url</li>
+                            </ul>
+                        </li>
+                        <li>配置静态资源文件夹
+                            <br><code>app.use(express.static("public"));</code>
+                        </li>
+                    </ol>
+                    <h3 id="page8">2.5 获取客户端请求数据</h3>
+                    <ol>
+                        <li>获取请求URL数据
+                            <img src="photo/express/express6.png" class="am-img-responsive">
+                        </li>
+                        <li>获取请求头信息数据
+                            <ul>
+                                <li>req.headers  //requres的请求头</li>
+                                <li>req.fresh  //判断request的请求头是否新鲜</li>
+                                <li>req.stale  //判断request的请求头是否陈旧</li>
+                                <li>req.xhr  //判断request是否是通过ajax发送的</li>
+                            </ul>
+                        </li>
+                        <li>获取表单请求信息数据
+                            <br><strong>需要安装body-parser插件</strong>
+                            <pre>
+&lt;form action="/submit" method="post">
+    Username: &lt;input type="text" name="username">
+    Password: &lt;input type="password" name="password">
+    &lt;input type="submit">
+&lt;/form>
+"use strict";
+const express = require("express");
+const bodyParser = require("body-parser");
+const app = express();
+app.use(express.static("public"));
+app.use(bodyParser.urlencoded());  //转换成json格式,表单默认提交即可
+//app.use(bodyParser.text());  转换成文本格式(表单type需要设置为text/plain)
+//app.use(bodyParser.json());  转换成json格式(表单type需要设置为application/json)
+app.post("/submit", function(req, res) {
+    res.send(req.body);
+});
+app.listen(3000);</pre>
+                        </li>
+                        <li>获取上传文件数据
+                            <ul>
+                                <li>需要安装multer插件</li>
+                                <li>multer API: <a href="https://github.com/expressjs/multer/blob/master/doc/README-zh-cn.md">https://github.com/expressjs/multer/blob/master/doc/README-zh-cn.md</a></li>
+                                <li>文件上传方式
+                                    <pre>
+"use strict";
+const express = require("express");
+const multer = require("multer");
+const app = express();
+//创建文件上传对象,设置文件上传路径
+const upload = multer({ dest:"uploads" });
+app.use(express.static("public"));
+//设置文件上传中间件
+//设置为单一文件上传,传入上传域的name属性值
+//app.use(upload.single("file"));
+//设置为同name上传域多文件上传,第一个参数为文件域的name值,第二个参数为最多上传文件数
+//app.use(upload.array("file", 5));
+//设置不同name上传域多文件上传
+app.use(upload.fields([{name:'file1', maxCount:1}, {name:'file2', maxCount:5}]));
+app.post("/upload", function(req, res) {
+    console.log(req.body);
+    //console.log(req.file);  //单一文件上传可以通过req.file获取对应信息
+    //console.log(req.files);  //多文件上传可以通过req.files获取对应信息
+    res.redirect("/");
+});
+app.listen(3000);</pre>
+                                </li>
+                                <li>配置文件上传参数
+                                    <pre>
+const storage = multer.diskStorage({
+    //配置文件上传路径
+    destination: function(req, file, cb) {
+        cb(null, "uploadPath");
+    },
+    //配置上传文件名
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + "-" + Date.now());
+    }
+});</pre>
+                                </li>
+                                <li>将上传文件存放到内存中
+                                    <code>const storage = multer.memoryStorage();</code>
+                                </li>
+                                <li>文件类型过滤器
+                                    <pre>
+//过滤除jpeg格式以外的其他格式
+const fileFilter = function(req, file, cb) {
+  if (file.mimetype !== "image/jpeg") {
+      cb(null, false);
+  } else {
+      cb(null, true);
+  }
+};
+const upload = multer({ dest:"uploads", fileFilter });</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page9">2.6 响应</h3>
+                    <ol>
+                        <li>基本响应方式
+                            <pre>
+//响应文件下载
+app.get("/download", function(req, res) {
+    res.download("readme.txt");
+});
+
+//响应文本
+app.get("/text", function(req, res) {
+    res.send("this is text");
+});
+
+//响应json
+app.get("/json", function(req, res) {
+    res.send({name: "this is json"});
+});
+
+//响应重定向
+app.get("/redirect", function(req, res) {
+    res.redirect("http://www.baidu.com/");
+});
+
+//响应静态资源
+app.get("/file/:name", function(req, res) {
+    let options = {
+       root: __dirname + "/public"
+    };
+    let fileName = req.params.name;
+    res.sendFile(fileName, options, function(err) {
+        console.log(err);
+    });
+});</pre>
+                        </li>
+                        <li>动态页面渲染
+                            <br><strong>需要安装consolidate插件</strong>
+                            <pre>
+"use strict";
+const express = require("express");
+const consolidate = require("consolidate");
+const app = express();
+//设置渲染引擎
+app.engine("html", consolidate.ejs);  //指定模板引擎
+app.set("view engine", "html");  //扩展名的省略
+app.set("views", __dirname + "/views");  //存放模板的路径
+app.get("/", function(req, res) {
+    res.render("home", {name: "test"});
+});
+app.listen(3000);</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page10">2.7 会话与状态管理</h3>
+                    <ol>
+                        <li>Cookie
+                            <br><strong>需要安装cookie-parserCoo插件</strong>
+                            <pre>
+"use strict";
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const app = express();
+app.use(cookieParser());
+app.get("/", function(req, res) {
+    res.send(req.cookies);
+});
+app.get("/add", function(req, res) {
+    let name = req.query.name;
+    let value = req.query.value;
+    res.cookie(name, value);
+    res.send("add cookie");
+});
+app.get("/remove", function(req, res) {
+    res.clearCookie("name");
+    res.clearCookie("undefined");
+    res.clearCookie("password");
+    res.send("remove cookie");
+});
+app.listen(3000);</pre>
+                        </li>
+                        <li>Session
+                            <br><strong>需要安装cookie-parser&express-session插件</strong>
+                            <pre>
+"use strict";
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const app = express();
+app.use(cookieParser());
+app.use(session({
+    cookie: {maxAge: 24*60*60*1000},
+    secret: "yang"c
+}));
+app.listen(3000);</pre>
+                        </li>
+                    </ol>
+                    <!--文章]]-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+        <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+            <div class="am-offcanvas-bar">
+
+                <ul class="am-nav">
+                    <h1>Express</h1>
+                    <!--导航[[-->
+                    <li class="am-nav-header">Node.js基础</li>
+                    <li><a href="#!" id="btn1">概述与模块化开发</a></li>
+                    <li><a href="#!" id="btn2">统一事件驱动与HTTP API</a></li>
+                    <li><a href="#!" id="btn3">文件系统/数据流/集群</a></li>
+                    <li class="am-nav-header">Express</li>
+                    <li><a href="#!" id="btn4">Express安装</a></li>
+                    <li><a href="#!" id="btn5">入门实例</a></li>
+                    <li><a href="#!" id="btn6">框架基础运行原理</a></li>
+                    <li><a href="#!" id="btn7">路由</a></li>
+                    <li><a href="#!" id="btn8">获取客户端请求数据</a></li>
+                    <li><a href="#!" id="btn9">响应</a></li>
+                    <li><a href="#!" id="btn10">会话与状态管理</a></li>
+                </ul>
+                <!--导航]]-->
+            </div>
+        </div>
+    </div>
+    <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+        data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+<!--页脚[[-->
+<br><br><br>
+<div class="am-g">
+    <div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+        <br>
+        <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+        <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+    </div>
+</div>
+<br><br><br>
+<!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+    //加载进度条
+    var progress = $.AMUI.progress;
+    $(window).load(function() {
+        progress.done();
+    })
+    $(document).ready(function() {
+        progress.start();
+    })
+    //侧边栏平滑滚动
+    $(window).smoothScroll();
+    function navClick($btnObj, $pageObj) {
+        $btnObj.on("click", function() {
+            var $w = $(window);
+            $w.smoothScroll({position: $pageObj.offset().top});
+        })
+    }
+    navClick($("#btn1"), $("#page1"));
+    navClick($("#btn2"), $("#page2"));
+    navClick($("#btn3"), $("#page3"));
+    navClick($("#btn4"), $("#page4"));
+    navClick($("#btn5"), $("#page5"));
+    navClick($("#btn6"), $("#page6"));
+    navClick($("#btn7"), $("#page7"));
+    navClick($("#btn8"), $("#page8"));
+    navClick($("#btn9"), $("#page9"));
+    navClick($("#btn10"), $("#page10"));
+
+</script>
+</body>
+</html>
