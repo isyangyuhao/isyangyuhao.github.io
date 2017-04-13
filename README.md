@@ -4,7 +4,7 @@
 Java基础知识和语法
 --------------------
 
-+ [注解与反射](#)
++ [注解与反射](http://yangyuhao.org/reflection)
 
 + [正则表达式与文本操作](http://yangyuhao.org/regular)
 
