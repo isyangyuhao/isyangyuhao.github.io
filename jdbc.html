@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>杨宇昊的学习笔记-JDBC</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <!--Link Web Font-->
+    <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+    <!--代码高亮highlight.js-->
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>-->
+    <!--Link Base Style-->
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css"/>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<!--导航栏 [[-->
+<header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+        <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+</header>
+<!--导航栏 ]]-->
+<div class="am-g am-g-fixed">
+    <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+        <div class="am-g">
+            <div class="am-u-sm-11 am-u-sm-centered">
+                <div class="am-cf am-article am-scrollable-horizontal">
+
+                    <!--文章[[-->
+                    <h3 id="page1">1. 概述</h3>
+                    <ol>
+                        <li>数据持久化
+                            <ul>
+                                <li>把数据保存在可掉电式存储设备中，以供之后使用</li>
+                                <li>将内存中的数据保存到硬盘上固化方式 ： 文件 / 数据库 / xml</li>
+                            </ul>
+                        </li>
+                        <li>JDBC概述
+                            <ul>
+                                <li>独立于特定数据库管理系统，通过sql数据库存取和操作的公共接口(一组api)，定义了用来访问数据库的java标准类库</li>
+                                <li>数据库抽象层 :   JAVA Application  <->  JDBC  <->  sqlServer / mySql / Oracle</li>
+                                <li>JDBC体系结构
+                                    <ul>
+                                        <li>面向应用的API ： Java API，抽象接口，供用用程序开发人员使用（连接数据库，执行sql语句，获取结果 …）</li>
+                                        <li>面向数据库的API ： Java Driver API，供开发者开发数据库驱动程序</li>
+                                    </ul>
+                                </li>
+                                <li>面向接口的编程，不需要实现接口，每个数据库服务商会实现对应的接口</li>
+                                <li>java驱动程序分类
+                                    <ul>
+                                        <li>JDBC-ODBC桥</li>
+                                        <li>部分本地API部分java的驱动程序</li>
+                                        <li>JDBC网络纯java驱动程序</li>
+                                        <li>本地协议的纯java驱动程序</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>本地协议的纯Java驱动程序
+                            <ul>
+                                <li>java application <-> JDBC API <-> JDBC驱动程序 <-> 数据库</li>
+                                <li>JDBC API
+                                    <br>JDBC API是一系列的接口，使应用程序能够进行数据库连接，执行sql语句，得到返回结果
+                                    <img src="photo/jdbc/jdbc1.png" class="am-img-responsive">
+                                </li>
+                                <li>Driver接口
+                                    <ul>
+                                        <li>Java.sql.Driver接口是所有JDBC驱动程序需要实现的接口，这个接口是提供给数据库厂商使用的，不同数据库不同实现</li>
+                                        <li>在程序中不要直接访问Driver接口，而是由驱动程序管理器类(Java.sql.DriverManager)去调用这些Driver的实现</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page2">2. 连接数据库</h3>
+                    <ol>
+                        <li>使用Driver接口连接数据库
+                            <ul>
+                                <li>加载mysql驱动
+                                    <ul>
+                                        <li>下载mysql-connector-java.zip</li>
+                                        <li>将压缩包解压后提取mysql-connector-java-bin.jar放到项目文件夹下的lib中</li>
+                                        <li>在jar文件上右键 -> build path -> add to bulid path</li>
+                                    </ul>
+                                </li>
+                                <li>创建Driver实现类对象
+                                    <br><code>Driver driver = new com.mysql.jdbc.Dirver();</code>
+                                </li>
+                                <li>准备数据库连接信息
+                                    <pre>
+String url = "jdbc:mysql://localhost/test";  //url规则 ： jdbc:数据库类型://域名/使用数据库名
+Properties info = new Properties();
+info.put("user", "root");  //存放登陆用户名信息
+info.put("password", "root");  //存放登陆密码信息</pre>
+                                </li>
+                                <li>调用Driver接口的connect(url,info)方法获取数据库连接
+                                    <br><code>java.sql.Connection connection = driver.connect(url, info);</code>
+                                </li>
+                                <li>e.g.
+                                    <pre>
+public class TestDriver  {
+    public TestDriver() throws SQLException {
+        Driver driver = new com.mysql.jdbc.Driver();
+        String url = "jdbc:mysql://localhost/test";
+        Properties info = new Properties();
+        info.put("user", "root");
+        info.put("password", "root");
+        java.sql.Connection connection = driver.connect(url, info);
+        System.out.println(connection);
+    }
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>编写可重用的数据库连接方法
+                            <pre>
+public java.sql.Connection getConnection() throws Exception {
+    //定义数据库连接信息变量
+    String driverClass = null;
+    String jdbcUrl = null;
+    String user = null;
+    String password = null;
+    //读取jdbc.properties配置文件获取链接数据库的配置信息
+    java.io.InputStream inputStream =
+             getClass().getClassLoader().getResourceAsStream("jdbc.properties");
+            //静态方法无法调用this，因此使用 类名.class 反射类的实例化对象
+    Properties properties = new Properties();
+    properties.load(inputStream);
+    //将配置信息取出分别赋值给对应变量
+    driverClass = properties.getProperty("driverClass");
+    jdbcUrl = properties.getProperty("jdbcUrl");
+    user = properties.getProperty("user");
+    password = properties.getProperty("password");
+    //通过反射创建并实例化对应的Driver类
+    Driver driver = (Driver) Class.forName(driverClass).newInstance();
+    Properties info = new Properties();
+    info.put("user", user);
+    info.put("password", password);
+    //获取数据库的连接
+    java.sql.Connection connection= driver.connect(jdbcUrl, info);
+    return connection;
+}
+public void testConnect() throws Exception {
+    System.out.println(getConnection());
+}
+#jdbc.properties
+driverClass = com.mysql.jdbc.Driver
+jdbcUrl = jdbc:mysql://localhost/test
+user = root
+password = root</pre>
+                        </li>
+                        <li>使用DriverManager连接数据库
+                            <ul>
+                                <li>DirverManager是数据库驱动管理类</li>
+                                <li>可以通过getConncetion(url,user,password)方法获取数据库的连接</li>
+                                <li>通过DriverManager可以管理多个驱动程序，使用时传入的参数不同返回不同的数据库连接</li>
+                                <li>e.g.
+                                    <pre>
+public TestDriverManager() throws Exception {
+    String url = "jdbc:mysql://localhost:3306/test";
+    String user = "root";
+    String password = "root";
+    //加载数据库驱动程序(Driver类中存在注册驱动程序的静态代码块)
+    Class.forName("com.mysql.jdbc.Driver");
+    Connection connection = DriverManager.getConnection(url, user, password);
+    System.out.println(connection);
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page3">3. CRUD操作</h3>
+                    <ol>
+                        <li>向数据表中执行插入/删除/更新操作
+                            <ul>
+                                <li>建立数据库连接 ： Connection connection = getConnection();</li>
+                                <li>准备执行插入/删除/更新的sql语句 : sql = "insert into tb_name(col) values(col_val);"</li>
+                                <li>执行插入
+                                    <ul>
+                                        <li>通过数据库连接对象获取Statement对象 ： Statement statement = connection.createStatement();</li>
+                                        <li>调用Statement对象的executeUpdate(sql)方法执行操作： statement.executeUpdate(sql);</li>
+                                    </ul>
+                                </li>
+                                <li>关闭Statement对象 ： statement.close();</li>
+                                <li>关闭连接 ： connection.close();</li>
+                                <li>e.g.
+                                    <pre>
+public void testStatement() throws SQLException {
+    Connection connection = null;
+    Statement statement = null;
+    String sql = "insert into jdbc1(id, name, email, birth)"
+            + " values('3', '444', '444@qq.com', '20060530')";
+    try {
+        connection = getConncetion();
+        statement = connection.createStatement();
+        statement.executeUpdate(sql);
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        try {
+            if (statement != null)
+                statement.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null)
+                connection.close();
+        }
+    }
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>查询数据表中的信息
+                            <ul>
+                                <li>ResultSet : 封装了JDBC的查询结果</li>
+                                <li>调用Statement对象的excuteQuery(url)可以获取结果集ResutlSet</li>
+                                <li>ResultSet返回是一张数据表，有一个指针指向数据表的第一行前边</li>
+                                <li>调用next()方法检测下一行是否有效，如果有效返回true并且指针下移</li>
+                                <li>当指针移动到一行的时候，通过调用getXxx(index)或getXxx(colName)方法可以获取每一列的值</li>
+                                <li>用完需要调用ResultSet.close()方法关闭ResultSet</li>
+                                <li>e.g.
+                                    <pre>
+//获取jdbc1表中的所有数据
+public void testResultSet() throws Exception {
+    Connection connection = null;
+    Statement statement = null;
+    java.sql.ResultSet resultSet = null;
+    String sql = "select * from jdbc1";
+    try {
+        connection = getConncetion();
+        statement = connection.createStatement();
+        resultSet = statement.executeQuery(sql);
+        while (resultSet.next()) {
+            int id = resultSet.getInt(1);
+            String name = resultSet.getString("name");
+            String email = resultSet.getString("email");
+            Date data = resultSet.getDate("birth");
+            System.out.println("==========================");
+            System.out.println("id is " + id);
+            System.out.println("name is " + name);
+            System.out.println("email is " + email);
+            System.out.println("data is " + data);
+            System.out.println("==========================");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+         try {
+             resultSet.close();
+             statement.close();
+         } catch (Exception e) {
+             e.printStackTrace();
+         } finally {
+             if (connection != null)
+                 connection.close();
+         }
+    }
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>PreparedStatement
+                            <ul>
+                                <li>使用Statement需要拼写sql语句，麻烦并且容易出错</li>
+                                <li>PreparedStatement是Statement的子接口，并且提供了补充占位符变量的方法</li>
+                                <li>使用PreparedStatement的方法
+                                    <ul>
+                                        <li>准备sql语句，使用?作为占位符： String sql = "insert into tb_name values(?,?,?,?)"</li>
+                                        <li>获取preparedStatement对象： PreparedStatement ps = connection.preparedStatement(sql)</li>
+                                        <li>设置占位符的值： PreparedStatement的setXxx(int index, Objcet val)</li>
+                                        <li>执行sql语句,不需要传入sql语句： executeQuery() or executeUpdate()</li>
+                                        <li>e.g.
+                                            <pre>
+public void testPreparedStatement() throws Exception {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = getConncetion();
+            String sql = "insert into jdbc1(id, name, email, birth) values(?,?,?,?)";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, 4);
+            preparedStatement.setString(2, "yang");
+            preparedStatement.setString(3, "yang@qq.com");
+            //向数据库中存放的时间信息需要使用java.sql包下的Date
+            preparedStatement.setDate(4,
+                    new Date(new java.util.Date().getTime()));
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connection.close();
+            }
+        }
+}</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>sql注入
+                            <ul>
+                                <li>sql注入是利用某些系统没有对用户的输入做充分的检查，而在用户输入数据中注入非法的sql语句或命令
+                                    从而利用sql引擎完成一些恶意行为的做法
+                                </li>
+                                <li>使用PreparedStatement替代Statement可以防范sql注入现象的发生
+                                    <pre>
+public void testSqlInjection() throws Exception {
+        String username = "a ' or password = ";
+        String password = " or '1' = '1 ";
+        String sql = "select * from jdbc2 where username = '"
+                + username
+                + "' and password = '"
+                + password
+                + "' ";
+        Connection connection = null;
+        Statement statement = null;
+        java.sql.ResultSet resultSet = null;
+        try {
+            connection = getConncetion();
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(sql);
+            if (resultSet.next()) {
+                System.out.println("login success!");
+            } else {
+                System.out.println("login error!");
+            }
+            System.out.println("sql ---> " + sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                resultSet.close();
+                statement.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connection.close();
+            }
+        }
+    }
+//生成的sql语句 :
+//sql ---> select * from jdbc2 where username = 'a ' or password = ' and password = ' or '1' = '1 '</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>ResultSetMetaData
+                            <ul>
+                                <li>ResultSetMeatData是描述ResultSet的元数据对象，从中可以获取到结果集中有多少列，列名是什么…</li>
+                                <li>使用方法
+                                    <ul>
+                                        <li>得到ResultSetMetaData对象 : 调用ResultSet的getMetaData()方法;</li>
+                                        <li>常用方法
+                                            <ul>
+                                                <li><code>int getColumnCount();  //获取查询到的列数</code></li>
+                                                <li><code>String getColumnLabel(int column);  //获取制定的列的别名，索引从1开始</code></li>
+                                            </ul>
+                                        </li>
+                                        <li>e.g.
+                                            <pre>
+//在不知道结果集格式的情况下获取查询信息
+connection = getConncetion();
+statement = connection.createStatement();
+resultSet = statement.executeQuery(sql);
+ResultSetMetaData metaData = resultSet.getMetaData();
+while (resultSet.next()) {
+    for (int i = 1; i <= metaData.getColumnCount(); ++i) {
+        System.out.println(metaData.getColumnLabel(i) + " -> " +
+                resultSet.getString(i)
+                );
+    }
+}</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page4">4. DAO</h3>
+                    <ol>
+                        <li>访问数据信息类，包含对数据的CURD(create, update, read, delete)，不包含任何业务相关信息</li>
+                        <li>dao用于实现功能的模块化</li>
+                        <li>dao中包含的方法
+                            <ul>
+                                <li><code>void update(String sql, Object … args);</code>  //包含insert,update,delete操作</li>
+                                <li><code>&lt;T> T get(Class&lt;T> clazz, String sql, Object … args);</code>  //查询一条记录，返回对应对象</li>
+                                <li><code>&lt;T> List&lt;T> getForList(Class&lt;T> clazz, String sql, Object … args);</code>  //查询多条记录，返回相应的对象的集合</li>
+                                <li><code>&lt;E> E getForValue(String sql, Object … args);</code>  //返回某条记录某一个 字段的值或是一个统计的值</li>
+                            </ul>
+                        </li>
+                        <li>使用BeanUtils包处理javaBean
+                            <ul>
+                                <li>需要加入两个jar包：commons-beanutils-1.8.0.jar / commons-logging-1.1.1.jar</li>
+                                <li><code>setProperty(obj, name, value);</code></li>
+                                <li><code>obj getProperty(obj, name);</code></li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page5">5. JDBC元数据</h3>
+                    <ol>
+                        <li>通过DatabaseMetaData可以获得连接数据库的详细信息</li>
+                        <br>常用方法
+                            <ul>
+                                <li><code>int getDatabaseMajorVersion();  //获取当前数据库版本号</code></li>
+                                <li><code>String getUserName();  //获取当前数据库连接者用户名</code></li>
+                                <li><code>ResultSet getCatalogs();  //获取当前存在数据库</code></li>
+                            </ul>
+                        <li>通过ResultSetMetaData可以获得结果集的元数据</li>
+                    </ol>
+                    <h3 id="page6">6. LOB</h3>
+                    <ol>
+                        <li>定义：LOB是用来存储大量地二进制和文本数据的一种数据类型</li>
+                        <li>分类
+                            <ul>
+                                <li>BLOB : 二进制数据</li>
+                                <li>CLOB：单字节字符数据</li>
+                                <li>NCLOB：多字节字符数据</li>
+                            </ul>
+                        </li>
+                        <li>CLOB和NCLOB类型适用于存储超长的文本数据，BLOB适用于存储大量地二进制数据，例如图像、视频、音频、文件等</li>
+                        <li>mysql中的BLOB类型:
+                            <br>TinyBlob - 255B
+                            <br>Blob - 65K
+                            <br>MediumBlob - 16M
+                            <br>LongBlob - 4G
+                        </li>
+                        <li>使用JDBC插入BLOB类型数据
+                            <ul>
+                                <li>InputStream inputStream = new FileInputStream("file_path_name");</li>
+                                <li>preparedStatement.setBlob(index, inputStream);</li>
+                            </ul>
+                        </li>
+                        <li>使用JDBC读取BLOB类型数据
+                            <pre>
+InputStream inputStream = resultSet.getBlob(index).getBinaryStream();
+OutputStream outputStream = new FileOutputStream("file_path_name");
+byte [] buffer = new byte[1024];
+int len = 0;
+while ((len = inputStream.read()) != -1) {
+    outputStream.write(buffer, 0, len);
+}
+inputStream.close();
+outputStream.close();</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page7">7. 事务</h3>
+                    <ol>
+                        <li>在数据库中，事务是指一组逻辑操作单元，使数据从一种状态转换到另一种状态</li>
+                        <li>事务的操作
+                            <br>定义一个事务 -> 对数据进行操作 -> 提交(commit)：这些数据勇冠的保存下来 / 回退(rollback)：放弃所有操作回到事务开始以前
+                        </li>
+                        <li>事务的ACID属性
+                            <ul>
+                                <li>原子性(Atomicity)：事务是一个不可分割的状态，事务中的操作要么都发生要么都不发生</li>
+                                <li>一致性(Consistency)：事务必须使使数据库从一个一致性状态转移到另一个一致性状态</li>
+                                <li>隔离性(Lsolation)：一个事务的执行不能被其他事务干扰，事务内的操作及使用的数据对并发的其他事务时隔离的，并发执行的各事务不能相互干扰</li>
+                                <li>持久性(Durability)：事务一但被提交，他对数据库中的数据改变是永久性的，之后的其他操作和数据库故障都不该对其产生影响</li>
+                            </ul>
+                        </li>
+                        <li>JDBC对事物的操作
+                            <ul>
+                                <li>如果包含多个操作，每个操作使用自己单独的连接会无法保证事务的进行</li>
+                                <li>具体步骤
+                                    <ul>
+                                        <li>事务操作开始前，开始事务：取消Connection的默认提交行为 : connection.setAutoCommit(false)</li>
+                                        <li>如果事务的操作都正常则提交：connection.commit();</li>
+                                        <li>如果出现异常，则回滚事务：connection.rollback();</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>e.g.
+                            <pre>
+//未使用事务
+public void testTransaction1() {
+    DAO dao = new DAO();
+    String sql = "update moneys set money = money - 500 where person = ?";
+    dao.update(sql, "Tom");
+    int i = 10 / 0;  //出现异常
+    sql = "update moneys set money = money + 500 where person = ?";
+    dao.update(sql, "Jerry");
+    //result : Tom.money-=500  -->  exception  -->  end
+}
+//使用事务
+public void testTransaction2() {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = JDBCTools.getConnection();
+            //开始事务：
+            connection.setAutoCommit(false);  //取消默认提交
+            String sql = "update moneys set money = money - 500 where person = ?";
+            update(connection, sql, "Tom");
+            int i = 10 / 0;  //出现异常
+            sql = "update moneys set money = money + 500 where person = ?";
+            update(connection, sql, "Jerry");
+            connection.commit();  //提交事务
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                connection.rollback();  //出现异常则回滚事务
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        } finally {
+            try {
+                JDBCTools.releaseDB(connection, null, preparedStatement, null);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        //result : Tom.money-=500  -->  exception  -->  rollback  -->  end
+}</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page8">8. 并发控制</h3>
+                    <ol>
+                        <li>并发问题
+                            <ul>
+                                <li>读脏数据：对于两个事务T1,T2,T1读取了已经被T2更新但还没有提交的字段，若T2回滚，则T1读取的内容都是临时且无效的</li>
+                                <li>不可重复读：对于两个事务T1,T2,T1读取了一个字段，然后T2更新了该字段，T1再次读取同一个字段，值发生了改变</li>
+                                <li>幻读：对于两个事务T1,T2,T1从一个表中读取了一个字段，然后T2在该表中插入了一些新的行，之后T1再次读取同一张表，多出几行</li>
+                            </ul>
+                        </li>
+                        <li>数据库事务的隔离性
+                            <br>数据库系统必须隔离并发控制运行各个事务的能力，使他们互不影响，避免各种并发控制
+                        </li>
+                        <li>数据库提供的事务隔离级别
+                            <img src="photo/jdbc/jdbc2.png" class="am-img-responsive">
+                            <ul>
+                                <li>Oracle支持2种事务隔离级别：READ_UNCOMMITTED(默认), SERIALIZABLE</li>
+                                <li>Mysql支持4种事务隔离级别，默认为REPEATABLE READ</li>
+                            </ul>
+                        </li>
+                        <li>在Mysql中设置隔离级别
+                            <ul>
+                                <li>每启动一个mysql程序，机会获得一个单独的数据库连接，每个数据库连接都有一个全局变量@@tx_isolation，表示当前的隔离级别</li>
+                                <li>查看当前的隔离级别指令：select @@tx_isolation;</li>
+                                <li>设置当前mysql连接的隔离级别指令：set transaction isolation level read committed;</li>
+                                <li>设置数据库系统全局的隔离级别：set blobbal transaction isolation level read committed;</li>
+                            </ul>
+                        </li>
+                        <li>在JDBC中设置隔离级别
+                            <br>connection.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+                        </li>
+                    </ol>
+                    <h3 id="page9">9. 批量处理</h3>
+                    <ol>
+                        <li>批量处理机制:当需要成批插入或更新记录时，可以采用java的批量更新机制，允许多条语句一次性提交给数据库批量处理</li>
+                        <li>JDBC批量处理语句方法
+                            <ul>
+                                <li>addBatch(String);  //添加需要批量处理的sql语句或是参数</li>
+                                <li>clearBatch();  //清空Batch中的sql语句</li>
+                                <li>executeBatch();  //执行批量处理语句</li>
+                            </ul>
+                        </li>
+                        <li>运行效率 : Statement > PreparedStatement > Batch</li>
+                        <li>在PreparedStatement中使用Batch
+                            <pre>
+@Test
+public void Batch() {
+    Connection connection = null;
+    PreparedStatement preparedStatement = null;
+    String sql = "";
+    long begin = System.currentTimeMillis();
+    try {
+        connection = JDBCTools.getConnection();
+        JDBCTools.beginTx(connection);
+        sql = "insert into test2(id, number) values(?,?)";
+        preparedStatement = connection.prepareStatement(sql);
+        for (int i = 0; i < 100000; ++i) {
+            preparedStatement.setInt(1, i);
+            preparedStatement.setInt(2, i);
+            //积攒sql语句
+            preparedStatement.addBatch();
+            //当积攒到一定程度，就同一执行一次，并且清空之前积攒的sql语句
+            if ((i + 1) % 300 == 0) {
+                preparedStatement.executeBatch();
+                preparedStatement.clearBatch();
+            }
+        }
+        //如果总条数不是批量数值的整数倍，则还需要再执行一次
+        if (100000 % 3 != 0) {
+            preparedStatement.executeBatch();
+            preparedStatement.clearBatch();
+        }
+        JDBCTools.commit(connection);
+        long end = System.currentTimeMillis();
+        System.out.println("time is : " + (end - begin));  //time is : 31334
+    } catch (Exception e) {
+        e.printStackTrace();
+        JDBCTools.rollback(connection);
+    } finally {
+        try {
+            JDBCTools.releaseDB(connection, null, preparedStatement, null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page10">10. 数据库连接池</h3>
+                    <ol>
+                        <li>数据库连接池
+                            <ul>
+                                <li>传统的模式 ： 主程序(Servlet,beans)中建立数据库连接 -> sql操作 -> 断开数据库连接</li>
+                                <li>数据库连接池(connection pool) : 为数据库连接建立一个缓冲池，预先在缓冲池中放入一定数量的连接，当需要数据库连接时只需要从缓冲池中取出即可，使用完毕后放回缓冲池；数据库缓冲池负责分配、管理、释放数据库的链接，允许应用程序重复使用一个数据库连接</li>
+                                <li>工作原理
+                                    <img src="photo/jdbc/jdbc3.png" class="am-img-responsive">
+                                </li>
+                                <li>JDBC的数据库连接池使用javax.sql.DataSource接口，该接口由服务器和开源组织提供实现，常用的有DBCP,C3P0</li>
+                                <li>DataSourse称为数据源，包含连接池和连接池管理两部分，通常称DataSourse为连接池</li>
+                            </ul>
+                        </li>
+                        <li>DBCP
+                            <ul>
+                                <li>DBCP是Apache软件基金组织下的开源连接池实现，该连接池依赖于该组织旗下另一个开源系统Common-pool，如果使用该连接池则需要导入两个jar包 : Commons-dbcp.jar(连接池实现) ， Commons-pool.jar(连接池实现依赖库)</li>
+                                <li>具体步骤
+                                    <ul>
+                                        <li>创建数据库连接池</li>
+                                        <li>为数据源实例指定必需的属性</li>
+                                        <li>为数据源指定可选的属性</li>
+                                        <li>从数据库中获取连接</li>
+                                        <li>e.g.
+                                            <pre>
+@Test
+public void testDBCP() throws SQLException {
+    //创建DBPC数据源实例
+    BasicDataSource dataSource = new BasicDataSource();
+    //为数据源指定必须的属性
+    dataSource.setUsername("root");
+    dataSource.setPassword("root");
+    dataSource.setUrl("jdbc:mysql:///test");
+    dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+    //配置可选项
+    dataSource.setInitialSize(5);  //指定数据库连接池中初始化连接的个数
+    dataSource.setMaxActive(50);  //指定同一时刻最多可以同时向数据库申请的连接数
+    dataSource.setMinIdle(5);  //在数据库连接池空闲状态下，连接池中最少有多少个连接
+    dataSource.setMaxWait(1000 * 5);  //等待数据库连接池分配连接的最长时间，超出则抛出异常
+    //从数据源中获取数据库连接
+    Connection connection = dataSource.getConnection();
+}</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>通过连接池工厂类获取连接
+                                    <ul>
+                                        <li>加载properties配置文件 : 配置文件中的键必须来自BasicDataSource中的属性</li>
+                                        <li>调用BasicDataSourceFactory中的createDataSource方法创建DataSourse实例</li>
+                                        <li>通过DataSourse实例中获取数据库连接</li>
+                                        <li>e.g.
+                                            <pre>
+@Test
+public void testDBCPWithDataSourceFactory() throws Exception {
+    Properties properties = new Properties();
+    InputStream inputstream = JDBCTest.class.getClassLoader()
+            .getResourceAsStream("dbcp.properties");
+    properties.load(inputstream);
+    //通过配置文件设置相应参数
+    DataSource dataSource = BasicDataSourceFactory.createDataSource(properties);
+    Connection connection = dataSource.getConnection();
+}
+# this is JDCP properties
+driverClassName = com.mysql.jdbc.Driver
+username = root
+password = root
+url = jdbc:mysql:///test
+initialSize = 10
+maxActive = 50
+minIdle = 5
+maxWait = 5000</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>C3P0
+                            <ul>
+                                <li>使用方法
+                                    <ul>
+                                        <li>导入c3p0.jar</li>
+                                        <li>创建c3p0-confg.xml文件,填写配置信息</li>
+                                        <li>创建ComboPooledDataSource实例：<br>
+                                            DataSource dataSource = new ComboPooledDataSource("named-config")</li>
+                                        <li>从DataSourse中获取数据库连接</li>
+                                    </ul>
+                                </li>
+                                <li>e.g.
+                                    <img src="photo/jdbc/jdbc4.png" class="am-img-responsive">
+                                </li>
+                                <li>重构后的JDBCTools
+                                    <pre>
+public class JDBCTools {
+    private static DataSource dataSource = null;
+    static {
+        dataSource = new ComboPooledDataSource("helloc3p0");
+    }
+    public JDBCTools() {
+    }
+    //数据库连接方法
+    public static Connection getConnection() throws Exception {
+        return dataSource.getConnection();
+    }
+    //数据库关闭方法
+    public static void releaseDB(Connection connection, Statement statement,
+            PreparedStatement preparedStatement, ResultSet resultSet) throws SQLException {
+    if (resultSet != null) {
+        try {
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    if (preparedStatement != null) {
+        try {
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    if (connection != null) {
+        try {
+        //数据库连接池的Connection对象进行close是，
+        //并不是真正进行关闭，而是将数据库连接归还到数据库连接池中
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+    }
+    //处理数据库事务
+    //提交事务
+    public static void commit(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.commit();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    //回滚事务
+    public static void rollback(Connection connection ) {
+        if (connection != null) {
+            try {
+                connection.rollback();
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    //开始事务
+    public static void beginTx(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.setAutoCommit(false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page11">11. DBUtil</h3>
+                    <ol>
+                        <li>使用DBUtils进行更新操作
+                            <pre>
+//测试QueryRunner类的update方法
+    @Test
+    public void testQueryRunnerUpdate() {
+        QueryRunner queryRunner = new QueryRunner();
+        Connection connection = null;
+        String sql = "insert into test2 values(?,?);";
+        try {
+            connection = JDBCTools.getConnection();
+            queryRunner.update(connection, sql, 1, 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                JDBCTools.releaseDB(connection, null, null, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+}</pre>
+                        </li>
+                        <li>使用DBUtils进行查询操作
+                            <pre>
+//QueryRunner的query方法的返回值取决于ResultSetHandler的返回值
+    class MyResultSetHandler implements ResultSetHandler {
+        //在handle方法中对结果集进行处理
+        @Override
+        public Object handle(ResultSet resultSet) throws SQLException {
+            List&lt;Student> students = new ArrayList<>();
+            while (resultSet.next()) {
+                int id = resultSet.getInt(1);
+                String name = resultSet.getString(2);
+                String sex = resultSet.getString(3);
+                int age = resultSet.getInt(4);
+                int classId = resultSet.getInt(5);
+                Student student = new Student(id, name, sex, age, classId);
+                students.add(student);
+            }
+            return students;
+        }
+    }
+//测试查询
+@Test
+public void testQuery() throws SQLException {
+    Connection connection = null;
+    try {
+        connection = JDBCTools.getConnection();
+        String sql = "select id, name, sex, age, classId from student;";
+        Object object = queryRunner.query(connection, sql, new MyResultSetHandler());
+        System.out.println(object);
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        JDBCTools.releaseDB(connection, null, null, null);
+    }
+}
+                            </pre>
+                        </li>
+                        <li>系统实现的Handler
+                            <ul>
+                                <li>BeanHandler : 把结果集的第一条记录转换为创建BeanHandler对象创建时传入的Class参数对应的对象
+                                    <br>Student student = queryRunner.query(connection, sql, new BeanHandler<>(Student.class), 1);
+                                </li>
+                                <li>BeanListHandler : 将结果集转为一个List,该List包含n个传入Class参数对应的对象
+                                    <br>List&lt;Student> students = queryRunner.query(connection, sql, new BeanListHandler<>(Student.class));
+                                </li>
+                                <li>MapHandler : 返回sql对应的第一条记录对应的Map对象，键为列名，值为列的值
+                                    <br>Map&lt;String, Object> studnet = queryRunner.query(connection, sql, new MapHandler());
+                                </li>
+                                <li>MapListHandler : 将结果集转换为一个承载Map的List,Map的键为列名，值为列的值
+                                    <br>List&lt;Map&lt;String, Object>> studnets = queryRunner.query(connection, sql, new MapListHandler());
+                                </li>
+                                <li>ScalarHandler : 将结果集转换为一个数值(Object类型)返回
+                                    <br>Object result = queryRunner.query(connection, sql, new ScalarHandler(), 1);
+                                </li>
+                            </ul>
+                        </li>
+                        <li>使用DBUtils对DAO进行重构
+                            <img src="photo/jdbc/jdbc5.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3 id="page12">12. 存储过程</h3>
+                    <ol>
+                        <li>步骤
+                            <ul>
+                                <li>通过Connection的prepareCall(string sql)方法获取CallableStatement对象的实例</li>
+                                <li>通过CallableStatement对象的reisterOutParameter()方法注册OUT参数</li>
+                                <li>通过CallableStatement对象的setXxx()方法设定IN或IN OUT参数，若想将参数默认值设为null则调用setNull()方法</li>
+                                <li>通过CallableStatement对象的execute()方法执行存储过程</li>
+                                <li>如果所调用的是带返回参数的存储过程，还需要通过CallbackStatement对象的getXxx()方法获取其返回值</li>
+                            </ul>
+                        </li>
+                        <li>e.g.
+                            <pre>
+String sql = "{?=call sum_salary(?,?)}";
+callableStatement = connection.prepareCall(sql);
+callableStatement.registerOutParameter(1, Types.NUMERIC);
+callableStatement.registerOutParameter(2, Types.NUMERIC);
+callableStatement.setInt(2, 28);
+callableStatement.execute();
+double res1 = callableStatement.getDouble(1);
+double res2 = callableStatement.getDouble(3);</pre>
+                        </li>
+                    </ol>
+                    <!--文章]]-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+        <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+            <div class="am-offcanvas-bar">
+
+                <ul class="am-nav">
+                    <h1>JDBC</h1>
+                    <!--导航[[-->
+                    <li><a href="#!" id="btn1">概述</a></li>
+                    <li><a href="#!" id="btn2">连接数据库</a></li>
+                    <li><a href="#!" id="btn3">CRUD操作</a></li>
+                    <li><a href="#!" id="btn4">DAO</a></li>
+                    <li><a href="#!" id="btn5">JDBC元数据</a></li>
+                    <li><a href="#!" id="btn6">LOB</a></li>
+                    <li><a href="#!" id="btn7">事务</a></li>
+                    <li><a href="#!" id="btn8">并发控制</a></li>
+                    <li><a href="#!" id="btn9">批量处理</a></li>
+                    <li><a href="#!" id="btn10">数据库连接池</a></li>
+                    <li><a href="#!" id="btn11">DBUtil</a></li>
+                    <li><a href="#!" id="btn12">存储过程</a></li>
+                </ul>
+                <!--导航]]-->
+            </div>
+        </div>
+    </div>
+    <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+        data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+<!--页脚[[-->
+<br><br><br>
+<div class="am-g">
+    <div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+        <br>
+        <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+        <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+    </div>
+</div>
+<br><br><br>
+<!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+    //加载进度条
+    var progress = $.AMUI.progress;
+    $(window).load(function() {
+        progress.done();
+    })
+    $(document).ready(function() {
+        progress.start();
+    })
+    //侧边栏平滑滚动
+    $(window).smoothScroll();
+    function navClick($btnObj, $pageObj) {
+        $btnObj.on("click", function() {
+            var $w = $(window);
+            $w.smoothScroll({position: $pageObj.offset().top});
+        })
+    }
+    navClick($("#btn1"), $("#page1"));
+    navClick($("#btn2"), $("#page2"));
+    navClick($("#btn3"), $("#page3"));
+    navClick($("#btn4"), $("#page4"));
+    navClick($("#btn5"), $("#page5"));
+    navClick($("#btn6"), $("#page6"));
+    navClick($("#btn7"), $("#page7"));
+    navClick($("#btn8"), $("#page8"));
+    navClick($("#btn9"), $("#page9"));
+    navClick($("#btn10"), $("#page10"));
+    navClick($("#btn11"), $("#page11"));
+    navClick($("#btn12"), $("#page12"));
+
+</script>
+</body>
+</html>

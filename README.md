@@ -10,7 +10,7 @@ Java基础知识和语法
 
 + [Java NIO](http://yangyuhao.org/nio)
 
-+ [JDBC](#)
++ [JDBC](http://yangyuhao.org/jdbc)
 
 + [GoF23设计模式](#)
 
