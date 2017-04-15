@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>杨宇昊的学习笔记-设计模式</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <!--Link Web Font-->
+    <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+    <!--代码高亮highlight.js-->
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>-->
+    <!--Link Base Style-->
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css"/>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<!--导航栏 [[-->
+<header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+        <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+</header>
+<!--导航栏 ]]-->
+<div class="am-g am-g-fixed">
+    <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+        <div class="am-g">
+            <div class="am-u-sm-11 am-u-sm-centered">
+                <div class="am-cf am-article am-scrollable-horizontal">
+
+                    <!--文章[[-->
+                    <h2 id="page1">一. 设计模式GoF23(设计模式 - 可复用的面向对象软件元素)</h2>
+                    <ol>
+                        <li><strong>创建型模式 - 帮助更好的创建对象</strong>
+                            <br>单例模式，工厂模式，抽象工厂模式，建造者模式，原型模式
+                        </li>
+                        <li><strong>结构型模式 - 在程序结构上实现松耦合，从而扩大整体类结构</strong>
+                            <br>适配器模式，代理模式，桥接模式，装饰模式，组合模式，外观模式，享元模式
+                        </li>
+                        <li><strong>行为型模式 - 关注对象间相互交互和相互通信协作，从而进一步明确对象的职责</strong>
+                            <br>模板方法模式，命令模式，迭代器模式，观察者模式，中介者模式，备忘录模式，解释器模式，状态模式，策略模式，责任链模式，访问者模式
+                        </li>
+                    </ol>
+                    <h2 id="page2">二. 面向对象设计的基本原则</h2>
+                    <ol>
+                        <li><strong>开闭原则(Open Close Principle):</strong> 一个软件的实体应当对扩展开放，对修改关闭</li>
+                        <li><strong>里氏代换原则(Liskov Substitution Principle):</strong> 任何基类可以出现的地方，子类一定可以出现</li>
+                        <li><strong>依赖倒转原则(Dependence Inversion Principle):</strong> 要针对接口编程，不要针对实现编程</li>
+                        <li><strong>接口隔离原则(Interface Segregation Principle):</strong> 使用多个隔离的接口，比使用单个接口要好</li>
+                        <li><strong>迪米特法则(Demeter Principle):</strong> 一个实体应当尽量少地与其他实体之间发生相互作用，使得系统功能模块相对独立</li>
+                        <li><strong>合成复用原则(Composite Reuse Principle):</strong> 尽量使用合成/聚合的方式，而不是使用继承</li>
+                    </ol>
+                    <h2 id="page3">三. 创建型设计模式</h2>
+                    <h3>1. 单例设计模式(Singleton)</h3>
+                    <ol>
+                        <li>核心作用：保证一个类只有一个实例，并且提供一个访问该实例的全局访问点</li>
+                        <li>常见应用场景
+                            <ul>
+                                <li>项目中，读取配置文件的类一般只有一个对象，没有必要每次读取都创建一个对象</li>
+                                <li>数据库连接池的设计一般为单例，因为数据库连接是一种数据库资源</li>
+                                <li>在Spring中默认Bean为单例的，这样做可以让Spring容器进行管理</li>
+                                <li>每个Servlet都是单例的</li>
+                                <li>Spring MVC/Struts1框架中的控制器为单例的</li>
+                            </ul>
+                        </li>
+                        <li>单例模式的优点
+                            <ul>
+                                <li>由于单例模式只生成一个实例，减少了系统性能开销，当一个对象产生需要消耗较多资源时，可以通过在应用中启动单例模式后驻留内存来解决</li>
+                                <li>单例模式可以在系统设置全局访问点，优化共享资源访问</li>
+                            </ul>
+                        </li>
+                        <li>常见的五中单例模式实现方式
+                            <ul>
+                                <li>饿汉式(线程安全，调用效率高，不可以延时加载)</li>
+                                <li>懒汉式(线程安全，调用效率不高，可以延时加载)</li>
+                                <li>双重检测锁式(由于JVM底层内部模型原因，偶尔出现问题，不建议使用)</li>
+                                <li>静态内部类式(线程安全，调用效率高，可以延时加载)</li>
+                                <li>枚举单例(线程安全，调用效率高，不能延时加载)</li>
+                            </ul>
+                        </li>
+                        <li>实现
+                            <ul>
+                                <li>饿汉式实现单例设计模式(单例对象立即加载)
+                                    <pre>
+public class SingletonDemo {
+    //提供静态属性,直接生成实例
+    private static SingletonDemo instance = new SingletonDemo();
+    //私有化构造器
+    private SingletonDemo() {}
+    //提供全局访问点
+    public static getInstance() {
+        return instance;
+    }
+}</pre>
+                                </li>
+                                <li>懒汉式实现单例设计模式(单例对象延迟加载)
+                                    <pre>
+public class SingletonDemo {
+    //提供静态属性,不直接创建实例
+    private static SingletonDemo instance;
+    //私有化构造器
+    private static SingletonDemo() {};
+    //提供全局访问点
+    public static synchronized getInstance() {
+        //判断是否使用过,如果第一次使用需要创建实例,否则直接返回
+        if (instance == null) {
+            instance = new SingletonDemo();
+        } else {
+            return instance;
+        }
+    }
+}</pre>
+                                </li>
+                                <li>双重检测锁实现单例设计模式(不稳定)
+                                    <pre>
+public class SingletonDemo {
+    //提供静态属性,不直接创建实例
+    private static instance = null;
+    //私有化构造器
+    private SingletonDemo() {};
+    //提供全局访问点,只需要在第一次创建实例时同步
+    public getInstance() {
+        //双重检测锁
+        if (instance == null) {
+            SingletonDemo sc;
+            synchronized (SingletonDemo.class) {
+                sc = instance;
+                if (sc == null) {
+                    synchronized (SingletonDemo.class) {
+                        sc = new SingletonDemo();
+                    }
+                }
+                instance = sc;
+            }
+        }
+    }
+    return instance;
+}
+由于编译器优化问题与JVM底层内部模型原因，有时会出现问题，不推荐使用</pre>
+                                </li>
+                                <li>静态内部类实现单例设计模式(既调用效率高又可以延时加载)
+                                    <pre>
+public class SingletionDemo {
+    //通过内部类形式创建实例对象,静态常量保证仅生成一个实例对象
+    private static class SingletionDemoInstance {
+        private static final SingletionDemo instance = new SingletionDemo();
+    }
+    //构造器私有化
+    private SingletionDemo() {};
+    //提供全局访问点,返回内部类的实例对象
+    public static SingletionDemo getInstance() {
+        return SingletionDemoInstance.instance;
+    }
+}</pre>
+                                </li>
+                                <li>枚举实现单例设计模式(可以防止反射和反序列化漏洞)
+                                    <pre>
+public enum SingletonDemo {
+    //定义枚举元素,枚举元素本身就是单例对象
+    INSTANCE;
+    //添加需要的操作
+    public void SingletonOperation() {
+        //function method ...
+    }
+}
+public class Client {
+    public static void main(String args []) {
+        //使用枚举类型的对象
+        SingletonDemo singletonDemo = SingletonDemo.INSTANCE;
+    }
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>防止单例模式受到反射和反序列化漏洞破解
+                            <ul>
+                                <li>通过反射破解单例对象
+                                    <pre>
+public class Client {
+    public static void main(String args []) {
+        //通过正常方式获取单例类实例化对象
+        SingletonDemo singletonDemo s1 = SingletonDemo.getInstance();
+        //通过反射获取单例类的运行时类
+        Class&lt;SingletonDemo> clazz = (Class&lt;SingletonDemo>) Class.forName("SingletonDemo");
+        //获取运行时类的构造器
+        Constructor&lt;SingletonDemo> c = clazz.getDeclaredConstructor(null);
+        //跳过权限检查
+        c.setAccessible(true);
+        //使用运行时类的构造器创建实例化对象,该对象地址已变,不是单例对象
+        SingletonDemo s2 = c.newInstance();
+    }
+}</pre>
+                                </li>
+                                <li>防止单例模式受到反射破解
+                                    <pre>
+//在单例类的私有化构造器内部判断是否已经存在实例,如果存在实例依然调用构造器则抛出运行时异常
+private SingletonDemo() {
+    if (instance != null) {
+        throw new RuntimeException();
+    }
+}</pre>
+                                </li>
+                                <li>通过反序列化破解单例对象
+                                    <pre>
+public class Client {
+    public static void main(String args []) {
+        SingletonDemo s1 = SingletonDemo.getInstance();
+        //进行对象序列化
+        FileOutputStream fos = new FileOutputStream("d:/single.txt");
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(s1);
+        oos.close();
+        fos.close();
+        //进行对象反序列化
+        ObjectInputstream ois = new ObjectInputstream(new FileInputStream("d:/single.txt"));
+        //通过反序列化获得的对象地址与存放前的对象已经不同,不是单例对象
+        SingletonDemo s2 = (SingletonDemo) ois.readObject();
+
+    }
+}</pre>
+                                </li>
+                                <li>防止单例模式受到反序列化破解
+                                    <pre>
+//反序列化时自动调用该方法,返回实例对象
+private Object readResolve() throws ObjectStreamException {
+    return instance;
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>UML图
+                            <img src="photo/gof/gof1.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3>2. 工厂设计模式(Factory)</h3>
+                    <ol>
+                        <li>核心作用：实现创建者和调用者的分离，通过工厂方法替代new操作来实例化对象，
+                            将选择实现类、创建对象统一管理和控制从而将调用者与实现类解耦
+                        </li>
+                        <li>工厂模式的分类
+                            <ul>
+                                <li>简单(静态)工厂模式 —— 用来生产同一等级结构中的任意产品(对于新增的产品，需要修改原有代码)</li>
+                                <li>工厂方法模式 —— 用来生产同一登记结构中的固定产品(支持新增任意产品)</li>
+                                <li>抽象工厂模式 —— 用来生产不同产品族的全部产品(不可以新增产品，支持增加产品族)</li>
+                            </ul>
+                        </li>
+                        <li>应用场景
+                            <ul>
+                                <li>JDK中Calendar的getInstance方法</li>
+                                <li>JDBC中Connection对象的获取</li>
+                                <li>Hibernate中SessionFactory创建Session</li>
+                                <li>Spring中IOC容器创建管理Bean对象</li>
+                                <li>XML解析时创建DocumentBuilderFactory创建解析器对象</li>
+                                <li>反射中Class对象的newInstance方法</li>
+                            </ul>
+                        </li>
+                        <li>简单(静态)工厂设计模式
+                            <pre>
+【实现方式1】
+public class SimpleFactory {
+    //定义创建类实例方法,根据所需实例类型返回对应实现类的实例化对象
+    public static FactoryDemo createFactoryDemo(String type) {
+        if (type.equals("FactoryDemo1")) {
+            return new FactoryDemoImpl1();
+        } else if (type.equals("FactoryDemo2")) {
+            return new FactoryDemoImpl2();
+        } else {
+            return null;
+        }
+    }
+}
+【实现方式2】
+public class SimpleFactory {
+    //定义不同实现类的创建实例方法
+    public static createFactoryDemo1() {
+        return new FactoryDemo1Impl();
+    }
+    public static createFactoryDemo2() {
+        return new FactoryDemo2Impl();
+    }
+}
+扩展新功能必须修改代码，违反了开闭原则</pre>
+                        </li>
+                        <li>工厂方法设计模式
+                            <pre>
+//定义工厂方法接口,声明创建实例方法
+public interface FactoryMethod {
+    public FactoryDemo createFactoryDemo();
+}
+//每个类实现其对应的工厂方法接口实现类
+public class CreateFactoryDemo1 implements FactoryMethod {
+    public FactoryDemo createFactoryDemo() {
+        return new FactoryDemo1();
+    }
+}
+public class CreateFactoryDemo2 implements FactoryMethod {
+    public FactoryDemo createFactoryDemo() {
+        return new FactoryDemo2();
+    }
+}</pre>
+                        </li>
+                        <li>抽象工厂设计模式
+                            <pre>
+//定义抽象工厂接口,声明不同产品族的创建方法
+public interface AbstractFactory {
+    public FactoryDemoA createFactoryDemoA();
+    public FactoryDemoB createFactoryDemoB();
+    public FactoryDemoC createFactoryDemoC();
+}
+//编写抽象工厂接口实现类,实现对应产品族的创建方法
+public class CreateFactoryOne implements AbstractFactory {
+    public FactoryDemoA createFactoryDemoA() {
+        return new FactoryDemoAImpl1();
+    }
+    public FactoryDemoB createFactoryDemoB() {
+        return new FactoryDemoBImpl1();
+    }
+    public FactoryDemoC createFactoryDemoC() {
+        return new FactoryDemoCImpl1();
+    }
+}
+public class CreateFactoryTwo implements AbstractFactory {
+    public FactoryDemoA createFactoryDemoA() {
+        return new FactoryDemoAImpl2();
+    }
+    public FactoryDemoB createFactoryDemoB() {
+        return new FactoryDemoBImpl2();
+    }
+    public FactoryDemoC createFactoryDemoC() {
+        return new FactoryDemoCImpl2();
+    }
+}</pre>
+                        </li>
+                        <li>UML图
+                            <img src="photo/gof/gof2.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3>3. 建造者设计模式(Builder)</h3>
+                    <ol>
+                        <li>核心作用：分离对象子组件的单独构造和装配，从而构建出复杂的对象；由于实现了构建和装配的解耦，不同的构建器相同的装配、相同的构建器不同的装配也可以制作出不同的对象，实现了构建算法和装配算法的解耦，实现了更好的复用</li>
+                        <li>应用场景
+                            <ul>
+                                <li>StringBuilder类的append方法</li>
+                                <li>SQL中的PreparedStatement方法</li>
+                                <li>JDOM中的DomBuilder、SAXBuilder方法</li>
+                            </ul>
+                        </li>
+                        <li>实现建造者设计模式
+                            <pre>
+//整体类
+public class MainDemo {
+    private PartDemo1 partDemo1;
+    private PartDemo2 partDemo2;
+    private PartDemo3 partDemo3;
+    //getter & setter
+    //more function ...
+}
+//构成整体的各部分类
+public class PartDemo1 {}
+public class PartDemo2 {}
+public class PartDemo3 {}
+//构建器接口
+public interface MainDemoBuilder {
+    public PartDemo1 builderPartDemo1();
+    public PartDemo2 builderPartDemo2();
+    public PartDemo3 builderPartDemo3();
+}
+//装配器接口
+public interface MainDemoDirector {
+    public MainDemo directMainDemo();
+}
+//构建器实现类
+public class MainDemoBuilderImpl implements MainDemoBuilder {
+    public PartDemo1 builderPartDemo1() {
+        return new PartDemo1();
+    }
+    public PartDemo2 builderPartDemo2() {
+        return new PartDemo2();
+    }
+    public PartDemo3 builderPartDemo3() {
+        return new PartDemo3();
+    }
+}
+//装配器实现类
+public class MainDemoDirectorImpl implements MainDemoDirector {
+    private MainDemoBuilder mainDemobuilder;
+    public MainDemoDirectorImpl(MainDemoBuilder mainDemobuilder) {
+        this.mainDemobuilder = mainDemobuilder;
+    }
+    public MainDemo directMainDemo() {
+        PartDemo1 partDemo1 = mainDemobuilder.builderPartDemo1();
+        PartDemo2 partDemo2 = mainDemobuilder.builderPartDemo2();
+        PartDemo3 partDemo3 = mainDemobuilder.builderPartDemo3();
+        MainDemo mainDemo = new MainDemo();
+        mainDemo.setPartDemo1(partDemo1);
+        mainDemo.setPartDemo2(partDemo2);
+        mainDemo.setPartDemo3(partDemo3);
+        return mainDemo;
+    }
+}</pre>
+                        </li>
+                        <li>UML图
+                            <img src="photo/gof/gof3.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3>4. 原型设计模式(Prototype)</h3>
+                    <ol>
+                        <li>核心作用：通过new产生一个对象需要非常繁琐的数据准备和访问权限，通过以某个对象为原型克隆出新对象，在克隆对象上修改出新特性</li>
+                        <li>应用场景：原型模式很少单独出现，一般和工厂模式一起出现，通过clone方法创建一个对象，然后由工厂方法提供给调用者，例如Spring中的Bean创建有两种方式，一种是单例模式、一种是原型+工厂模式</li>
+                        <li>浅拷贝实现原型设计模式
+                            <pre>
+public class Demo implements Cloneable {
+    private Integer id;
+    private String name;
+    private Date date;
+    public Demo() {};
+    public Demo(Integer id, String name, Date date) {
+        this.id = id;
+        this.name = name;
+        this.date = date;
+    }
+    //getter & setter
+    //重写克隆方法
+    protected Object clone() throws CloneNotSupportedException {
+        //直接调用Object.clone方法
+        Object obj = super.clone();
+        return obj;
+    }
+}
+public class Client {
+    public static void main(String args []) {
+        Demo d1 = new Demo(1, "demo1", new Date());
+        //通过demo1克隆出demo2对象,此时两个对象虽然属性值相同,但地址并不相同
+        Demo d2 = (Demo) d1.clone();
+        //由于d1与d2的date属性中的值指向同一对象,所以当修改d2的date属性时d1也会跟着改变
+        d2.setDate(new Date(10000));
+    }
+}</pre>
+                        </li>
+                        <li>深拷贝实现原型设计模式
+                            <pre>
+【实现方式1: 通过拷贝内部属性实现】
+public class Demo implements Cloneable {
+    private Integer id;
+    private String name;
+    private Date date;
+    public Demo() {};
+    public Demo(Integer id, String name, Date date) {
+        this.id = id;
+        this.name = name;
+        this.date = date;
+    }
+    //getter & setter
+    //重写克隆方法
+    protected Object clone() throws CloneNotSupportedException {
+        //直接调用Object.clone方法
+        Object obj = super.clone();
+        //实现深拷贝,将对应属性也进行克隆
+        Demo d = obj;
+        d.date = this.date.clone();
+        return obj;
+    }
+}
+public class Client {
+    public static void main(String args []) {
+        Demo d1 = new Demo(1, "demo1", new Date());
+        //通过demo1克隆出demo2对象,此时两个对象虽然属性值相同,但地址并不相同
+        Demo d2 = (Demo) d1.clone();
+        //由于d1与d2的date属性值也是拷贝构造的,因此修改d2的date属性并不会影响d1
+        d2.setDate(new Date(10000));
+    }
+}
+【实现方式2: 通过序列化与反序列化实现】
+public class Demo implements Cloneable {
+    private Integer id;
+    private String name;
+    private Date date;
+    public Demo() {};
+    public Demo(Integer id, String name, Date date) {
+        this.id = id;
+        this.name = name;
+        this.date = date;
+    }
+    //getter & setter
+    //重写克隆方法
+    protected Object clone() throws CloneNotSupportedException {
+        //直接调用Object.clone方法
+        Object obj = super.clone();
+        return obj;
+    }
+}
+public class Client {
+    public static void main(String args []) {
+        Demo d1 = new Demo(1, "demo1", new Date());
+        //通过demo1克隆出demo2对象,此时两个对象虽然属性值相同,但地址并不相同
+        Demo d2 = (Demo) d1.clone();
+        //进行对象序列化
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream();
+        oos.writeObject(d1);
+        byte[] bytes = bos.toByteArray();
+        //进行对象反序列化
+        BtyeArrayInputStream bis = new BtyeArrayInputStream(bytes);
+        ObjectInputStream ois = new ObjectInputStream(bis);
+        Demo d2 = (Demo) ois.readObject();
+        //由于d2经过了反序列化,其中的属性地址发生改变,d1与d2的date属性指向已经不相同了,修改d2的date属性不会影响d1
+        d2.setDate(new Date(10000));
+    }
+}</pre>
+                        </li>
+                    </ol>
+                    <h2 id="page4">四. 结构型设计模式</h2>
+                    <h3>5. 适配器设计模式(Adapter)</h3>
+                    <ol>
+                        <li>核心作用：将一个类的接口转换成希望的另一个接口，使得原本由于接口不兼容而无法工作的类可以在一起工作</li>
+                        <li>适配器模式中的角色
+                            <ul>
+                                <li>目标接口(Target): 客户所期待的接口，目标可以是具体的抽象类或接口</li>
+                                <li>被适配类(Adaptee): 需要适配的类或适配者类</li>
+                                <li>适配器(Adapter): 通过包装一个需要适配的对象，把原接口转换成目标接口</li>
+                            </ul>
+                        </li>
+                        <li>应用场景：java.io.InputStreamReader(InputStream); java.io.OutputStreamWriter(OutputStream);</li>
+                        <li>类适配器设计模式
+                            <pre>
+//被适配类
+public class Adaptee {
+    public void request(){};
+}
+//目标接口
+public interface Target {
+    public void handleRequest();
+}
+//类适配器(由于Java只允许单继承，所以该方法不够灵活)
+public class Adapter extends Adaptee implements Target {
+    public void handleRequest() {
+        super.request();
+    }
+}
+public class Client {
+    public void use(Target t) {
+        t.handleRequest();
+    }
+    public static void main(String args []) {
+        Client c = new Client();
+        Adaptee adaptee = new Adaptee();
+        Target t = new Adapter();
+        c.use(t);
+    }
+}</pre>
+                        </li>
+                        <li>对象适配器设计模式
+                            <pre>
+//被适配类
+public class Adaptee {
+    public void request(){};
+}
+//目标接口
+public interface Target {
+    public void handleRequest();
+}
+//对象适配器(通过对象组合方式实现适配)
+public class Adapter implements Target {
+    private Adaptee adaptee;
+    public Adapter(Adaptee adaptee) {
+        this.adaptee = adaptee;
+    }
+    public void handleRequest() {
+        adaptee.request();
+    }
+}
+public class Client {
+    public void use(Target t) {
+        t.handleRequest();
+    }
+    public static void main(String args []) {
+        Client c = new Client();
+        Adaptee adaptee = new Adaptee();
+        Target t = new Adapter(adaptee);
+        c.use(t);
+    }
+}</pre>
+                        </li>
+                        <li>UML图
+                            <img src="photo/gof/gof4.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3>6. 代理设计模式(Proxy)</h3>
+                    <ol>
+                        <li>核心作用：通过代理控制对对象的访问，可以详细控制访问某个(类)对象的方法，
+                            可以在调用这个方法前做前置处理，调用方法后做后置处理(AOP的微观实现)
+                        </li>
+                        <li>代理模式中的角色
+                            <ul>
+                                <li>抽象角色：定义代理角色和真实角色的公共对外方法</li>
+                                <li>真实角色：实现抽象角色，定义真实角色所要实现的业务逻辑供代理角色调用</li>
+                                <li>代理角色：定义抽象角色，是真实角色的代理，通过真实角色的业务逻辑来实现抽象方法，并可以附加自己的操作</li>
+                            </ul>
+                        </li>
+                        <li>应用场景
+                            <ul>
+                                <li>安全代理：屏蔽对真实角色的直接访问</li>
+                                <li>远程代理：通过代理类处理远程方法调用</li>
+                                <li>延迟加载：先加载轻量级的代理对象，真正需要时再加载真实对象</li>
+                            </ul>
+                        </li>
+                        <li>代理模式的分类
+                            <ul>
+                                <li>静态代理(静态定义代理类)</li>
+                                <li>动态代理(动态生成代理类)
+                                    <ul>
+                                        <li>JDK自带的动态处理</li>
+                                        <li>javaassist字节码操作库实现</li>
+                                        <li>CGLIB</li>
+                                        <li>ASM(底层使用指令，可维护较差)</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>静态代理设计模式
+                            <pre>
+//抽象角色
+public interface Demo {
+    public void f1();
+    public void f2();  //核心业务逻辑
+    public void f3();
+}
+//真实角色
+public class DemoImpl implements Demo {
+    public void f1() {}
+    public void f2() {}
+    public void f3() {}
+}
+//代理角色
+public class DemoProxy implements Demo {
+    private Demo demo;
+    public DemoProxy(Demo demo) {
+        this.demo = demo;
+    }
+    public void f1() {}
+    //核心业务调用真实角色实现
+    public void f2() { demo.f2(); }
+    public void f3() {}
+}
+public class Client {
+    public static void main(String args []) {
+        Demo real = new DemoImpl();
+        Demo proxy = new DemoProxy(real);
+        proxy.f1();
+        proxy.f2();
+        proxy.f3();
+    }
+}</pre>
+                        </li>
+                        <li>动态代理设计模式
+                            <pre>
+//抽象角色
+public interface Demo {
+    public void f1();
+    public void f2();  //核心业务逻辑
+    public void f3();
+}
+//真实角色
+public class DemoImpl implements Demo {
+    public void f1() {}
+    public void f2() {}
+    public void f3() {}
+}
+//代理角色
+public class DemoHandler implements InvocationHandler{
+    Demo demo;
+    public DemoHandler(Demo demo) {
+        super();
+        this.demo = demo;
+    }
+    //只要调用代理方法,全部调用invoke
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        //编写前置方法...
+        method.invoke(demo, args);
+        //编写后置方法...
+        //如果执行方法有返回值则通过return返回即可
+        return null;
+    }
+}
+public class Client {
+    public static void main(String args []) {
+        Demo real = new DemoImpl();
+        DemoHandler handler = new DemoHandler(real);
+        Demo proxy = Proxy.newProxyInstance(ClassLoader
+            .getSystemClassLoader(), new Class[](Demo.class), handler);
+        proxy.f1();
+        proxy.f2();
+        proxy.f3();
+    }
+}</pre>
+                        </li>
+                        <li>UML图
+                            <img src="photo/gof/gof5.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3>7. 桥接设计模式(Bridge)</h3>
+                    <ol>
+                        <li>核心作用：处理多层继承结构和多维度变化场景，将各个维度设计成独立的继承结构，使各维度可以独立的扩展在抽象层建立关联</li>
+                        <li>应用场景：JDBC驱动程序、日志管理、分类信息、不同类型的消息处理等</li>
+                        <li>实现桥接设计模式
+                            <pre>
+//x轴维度
+public interface DemoA {
+    public void execute();
+}
+//x轴维度实现类
+public class DemoAImpl implements DemoA {
+    public void execute() {}
+}
+//y轴维度
+public class DemoB {
+    protected DemoA demoA;
+    public DemoB(DemoA demoA) {
+        this.demoA = demoA;
+    }
+    public void execute() {
+        demoA.execute();
+    }
+}
+//y轴维度实现类
+public class DemoBImpl extends DemoB {
+    public DemoBImpl(DemoA demoA) {
+        super(demoA);
+    }
+    public void execute() {
+        super.execute();
+    }
+}
+public class Client {
+    public static void main(String args []) {
+        //将y轴与x轴相组合
+        DemoB demoB = new DemoBImpl(new DemoAImpl());
+    }
+}</pre>
+                        </li>
+                        <li>桥接模式将多层继承转化为多个维度的组合关系
+                            <img src="photo/gof/gof6.png" class="am-img-responsive">
+                        </li>
+                        <li>UML图
+                            <img src="photo/gof/gof7.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3>8. 组合设计模式(Composite)</h3>
+                    <ol>
+                        <li>核心作用：将部分和整体关系用树形结构表示，从而使客户端可以使用同一的方式处理部分对象和整体对象</li>
+                        <li>组合模式的角色
+                            <ul>
+                                <li>抽象构件角色(Component): 定义了叶子和容器构件的共同点</li>
+                                <li>叶子构件角色(Leaf): 无子节点</li>
+                                <li>容器构件角色(Composite): 有容器特征，可以包含子节点</li>
+                            </ul>
+                        </li>
+                        <li>应用场景：操作系统的资源管理器，GUI中的容器层次图，XML文件解析等</li>
+                        <li>实现组合设计模式
+                            <pre>
+//抽象构件
+public interface Component {
+    public void operation();
+}
+//叶子构件
+public interface Leaf extends Component {}
+//容器构件
+public interface Composite extends Component {
+    public void add(Component c);
+    public void remove(Component c);
+    public getChild(int index);
+}</pre>
+                        </li>
+                        <li>模拟杀毒软件对文件目录进行杀毒
+                            <pre>
+//模拟杀毒软件架构
+//抽象构件
+public interface AbstractFile {
+    public void killVirus();  //杀毒
+}
+//叶子构件
+public class ImageFile implements AbstractFile {
+    private String name;
+    public ImageFile(String name) {
+        super();
+        this.name = name;
+    }
+    public void killVirus() {
+        //kill Virus...
+    }
+}
+public class TextFile implements AbstractFile {
+    private String name;
+    public TextFile(String name) {
+        super();
+        this.name = name;
+    }
+    public void killVirus() {
+        //kill Virus...
+    }
+}
+public class MusicFile implements AbstractFile {
+    private String name;
+    public MusicFile(String name) {
+        super();
+        this.name = name;
+    }
+    public void killVirus() {
+        //kill Virus...
+    }
+}
+//容器构件
+public class Folder implements AbstractFile {
+    private String name;
+    //定义容器,存放本容器构件的子节点
+    private List&lt;AbstractFile> list = new ArrayList&lt;AbstractFile>();
+    public Folder(String name) {
+        super();
+        this.name = name;
+    }
+    public void add(AbstractFile file) {
+        list.add(file);
+    }
+    public void remove(AbstractFile file) {
+        list.remove(file);
+    }
+    public AbstractFile getChild(int index) {
+        return list.get(index);
+    }
+    public void killVirus() {
+        //kill Virus...
+        //向下递归
+        for (AbstractFile file : list) {
+            file.killVirus();
+        }
+    }
+}
+public class Client {
+    public static void main(String args []) {
+        AbstractFile file1 = new ImageFile("image.png");
+        AbstractFile file2 = new TextFile("text.txt");
+        Folder folder = new Folder("folder");
+        folder.add(file1);
+        folder.add(file2);
+        //对foler文件夹下所有文件进行杀毒
+        folder.killVirus();
+    }
+}</pre>
+                        </li>
+                        <li>UML图
+                            <img src="photo/gof/gof8.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3>9. 装饰(包装器)设计模式(Decorator)</h3>
+                    <ol>
+                        <li>核心作用：动态的为一个对象增加新功能，通过装饰模式无需通过继承增加子类就能扩展新功能，避免类型体系快速膨胀</li>
+                        <li>装饰模式的角色
+                            <ul>
+                                <li>Component抽象构件角色: 真是对象和装饰对象相同的接口</li>
+                                <li>ConcreateComponent具体构建角色(真实构件): 实现了接口的具体内容</li>
+                                <li>Decorator装饰角色: 持有一个抽象构建的引用</li>
+                                <li>ConcreteDecorator具体装饰角色: 负责给构建对象添加新的职能</li>
+                            </ul>
+                        </li>
+                        <li>应用场景：IO中的输入输出流设计，Servlet API中提供的HttpServletRequestWrapper等增强request功能的类，
+                            Struts2中request、response、session等对象的处理</li>
+                        <li>实现装饰设计模式
+                            <pre>
+//抽象构件角色
+public interface Demo {
+    public void operation();
+}
+//具体构件角色
+public class DemoImpl implements Demo {
+    public void operation() {}
+}
+//装饰角色
+public class DemoDecorator implements Demo {
+    private Demo demo;
+    public DemoDecorator(Demo demo) {
+        super();
+        this.demo = demo;
+    }
+    //调用具体构建的操作方法
+    public void operation() { demo.operation(); }
+}
+//具体装饰角色
+public class DemoDecoratorImpl1 extends DemoDecorator {
+    public DemoDecoratorImpl(Demo demo) {
+        super(demo);
+    }
+    //添加装饰方法1
+    public void decoratorMethod1() {}
+}
+public class DemoDecoratorImpl2 extends DemoDecorator {
+    public DemoDecoratorImpl(Demo demo) {
+        super(demo);
+    }
+    //添加装饰方法2
+    public void decoratorMethod2() {}
+}
+public class Client {
+    public static void main(String args []) {
+        //装饰一个新功能的Demo
+        DemoDecoratorImpl1 demoDecorator1 = new DemoDecoratorImpl1(new DemoImpl());
+        demoDecorator1.operation();
+        demoDecorator1.decoratorMethod1();
+        //装饰两个新功能的Demo,装饰对象可以互相任意组合
+        DemoDecoratorImpl2 demoDecorator2 = new DemoDecoratorImpl2(new DemoDecoratorImpl1(new DemoImpl()));
+        demoDecorator2.operation();
+        demoDecorator2.decoratorMethod1();
+        demoDecorator2.decoratorMethod2();
+
+    }
+}</pre>
+                        </li>
+                        <li>UML图
+                            <img src="photo/gof/gof9.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3>10. 外观设计模式(Facade)</h3>
+                    <ol>
+                        <li>核心作用：为子系统提供统一的入口，封装子系统的复杂性，便于客户端调用</li>
+                        <li>应用场景：各种封装类、工具类</li>
+                        <li>实现外观设计模式
+                            <pre>
+//需要执行的类1
+public class Demo1 {
+    public void method1() {}
+}
+//需要执行的类2
+public class Demo2 {
+    public void method2() {}
+}
+//需要执行的类3
+public class Demo3 {
+    public void method3() {}
+}
+//外观模式类,封装了子系统的所有功能调用
+public class DemoFacade {
+    private Demo1 demo1 = new Demo1();
+    private Demo2 demo2 = new Demo2();
+    private Demo3 demo3 = new Demo3();
+    public void execute() {
+        demo1.method1();
+        demo2.method2();
+        demo3.method3();
+    }
+}
+public class Client {
+    public static void main(String args []) {
+        DemoFacade demoFacae = new DemoFacade();
+        demoFacae.execute();
+    }
+}</pre>
+                        </li>
+                        <li>UML图
+                            <img src="photo/gof/gof10.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3>11. 享元设计模式(FlyWeight)</h3>
+                    <ol>
+                        <li>核心作用：如果有多个完全相同或相似的对象，可以通过享元模式以共享的方式高效的支持大量细粒度对象的重用来节省内存</li>
+                        <li>享元模式的组成
+                            <ul>
+                                <li>享元工厂类FlyWeightFactory
+                                    <br>创建并管理享元对象，享元池一般设计成键值对
+                                </li>
+                                <li>抽象享元类FlyWeight
+                                    <br>通常是一个借口或抽象类，声明公共方法，这些方法可以向外界提供对象的内部状态，设置外部状态
+                                </li>
+                                <li>具体享元类ConcreteFlyWeight
+                                    <br>为内部状态提供成员变量进行存储
+                                </li>
+                                <li>非共享享元类UnsharedFlyWeight
+                                    <br>不能被共享的子类可以设计为非共享享元类
+                                </li>
+                            </ul>
+                        </li>
+                        <li>应用场景：线程池、数据库连接池、String类的设计等</li>
+                        <li>享元设计模式实现
+                            <pre>
+//抽象享元类
+public interface FlyWeight {
+    //声明内部方法
+    public void setAttribute1(String attr);
+    public String getAttribute1();
+    //在享元类中需要使用外部享元类的内容
+    public void operation(UnsharedFlyWeight unFlyWeight);
+}
+//非共享享元类
+public class UnsharedFlyWeight {
+    //声明外部属性与方法
+    private String attribute2;
+    public UnsharedFlyWeight(String attr) {
+        this.attribute2 = attr;
+    }
+    //getter & setter
+}
+//具体享元类
+public class ConcreteFlyWeight implements FlyWeight {
+    //声明内部属性
+    private String attribute1;
+    //override getter & setter
+    public void operation(UnsharedFlyWeight unFlyWeight) {
+        //...
+    }
+}
+//享元工厂类
+public class FlyWeightFactory {
+    private static &lt;MapString, FlyWeight> map = new HashMap&lt;String, FlyWeight>();
+    public static FlyWeight getFlyWeight(String attribute1) {
+        if (map.get(attribute1) != null) {
+            return map.get(attribute1);
+        } else {
+            FlyWeight flyWeight = new FlyWeight();
+            flyWeight.setAttribute1(attribute1);
+            map.put(attribute1, flyWeight);
+        }
+    }
+}
+public class Client {
+    public static void main(String args [] ) {
+        FlyWeight flyWeight = FlyWeightFactory.getFlyWeight("attr1-1");
+        flyWeight.operation(new UnsharedFlyWeight("attr2-1"));
+        flyWeight.operation(new UnsharedFlyWeight("attr2-2"));
+    }
+}</pre>
+                        </li>
+                        <li>UML图
+                            <img src="photo/gof/gof11.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h2 id="page5">五. 行为型设计模式</h2>
+                    <h3>12. 责任链设计模式(Chain Of Responsibility)</h3>
+                    <ol>
+                        <li>核心作用：避免发送者和接受者耦合在一起，让多个对象都可以接收请求，将这些对象连接成一条链并沿着该链进行传递</li>
+                        <li>应用场景：异常处理机制、js中的事件冒泡和捕获、Servlet中的过滤链、Struts2中的拦截器栈</li>
+                        <li>实现责任链设计模式
+                            <pre>
+//封装基本请求信息
+public class DemoRequest {
+    private String attr1;
+    private String attr2;
+    //setter & getter
+}
+//责任链的抽象类
+public abstract class Demo {
+    protected String demoName;
+    protected Demo nextDemo;
+    //setter & getter
+    //处理请求的核心业务方法
+    public abstract void handleRequest(DemoRequest request);
+}
+public class ChainDemo1 extends Demo {
+    public ChainDemo1() {super();}
+    public void handleRequest(DemoRequest request) {
+        if () {
+            //如果符合条件则处理请求
+        } else {
+            if (this.nextDemo != null) {
+                this.nextDemo.handleRequest(request);
+            }
+        }
+    }
+}
+public class ChainDemo2 extends Demo {
+    public ChainDemo2() {super();}
+    public void handleRequest(DemoRequest request) {
+        if () {
+            //如果符合条件则处理请求
+        } else {
+            if (this.nextDemo != null) {
+                this.nextDemo.handleRequest(request);
+            }
+        }
+    }
+}
+public class ChainDemo3 extends Demo {
+    public ChainDemo3() {super();}
+    public void handleRequest(DemoRequest request) {
+        if () {
+            //如果符合条件则处理请求
+        }
+    }
+}
+public class Client {
+    public static void main(String args []) {
+        //创建责任链处理对象,设置责任链对应组织关系
+        ChainDemo1 d1 = new ChainDemo1();
+        ChainDemo2 d2 = new ChainDemo2();
+        ChainDemo3 d3 = new ChainDemo3();
+        d1.setNextDemo(d2);
+        d2.setNextDemo(d3);
+        //处理请求
+        DemoRequest request = new DemoRequest();
+        d1.handleRequest(request);
+    }
+}</pre>
+                        </li>
+                    </ol>
+                    <h3>13. 迭代器设计模式(iterator)</h3>
+                    <ol>
+                        <li>核心作用：提供一种可以遍历聚合对象的方式</li>
+                        <li>模式结构
+                            <ul>
+                                <li>聚合对象：存储数据</li>
+                                <li>迭代器：遍历数据</li>
+                            </ul>
+                        </li>
+                        <li>应用场景：JDK内置的Set、List迭代器</li>
+                        <li>实现迭代器设计模式
+                            <pre>
+//迭代器接口
+public interface Iterator {
+    public void first();  //将游标指向第一个
+    public void next();  //将游标指向下一个
+    public boolean hasNext();  //判断是否存在下一个元素
+    boolean isFirst();  //判断是否为第一个元素
+    boolean isLast();  //判断是否为最后一个元素
+    Object getCurrentObj();  //获取当前游标指向的对象
+}
+//聚合类
+public class ConcreteAggregate {
+    private List&lt;Object> list = new ArrayList&lt;Object>();
+    public ConcreteAggregate() {
+        super();
+    }
+    public void addObject(Object obj) {
+        this.list.add(obj);
+    }
+    public void removeObject(Object obj) {
+        this.list.remove(obj);
+    }
+    public Iterator createIterator() {
+        return new ConcreteIterator();
+    }
+    //使用内部类定义迭代器可以直接使用外部方法
+    private class ConcreteIterator implements Iterator {
+        private int cursor;  //定义游标,用于记录遍历时的位置
+        public void first() {
+            cursor = 0;
+        }
+        public Object getCurrentObj(cursor) {
+            return list.get(cursor);
+        }
+        public boolean hasNext() {
+            if (cursor < list.size()) {
+                return true;
+            }
+            return false;
+        }
+        public boolean isFirst() {
+            if (cursor == 0) {
+                return true;
+            }
+            return false;
+        }
+        public boolean isLast() {
+            if (cursor == list.size()) {
+                return true;
+            }
+            return false;
+        }
+        public void next() {
+            if (cursor < list.size()) {
+                ++cursor;
+            }
+        }
+    }
+}
+public class Client {
+    public static void main(String args []) {
+        ConcreteAggregate ca = new ConcreteAggregate();
+        ca.addObject("o1");
+        ca.addObject("o2");
+        ca.addObject("o3");
+        Iterator inerator = ca.createIterator();
+        while (inerator.hasNext()) {
+            System.out.println(inerator.getCurrentObj);
+            inerator.next();
+        }
+    }
+}</pre>
+                        </li>
+                    </ol>
+                    <h3>14. 中介者设计模式(Mediator)</h3>
+                    <ol>
+                        <li>
+                            核心作用：如果一个系统中的对象之间的联系呈现为网状结构，对象之间存在大量的多对多关系，导致关系及其复杂，则这些对象成为同事对象；引入一个中介者对象来让所有的同事对象都只和中介者对象通讯，将复杂的网状结构化解为星型结构
+                        </li>
+                        <li>应用场景：MVC模式中的Controller，GUI中的窗口对象等</li>
+                        <li>实现中介者设计模式
+                            <pre>
+//中介者接口
+public interface Mediator {
+    public void register(String roleName, Role role);  //注册角色
+    public void command(String roleName);  //发送命令
+}
+//中介者实现类
+public class MediatorImpl implements Mediator {
+    private Map&lt;String, Role> map = new HashMap&lt;String, Role>();
+    public void register(String roleName, Role role) {
+        map.put(roleName, role);
+    }
+    public command(String roleName) {
+        map.get(roleName).selfAction();
+    }
+}
+//同事对象接口
+public interface Role {
+    public void selfAction();  //做本角色的事情
+    public void outAction();  //向中介者发出申请
+}
+//同事对象实现类
+public class RoleImpl1 implements Role{
+    private Mediator mediator;  //持有中介者
+    public RoleImpl1(Mediator mediator) {
+        super();
+        this.mediator = mediator;
+        mediator.register("role1", this);
+    }
+    public selfAction() {}
+    public outAction() {}
+}
+public class RoleImpl2 implements Role{
+    private Mediator mediator;  //持有中介者
+    public RoleImpl1(Mediator mediator) {
+        super();
+        this.mediator = mediator;
+        mediator.register("role2", this);
+    }
+    public selfAction() {}
+    public outAction() {}
+}
+public class Client() {
+    public static void main(String args []) {
+        Mediator mediator = new MediatorImpl();
+        Role role1 = new RoleImpl1();
+        Role role2 = new RoleImpl2();
+        role1.selfAction();
+        role1.outAction();
+    }
+}</pre>
+                        </li>
+                    </ol>
+                    <h3>15. 命令设计模式(command)</h3>
+                    <ol>
+                        <li>核心作用：将一个请求封装为一个对象，从而使我们可用不同的请求对客户进行参数化；对请求排队或者记录请求日志，以及可撤销的操作</li>
+                        <li>模式结构
+                            <ul>
+                                <li>抽象命令类Command</li>
+                                <li>具体命令类ConcreteCommand</li>
+                                <li>调用者/请求者Invoker: 请求的发送者，通过命令对象来执行操作</li>
+                                <li>接收者Receiver: 接受执行与请求相关的操作，具体实现对请求的业务处理</li>
+                            </ul>
+                        </li>
+                        <li>应用场景：Struts2中action的调用过程、数据库事务机制的底层实现、命令的撤销和恢复</li>
+                        <li>实现命令设计模式
+                            <pre>
+//接收者
+public class Receiver {
+    public void action() {}
+}
+//抽象命令类
+public interface Command {
+    public void execute();
+}
+//具体命令类
+public class ConcreteCommand implements Command {
+    private Receiver receiver;  //命令真正的执行者
+    public ConcreteCommand(Receiver receiver) {
+        super();
+        this.receiver = receiver;
+    }
+    public void execute() {
+        receiver.action();
+    }
+}
+//调用者/发起者
+public class Invoke {
+    //可以通过容器List接受很多命令,进行批处理
+    private Command command;
+    public Invoke(Command command) {
+        super();
+        this.command = command;
+    }
+    //业务方法,用于调用命令类的方法
+    public void call() {
+        command.execute();
+    }
+}
+public class Client {
+    public static class main(String args []) {
+        Command cmd = new ConcreteCommand(new Receiver());
+        Invoke invoke = new Invoke(cmd);
+        invoke.call();
+    }
+}</pre>
+                        </li>
+                    </ol>
+                    <h3>16. 解释器设计模式(Interpreter)</h3>
+                    <ol>
+                        <li>核心作用：用于描述如何构成一个语言解释器，主要用于面向对象语言开发的编译器和解释器设计</li>
+                        <li>尽量不要使用解释器模式，后期维护会很麻烦，在项目中可以使用Jruby、Groovy、Java的js引擎来替代解释器的作用，弥补Java语言的不足</li>
+                        <li>应用场景：EL表达式的处理、正则表达式解释器、SQL语法解释器、数学表达式解析器</li>
+                    </ol>
+                    <h3>17. 访问者设计模式(visitor)</h3>
+                    <ol>
+                        <li>核心作用：对于存储在一个集合中的对象，他们可能存在不同的类型，对于该集合中的对象，可以接受一类称为访问者的对象来访问，不同访问者的访问方式不同</li>
+                        <li>应用场景：XML文档解析器的设计、编译器的设计、复杂集合对象的处理</li>
+                    </ol>
+                    <h3>18. 策略设计模式(strategy)</h3>
+                    <ol>
+                        <li>核心作用：策略模式对应解决某一问题的一个算法族，允许用户从该算法族中任选一个算法解决问题，同时可以方便的更换算法或者增加新算法，并由客户端来决定调用哪一算法，实现分离算法选择实现</li>
+                        <li>应用场景：JavaSE中GUI的布局管理器，Spring中Resource接口，Servlet中的HttpServlet#service()</li>
+                        <li>实现策略设计模式
+                            <pre>
+//处理方法接口
+public interface Strategy {
+    public void execute();
+}
+//处理方法的算法族
+public class StrategyImpl1 implements Strategy {
+    public void execute() {
+        //execute method 1
+    }
+}
+public class StrategyImpl2 implements Strategy {
+    public void execute() {
+        //execute method 2
+    }
+}
+public class StrategyImpl3 implements Strategy {
+    public void execute() {
+        //execute method 3
+    }
+}
+//上下文类,管理算法族,将客户端调用和算法分离
+public class Context {
+    private Strategy strategy;  //当前采用的算法
+    public Context() {
+        super();
+        this.strategy = strategy;
+    }
+    //getter&setter
+    public void execute() {
+        strategy.execute();
+    }
+}
+public class Client() {
+    public static void main(String args []) {
+        Strategy strategy1 = new StrategyImpl1();
+        Context context = new Context(strategy1);
+        context.execute();
+    }
+}</pre>
+                        </li>
+                    </ol>
+                    <h3>19. 模板方法设计模式(template method)</h3>
+                    <ol>
+                        <li>核心作用：定义一个操作算法的骨架，将某些步骤延迟到子类中实现；即在父类中定义好处理步骤，具体实现延迟到子类中定义</li>
+                        <li>应用场景：数据库访问的封装，Junit单元测试，Servlet中的doGet&doPost，Hibernate中的模板，Spring中的JDBCTemplate等</li>
+                        <li>实现模板方法设计模式
+                            <pre>
+//模板方法类
+public abstract class TemplateMethod {
+    public void execute1() {}
+    //方法回调,延迟到子类中实现
+    public abstract void transact();
+    public void execute2() {}
+    //模板方法,定义执行流程,无法更改
+    public final void process() {
+        this.execute1();
+        this.transact();
+        this.execute2();
+    }
+}
+public class Client {
+    public static void main(String args []) {
+        TemplateMethod method = new TemplateMethod() {
+            //通过匿名内部类具体实现方法回调
+            public void transact() {
+                //execute...
+            }
+        }
+        method.process();
+    }
+}</pre>
+                        </li>
+                    </ol>
+                    <h3>20. 状态设计模式(state)</h3>
+                    <ol>
+                        <li>核心作用：用于解决系统中复杂对象的状态转换以及不同状态对应不同行为的封装问题</li>
+                        <li>组成结构
+                            <ul>
+                                <li>环境上下文类Context: 环境类中维护一个State对象，定义了当前状态</li>
+                                <li>抽象状态类State</li>
+                                <li>具体状态类ConcreteState: 每个类封装一个状态对应的行为</li>
+                            </ul>
+                        </li>
+                        <li>应用场景：各种管理系统中的状态管理，线程对象状态的切换等</li>
+                        <li>实现状态设计模式
+                            <pre>
+//抽象状态类
+public interface State {
+    public void handle();
+}
+//状态实现类
+public class OneState implements State {
+    public void handle() {}
+}
+public class TwoState implements State {
+    public void handle() {}
+}
+public class ThreeState implements State {
+    public void handle() {}
+}
+//环境上下文类
+public class Context {
+    private State state;
+    public void setState(State state) {
+        //切换状态
+        this.state = state;
+        //调用状态对应的执行方法
+        state.handle();
+    }
+}
+public class Client {
+    public static void main(String args []) {
+        Context context = new Context();
+        context.setState(new OneState());
+    }
+}</pre>
+                        </li>
+                    </ol>
+                    <h3>21. 观察者设计模式(observer)</h3>
+                    <ol>
+                        <li>核心作用：主要用于1:N的通知，当一个对象(目标对象)状态发生改变时，需要及时告知一系列对象(观察者对象)令他们做出相应</li>
+                        <li>通知观察者的方式
+                            <ul>
+                                <li>推送: 每次都会将通知以广播方式发送给所有观察者，所有观察者只能被动接收</li>
+                                <li>拉取: 观察者知道目标对象发生改变，但什么时候获取内容、获取什么内容可以自主决定</li>
+                            </ul>
+                        </li>
+                        <li>应用场景：聊天室的同步获取消息，网络游戏的状态分发，邮件订阅，Servlet中的监听器，Android的广播机制，JDK的AWT中事件处理模型</li>
+                        <li>实现以推送方式通知观察者设计模式
+                            <pre>
+//观察者接口
+public interface Observer {
+    public void update(Subject subject);
+}
+//目标对象
+public class Subject {
+    //存放观察者的容器
+    protected List&lt;Observer> list = new ArrayList&lt;Observer>();
+    //注册观察者
+    public void registerObserver(Observer observer) {
+        list.add(observer);
+    }
+    //移除观察者
+    public void removeObserver(Observer observer) {
+        list.remove(observer);
+    }
+    //通知所有观察者更新状态
+    public void notifyAllObservers() {
+        for(Observer observer : list) {
+            observer.update(this);
+        }
+    }
+}
+//具体目标对象
+public class ConcreteSubject extends Subject {
+    private int state;
+    public int getState() {
+        return this.state;
+    }
+    public void setState(int state) {
+        this.state = state;
+        //目标对象发生改变,通知所有观察者更新状态
+        this.notifyAllObservers();
+    }
+}
+//具体观察者
+public class Observer1 implements Observer {
+    private int observerState1;
+    public void update(Subject subject) {
+        //两者状态保持一致
+        this.observerState1 = (ConcreteSubject) subject.getState();
+    }
+}
+public class Client {
+    public static void main(String args []) {
+        //创建目标对象
+        ConcreteSubject subject = new ConcreteSubject();
+        //创建多个观察者
+        Observer observer1 = new Observer1();
+        Observer observer2 = new Observer1();
+        Observer observer3 = new Observer1();
+        //将观察者注册到目标对象中
+        subject.register(observer1);
+        subject.register(observer2);
+        subject.register(observer3);
+        //将目标对象的状态发生改变,所有的观察者都会受到通知发生改变
+        subject.setState(1);
+    }
+}</pre>
+                        </li>
+                        <li>使用JDK提供的API实现观察者模式
+                            <pre>
+//定义具体的目标对象
+public class ConcreteSubject extends Observable {
+    private int state;
+    public int getState() {
+        return this.state;
+    }
+    public void setState(int state) {
+        this.state = state;
+        setChanged();  //表示目标对象已经发生更改
+        notifObservers(state);  //通知所有观察者state发生了变化
+    }
+}
+//定义具体的观察则
+public class Observer2 implements Observer {
+    private int observerState2;
+    public void update(Observable o, Object arg) {
+        observerState2 = ((ConcreteSubject) o).getState();
+    }
+}
+public class Client {
+    public static void mian(String args []) {
+        //创建目标对象
+        ConcreteSubject subject = new ConcreteSubject();
+        //创建目标对象
+        Observer observer1 = new Observer2();
+        Observer observer2 = new Observer2();
+        Observer observer3 = new Observer2();
+        //将观察者对象注册到目标对象中
+        subject.radObserver(observer1);
+        subject.radObserver(observer2);
+        subject.radObserver(observer3);
+        //修改目标对象,所有观察者都会收到通知发生改变
+        subject.setState(1);
+    }
+}</pre>
+                        </li>
+                    </ol>
+                    <h3>22. 备忘录设计模式(memento)</h3>
+                    <ol>
+                        <li>核心作用：保存某个对象内部状态的拷贝，可以将对象恢复到原先的状态</li>
+                        <li>组成结构
+                            <ul>
+                                <li>源发器类Originator</li>
+                                <li>备忘录类Memento</li>
+                                <li>负责人类CareTake</li>
+                            </ul>
+                        </li>
+                        <li>开发中常见的应用场景：软件的撤销和历史操作，事务管理中的回滚操作等</li>
+                        <li>实现备忘录设计模式
+                            <pre>
+//源发器类
+public class Originator {
+    private String attr1;
+    private String attr2;
+    private String attr3;
+    //getter&setter
+    public Originator(String attr1, String attr2, String attr3) {
+        this.attr1 = attr1;
+        this.attr2 = attr2;
+        this.attr3 = attr3;
+    }
+    //进行备忘操作,并返回备忘对象
+    public Memento memento() {
+        return new Memento(this);
+    }
+    //进行数据恢复,恢复成指定备忘录的值
+    public void recovery(Memento memento) {
+        this.attr1 = memento.getAttr1();
+        this.attr2 = memento.getAttr2();
+        this.attr3 = memento.getAttr3();
+    }
+}
+//备忘录类
+public class Memento {
+    private String attr1;
+    private String attr2;
+    private String attr3;
+    //getter&setter
+    public Memento(Originator o) {
+        this.attr1 = o.getAttr1();
+        this.attr2 = o.getAttr2();
+        this.attr3 = o.getAttr3();
+    }
+}
+//负责人类
+public class CareTaker {
+    private Memento memento;
+    //可以进行多个备忘点的操作
+    //private List&lt;Memento> list = new ArrayList&lt;Memento>();
+    //private Stack&lt;Memento> stack = new Stack&lt;Memento>();
+    public Memento getMemento() {
+        return memento;
+    }
+    public void setMemento(Memento memento) {
+        this.memento = memento;
+    }
+}
+public class Client {
+    public static void main(String args []) {
+        CareTaker taker = new CareTaker();
+        Originator originator = new Originator("a1", "b1", "c1");
+        taker.setMemento(originator.memento());  //进行备份操作
+        originator.setAttr1("a2");
+        originator.recovery(taker.getMemento);  //进行数据恢复
+    }
+}</pre>
+                        </li>
+                    </ol>
+                    <!--文章]]-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+        <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+            <div class="am-offcanvas-bar">
+
+                <ul class="am-nav">
+                    <h1>设计模式</h1>
+                    <!--导航[[-->
+                    <li><a href="#!" id="btn1">设计模式GoF23</a></li>
+                    <li><a href="#!" id="btn2">面向对象设计的基本原则</a></li>
+                    <li><a href="#!" id="btn3">创建型设计模式</a></li>
+                    <li><a href="#!" id="btn4">结构型设计模式</a></li>
+                    <li><a href="#!" id="btn5">行为型设计模式</a></li>
+
+                </ul>
+                <!--导航]]-->
+            </div>
+        </div>
+    </div>
+    <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+        data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+<!--页脚[[-->
+<br><br><br>
+<div class="am-g">
+    <div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+        <br>
+        <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+        <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+    </div>
+</div>
+<br><br><br>
+<!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+    //加载进度条
+    var progress = $.AMUI.progress;
+    $(window).load(function() {
+        progress.done();
+    })
+    $(document).ready(function() {
+        progress.start();
+    })
+    //侧边栏平滑滚动
+    $(window).smoothScroll();
+    function navClick($btnObj, $pageObj) {
+        $btnObj.on("click", function() {
+            var $w = $(window);
+            $w.smoothScroll({position: $pageObj.offset().top});
+        })
+    }
+    navClick($("#btn1"), $("#page1"));
+    navClick($("#btn2"), $("#page2"));
+    navClick($("#btn3"), $("#page3"));
+    navClick($("#btn4"), $("#page4"));
+    navClick($("#btn5"), $("#page5"));
+
+</script>
+</body>
+</html>

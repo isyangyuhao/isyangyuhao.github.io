@@ -12,7 +12,7 @@ Java基础知识和语法
 
 + [JDBC](http://yangyuhao.org/jdbc)
 
-+ [GoF23设计模式](#)
++ [GoF23设计模式](http://yangyuhao.org/gof)
 
 JavaWeb部分
 --------------------
