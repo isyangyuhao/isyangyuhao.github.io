@@ -42,7 +42,7 @@ JavaEE框架与组件
 
 + [Spring MVC](http://yangyuhao.org/springmvc)
 
-+ [JPA](#)
++ [JPA](http://yangyuhao.org/jpa)
 
 + [SpringData JPA](http://yangyuhao.org/springDataJPA)
 

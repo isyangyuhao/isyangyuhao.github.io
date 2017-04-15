@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>杨宇昊的学习笔记-JPA</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <!--Link Web Font-->
+    <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+    <!--代码高亮highlight.js-->
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>-->
+    <!--Link Base Style-->
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css"/>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<!--导航栏 [[-->
+<header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+        <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+</header>
+<!--导航栏 ]]-->
+<div class="am-g am-g-fixed">
+    <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+        <div class="am-g">
+            <div class="am-u-sm-11 am-u-sm-centered">
+                <div class="am-cf am-article am-scrollable-horizontal">
+
+                    <!--文章[[-->
+                    <h3 id="page1">1. JPA概述</h3>
+                    <ol>
+                        <li>Java Persistence API : 用于对象持久化的API</li>
+                        <li>JPA是JavaEE5.0平台标准ORM规范，使应用程序可以以统一的方式访问持久层</li>
+                        <li><img src="photo/jpa/jpa1.png" class="am-img-responsive"></li>
+                        <li>JPA与Hibernate关系
+                            <ul>
+                                <li>JPA是Hibernate的一个抽象
+                                    <ul>
+                                        <li>
+                                            JPA是规范：JPA本质上是一种ORM规范，不是ORM框架，因为JPA没有提供ORM的实现，只是定制了一系列的规范，提供了一系列的API接口，具体实现由各个ORM厂商提供
+                                        </li>
+                                        <li>Hibernate是一种实现：Hibernate不仅是一个ORM框架，还是JPA的一种实现</li>
+                                    </ul>
+                                </li>
+                                <li>从功能上看，JPA是Hibernate功能的子集</li>
+                            </ul>
+                        </li>
+                        <li>JPA提供商
+                            <ul>
+                                <li>Hibernate
+                                    <br>JPA的发起者是Hibernate的作者
+                                    <br>Hibernate从3.2起兼容JPA
+                                </li>
+                                <li>OpenJPA
+                                    <br>OpenJPA是Apache组织提供的开源项目
+                                </li>
+                                <li>TopLink
+                                    <br>以前需要收费的项目，如今已开源的JPA实现
+                                </li>
+                            </ul>
+                        </li>
+                        <li>JPA优点
+                            <ul>
+                                <li>标准化：提供了相同的API，保证了基于JPA开发的企业应用能够经过少量的修改就能够在不同的JPA框架下运行</li>
+                                <li>简单易用，继承方便：JPA的主要目标之一就是提供更加简单的编程模型，在JPA模型下创建实体和创建Java类一样简单，只要使用javax.persistence.Entity进行注释，JPA的框架和接口同样非常简单</li>
+                                <li>可媲美JDBC的查询能力：JPA的查询语言是面向对象的，JPA定义了JPQL，而且能够支持批量更新和修改、JSON、GROUP BY、HAVING等通常只有SQL才能实现的高级查询特征，甚至还能够支持子查询</li>
+                                <li>支持面向对象的高级特性：JPA中能够支持面向对象的高级特性，例如类的继承、多态和类之间的复杂关系，最大限度的使用面向对象的模型</li>
+                            </ul>
+                        </li>
+                        <li>JPA包括的技术
+                            <ul>
+                                <li>ORM映射元数据：JPA支持XML和JDK5.0注解两种元数据的形式，元数据描述对象和表之间的映射关系，框架据此将实体对象持久化到数据库表中</li>
+                                <li>JPA的API：用来操作系统实体对象，执行CURD操作，框架在后台完成所有事情，不需要使用JDBC和SQL</li>
+                                <li>JPQL映射语言：通过面向对象而非面向数据库的查询语言查询数据，避免程序和具体的SQL密切耦合</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page2">2. JPA开发步骤与实例</h3>
+                    <ol>
+                        <li>创建JPA工程</li>
+                        <li>加入jar包
+                            <ul>
+                                <li>加入Hibernate-Required中的jar包</li>
+                                <li>加入Hibernate-JPA中的jar包</li>
+                                <li>加入数据库驱动</li>
+                            </ul>
+                        </li>
+                        <li>填写JPA配置文件persistence.xml
+                            <img src="photo/jpa/jpa2.png" class="am-img-responsive">
+                        </li>
+                        <li>创建实体类，通过注解方式描述实体类与数据表的映射关系
+                            <pre>
+@Table(name="JPA_CUSTOMERS")
+@Entity
+public class Customer {
+    private Integer id;
+    private String lastName;
+    private String email;
+    private int age;
+    @Column(name="ID")
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Id
+    public Integer getId() {
+        return id;
+    }
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    @Column(name="LAST_NAME")
+    public String getLastName() {
+        return lastName;
+    }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public int getAge() {
+        return age;
+    }
+    public void setAge(int age) {
+        this.age = age;
+    }
+}</pre>
+                        </li>
+                        <li>在persistence.xml中配置实体类
+                            <br><code>&lt;class>org.yang.demo.entities.Customer&lt;/class></code>
+                        </li>
+                        <li>使用JPA API完成CURD操作
+                            <pre>
+public class Main {
+    public static void main(String args []) {
+        //1. 创建EntitymanagerFactory
+        EntityManagerFactory entityManagerFactory = 
+        Persistence.createEntityManagerFactory("jpa1");
+        //2. 创建EntityManager
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        //3. 开启事物
+        EntityTransaction transaction = entityManager.getTransaction();
+        transaction.begin();
+        //4. 进行持久化操作
+        Customer customer = new Customer();
+        customer.setAge(20);
+        customer.setEmail("110@qq.com");
+        customer.setLastName("yang");
+        entityManager.persist(customer);
+        //5. 提交事务
+        transaction.commit();
+        //6. 关闭EntityManager
+        entityManager.close();
+        //7. 关闭EntityManagerFactory
+        entityManagerFactory.close();
+    }
+}</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page3">3. 基本注解</h3>
+                    <ol>
+                        <li>@Entity
+                            <ul>
+                                <li>使用@Entity注解修饰Java类为实体类，将映射到指定的数据表</li>
+                            </ul>
+                        </li>
+                        <li>@Table
+                            <ul>
+                                <li>当实体类与其映射的数据库表明不同名时，通过@Table注解标注说明，该注解与@Entity注解并列使用</li>
+                                <li>@Table注解的常用选项为name，指明数据库的表名</li>
+                                <li>@Table注解的catalog和schema属性用于设置表所属的数据库目录和模式，通常为数据库名</li>
+                                <li>@Table注解的uniqueConstraints选项用于设置约束条件，通常不需要设置</li>
+                                <li>e.g.
+                                    <pre>
+@Table(name="JPA_CUSTOMERS")
+@Entity
+public class Customer {</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>@Id
+                            <ul>
+                                <li>@Id注解用于声明一个实体类的属性映射为数据库的主键列，该属性通常设置于属性声明语句之前，也可以同行或单独一行</li>
+                                <li>推荐将注解置于getter方法前</li>
+                            </ul>
+                        </li>
+                        <li>@GeneratedValue
+                            <ul>
+                                <li>
+                                    @GeneratedValue注解用于标注主键的生成策略，通过strategy属性指定，默认情况下，JPA自动选择一个最合适底层数据库生成策略：SQLService使用identity，MySql使用increment等
+                                </li>
+                                <li>在javax.persistence.GenerationType中定义以下几种可供选择的策略
+                                    <ul>
+                                        <li>IDENTITY - 采用数据库ID自增长的方式来生成主键字段，Oracle不支持</li>
+                                        <li>AUTO - JPA自动选择合适的策略，默认选项</li>
+                                        <li>SEQUENCE - 通过序列产生主键，通过@SequenceGenerator注解指定序列名，MySql不支持</li>
+                                        <li>TABLE - 通过表产生主键，框架借由表模拟序列产生主键，使用该策略可以使应用更易于移植
+                                            <br>使用TABLE策略生成主键步骤
+                                            <ul>
+                                                <li>新建主键生成表
+                                                    <pre>
+CREATE TABLE JPA_ID_GENERAORS (
+    ID INT(10) PRIMARY KEY,
+    PK_NAME VARCHAR(50) NOT NULL,
+    PK_VALUE INT(10) NOT NULL
+);
+INSERT INTO JPA_ID_GENERATORS(ID, PK_NAME, PK_VALUE) VALUES(1, 'CUSTOMERS_ID', 1);</pre>
+                                                </li>
+                                                <li>使用注解修饰主键属性的getter
+                                                    <pre>
+@Column(name="ID")
+@TableGenerator(name="ID_GENERATOR",  //表主键生成器名
+    table="JPA_ID_GENERATORS",  //表主键生成器对应主键生成表
+    pkColumnName="PK_NAME",  //主键生成表主键名列名
+    pkColumnValue="CUSTOMERS_ID",  //主键生成表主键列名对应的值
+    valueColumnName="PK_VALUE",  //主键生成表主键值对应的列名
+    allocationSize=1  //每次增长幅度
+)
+@GeneratedValue(strategy=GenerationType.TABLE, generator="ID_GENERATOR")
+@Id
+public Integer getId() {
+    return id;
+}</pre>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>@Basic
+                            <ul>
+                                <li>@Basic注解标识一个简单的属性到数据表字段的映射，对于没有任何标注的getter，默认即为@Basic</li>
+                                <li>fetch属性标识该属性的读取策略，默认为EAGER主支抓取，LAZY表示延迟加载</li>
+                                <li>optional属性表示该属性是否允许为null，默认为true</li>
+                            </ul>
+                        </li>
+                        <li>@Column
+                            <ul>
+                                <li>使用@Column注解可以对属性进行更细致的标注</li>
+                                <li>name属性用于设置映射数据表的列明</li>
+                                <li>@Column注解拥有unique，nullable，length属性等</li>
+                                <li>columnDefinition属性表示该字段在数据库中的实际类型</li>
+                                <li>e.g.
+                                    <pre>
+@Column(name="LAST_NAME", length=50, nullable=false)
+public String getLastName() {
+    return lastName;
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>@Transient
+                            <ul>
+                                <li>表示该属性并非一个数据库表的字段映射，ORM框架将会忽略该属性</li>
+                                <li>e.g.
+                                    <pre>
+@Transient
+public void printInfo() {
+    System.out.println(this.id + this.age + this.email + this.lastName);
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>@Temporal
+                            <ul>
+                                <li>在核心的javaAPI中没有定义Date类型的精度，而在数据库中，表示Date类型的数据有DATE,TIME,TIMESTAMP三种精度，在进行属性映射时可以通过@Temporal注解来调整精度</li>
+                                <li>e.g.
+                                    <pre>
+@Temporal(TemporalType.DATE)
+public Date getBirth() {
+    return birth;
+}
+@Temporal(TemporalType.TIMESTAMP)
+public Date getCreateTime() {
+    return createTime;
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page4">4. JPA API</h3>
+                    <ol>
+                        <li>Persistence
+                            <ul>
+                                <li>Persistence类用于获取EntityManagerFactory实例，该类包含一个名为createEntityManagerFactory静态方法</li>
+                                <li>createEntityManagerFactory方法拥有两个重载版本
+                                    <ul>
+                                        <li>带一个参数的方法以persistence.xml中的持久化单元名作为参数
+                                            <br>EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("jpa1");
+                                        </li>
+                                        <li>
+                                            带两个参数的方法，第一个参数为persistence.xml中持久化类的单元名，第二个参数为Map类型，用于设置JPA相关属性，这是会忽略其他地方设置的属性，Map对象的属性名必须为JPA实现库提供商的名字空间约定的属性名
+                                            <pre>
+Map&lt;String, Object> propertiesMap = new HashMap<>();
+propertiesMap.put("hibernate.show_sql", false);
+EntityManagerFactory entityManagerFactory = 
+Persistence.createEntityManagerFactory("jpa1", propertiesMap);</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>EntityManageFactory
+                            <br>EntityManagerFactory用于常见EntityManager实例，该接口定义了4个方法
+                            <ul>
+                                <li>createEntityManger() - 用于创建实体管理器对象实例
+                                    <br>EntityManager entityManager = entityManagerFactory.createEntityManager();
+                                </li>
+                                <li>createEntityManager(Map map) - 用于创建实体管理器对象实例的重载方法，Map参数用于提供EntityManage属性</li>
+                                <li>isOpen() - 检查EntityManagerFactory是否处于打开状态，实体管理器工厂创建后一直处于打开状态，除非调用close()使其关闭</li>
+                                <li>close() - 关闭EntityManagerFactory，EntityManagerFactory关闭后立即释放所有资源，关闭后该对象其他方法无法调用，否则会抛出IllegalStateException异常</li>
+                            </ul>
+                        </li>
+                        <li>EntityManager
+                            <ul>
+                                <li>find()
+                                    <pre>
+//类似于Hibernate中的get方法
+@Test
+public void testFind() {
+Customer customer = entityManager.find(Customer.class, 1);
+    System.out.println("======================================");
+    System.out.println(customer);
+}</pre>
+                                </li>
+                                <li>getFerence()
+                                    <pre>
+//类似于Hibernate中的load方法
+@Test
+public void testGetReFerence() {
+Customer customer = entityManager.getReference(Customer.class, 1);
+    System.out.println("======================================");
+    System.out.println(customer);
+}</pre>
+                                </li>
+                                <li>persist()
+                                    <pre>
+//类似于Hibernate中的save方法,使状态从临时状态转换为持久化状态
+//与hibernate区别 : 若对象有id则不能执行insert操作，抛出异常
+@Test
+public void testPersistence() {
+    Customer customer = new Customer();
+    customer.setAge(20);
+    customer.setBirth(new Date());
+    customer.setCreateTime(new Date());
+    customer.setEmail("222@qq.com");
+    customer.setLastName("wang");
+    entityManager.persist(customer);
+}</pre>
+                                </li>
+                                <li>remove()
+                                    <pre>
+//类似于hibernate中的delete方法,把对象从数据库中删除
+//与hibernate区别 : 该方法只能移除持久化对象，而hibernate可以移除游离对象
+@Test
+public void testRemove() {
+    // Customer customer = new Customer();
+    // customer.setId(2);
+    Customer customer = entityManager.find(Customer.class, 2);
+    entityManager.remove(customer);
+}</pre>
+                                </li>
+                                <li>merge(T entity) : 用于处理Entity的同步，即数据库的插入和更新操作(类似于Hibernate的saveOrUpdate方法)
+                                    <img src="photo/jpa/jpa3.png" class="am-img-responsive">
+                                    <ul>
+                                        <li>如果merge方法传入临时对象，JPA会创建新对象，将临时对象的属性复制到新的对象当中，然后对新对象进行持久化操作，新对象中存在id，临时对象的id为null
+                                            <pre>
+@Test
+public void testMerge1() {
+    Customer customer = new Customer();
+    customer.setAge(18);
+    customer.setBirth(new Date());
+    customer.setCreateTime(new Date());
+    customer.setEmail("333@qq.com");
+    customer.setLastName("zhao");
+    Customer customer2 = entityManager.merge(customer);
+    System.out.println("customerId : " + customer.getId());  //null
+    System.out.println("customer2Id : " + customer2.getId());  //3
+}</pre>
+                                        </li>
+                                        <li>如果merge方法传入游离对象(对象存在OID)，如果在EntityManager缓存中没有该对象并且在数据库中也没有对应得记录，JPA会创建一个新的对象，然后将游离对象的属性赋值到新的对象中，对新创建的对象执行持久化操作
+                                            <pre>
+@Test
+public void testMerge2() {
+    Customer customer = new Customer();
+    customer.setAge(18);
+    customer.setBirth(new Date());
+    customer.setCreateTime(new Date());
+    customer.setEmail("333@qq.com");
+    customer.setLastName("zhao");
+    customer.setId(4);
+    Customer customer2 = entityManager.merge(customer);
+    System.out.println("customerId : " + customer.getId());  //4
+    System.out.println("customer2Id : " + customer2.getId());  //4
+}</pre>
+                                        </li>
+                                        <li>如果merge方法传入游离对象，如果在EntityManager缓存中不存在该对象但在数据库中存在对应的记录，JPA会查询对应的记录，然后返回该记录的对象，再将游离对象的属性赋值到查询到的对象中，对查询到的对象执行更新操作
+                                            <pre>
+@Test
+public void testMerge3() {
+Customer customer = new Customer();
+    customer.setAge(18);
+    customer.setBirth(new Date());
+    customer.setCreateTime(new Date());
+    customer.setEmail("333@qq.com");
+    customer.setLastName("$zhao");
+    customer.setId(4);  //数据库中已存在id为4的记录
+    Customer customer2 = entityManager.merge(customer);
+    System.out.println(customer == customer2);  //false
+}</pre>
+                                        </li>
+                                        <li>如果merge方法传入游离对象，如果在EntityManager缓存中存在对应的对象，JPA会把游离对象属性赋值给EntityManager缓存中的对象，执行更新操作
+                                            <pre>
+@Test
+public void testmerge4() {
+    Customer customer = new Customer();
+    customer.setAge(18);
+    customer.setBirth(new Date());
+    customer.setCreateTime(new Date());
+    customer.setEmail("333@qq.com");
+    customer.setLastName("#zhao");
+    customer.setId(4);  //数据库中已存在id为4的记录
+    Customer customer2 = entityManager.find(Customer.class, 4);
+    entityManager.merge(customer);
+}</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>flush() : 同步持久上下文环境，即将持久上下文环境的所有未保存实体的状态信息保存到数据库
+                                    <pre>
+@Test
+public void testFlush() {
+    Customer customer = entityManager.find(Customer.class, 1);
+    customer.setLastName("yang");
+    entityManager.flush();  //在此时发送sql语句更新数据，并不用等到提交事务时才更新
+}</pre>
+                                </li>
+                                <li>setFlushModel(FlushModeType flushMode) : 设置持久上下文环境的Flush模式，参数可以取2个枚举
+                                    <ul>
+                                        <li>FlushModeType.AUTO - 自动更新数据库实体</li>
+                                        <li>FlushModeType.COMMIT - 为知道提交事务时才更新数据库记录</li>
+                                    </ul>
+                                </li>
+                                <li>getFlushMode() : 获取持久上下文环境的Flush模式，返回FlushModelType类的枚举值</li>
+                                <li>refresh(Object entity) : 用数据库实体记录的值更新实体对象的状态，即更新实例的属性值</li>
+                                <li>clear() : 清楚持久上下文环境，断开所有关联的实体，如果此时还有未提交的更新将会被撤销</li>
+                                <li>contains(Object entity) : 判断一个实例是否属于当前持久化上下文环境管理的实体</li>
+                                <li>isOpen() : 判断当前实体类管理器是否处于打开状态</li>
+                                <li>getTransaction() : 返回资源层的事物对象，EntityTransaction的实例可以用于开始和提交多个事务</li>
+                                <li>close() : 关闭实体类管理器，之后若调用实体类管理器实例的方法或者其派生的查询对象的方法将抛出IllegalstateException异常，除了getTransaction和isOpen方法(返回false)；当实体管理器的事务处于活动状态时，调用close方法后持久化上下文仍处于被管理状态，知道事务完成</li>
+                                <li>createQuery(String qlString) : 创建一个查询对象</li>
+                                <li>createNamedQuery(String name) : 根据命名的查询语句块创建查询对象，参数为命名的查询语句</li>
+                                <li>createNativeQuery(String sqlString) : 使用标准的sql语句创建查询对象</li>
+                                <li>createNativeQuery(String sqls, String resultSetMapping) : 使用标准的sql语句创建查询对象，并指定返回集Map的名称</li>
+                            </ul>
+                        </li>
+                        <li>EntityTransaction
+                            <ul>
+                                <li>EntityTransaction接口用于管理资源层实体管理器的事务操作，通过调用实体管理器的getTransaction()方法获得其实例</li>
+                                <li>EntityTransaction接口的方法
+                                    <ul>
+                                        <li>begin() : 用于启动一个事务，此后的多个数据库操作作为集体被提交或撤销，若此时事务已启动则会抛出illegalStateException异常</li>
+                                        <li>commit() : 用于提交当前事务，即将事务启动以后的所有数据库更新操作持久化至数据库中</li>
+                                        <li>rollback() : 撤销(回滚)当前事务，即撤销事务启动后的所有数据库更新操作，从而不会对数据库产生影响</li>
+                                        <li>setRollbackOnly() : 使当前事务只能被撤销</li>
+                                        <li>getRollbackOnly() : 查看当前事务是否设置了只能撤销的标志</li>
+                                        <li>isActive() : 查看当前事务是否是活动的，如果返回true则不可以调用begin方法，否则会抛出illegalStateException异常；如果返回false则不可以调用commit,rollback,setEollbackOnly,getRollbackOnly方法，否则抛出illegalStateException异常</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page5">5. 映射关联关系</h3>
+                    <ol>
+                        <li>映射单向多对一关联关系
+                            <img src="photo/jpa/jpa4.png" class="am-img-responsive">
+                            <pre>
+//保存多对一的关联关系，先保存1端再保存n端，这样不会产生额外的update语句
+@Test
+public void testManyToOnePersist() {
+    Customer customer = new Customer();
+    customer.setAge(18);
+    customer.setBirth(new Date());
+    customer.setCreateTime(new Date());
+    customer.setEmail("guanlian1@qq.com");
+    customer.setLastName("#abc");
+    Order order1 = new Order();
+    order1.setOrderName("order1");
+    Order order2 = new Order();
+    order2.setOrderName("order2");
+    order1.setCustomer(customer);
+    //设置关联关系
+    order1.setCustomer(customer);
+    order2.setCustomer(customer);
+    entityManager.persist(customer);
+    entityManager.persist(order1);
+    entityManager.persist(order2);
+}
+//默认情况下，使用左外连接的方式来获取1端的对象
+@Test
+public void testManyToOneFind() {
+    Order order = entityManager.find(Order.class, 1);
+    System.out.println(order.getOrderName());
+    System.out.println(order.getCustomer().getLastName());
+}
+@Test
+public void testManyToOneReomve() {
+    Order order = entityManager.find(Order.class, 2);
+    entityManager.remove(order);  //可以删除
+    Customer customer = entityManager.find(Customer.class, 5);
+    entityManager.remove(customer);  //存在外检约束，不可以删除
+}
+@Test
+public void testMantToOneUpdate() {
+    Order order = entityManager.find(Order.class, 1);
+    order.getCustomer().setLastName("$$$abc");
+}</pre>
+                        </li>
+                        <li>映射单向一对多关联关系
+                            <img src="photo/jpa/jpa5.png" class="am-img-responsive">
+                            <pre>
+//执行单项一对多关联关系的保存时，一定会多出update语句，所以保存无先后次序
+@Test
+public void testOneToManyPersist() {
+    Order order1 = new Order();
+    order1.setOrderName("order3");
+    Order order2 = new Order();
+    order2.setOrderName("order4");
+    Customer customer = new Customer();
+    customer.setAge(18);
+    customer.setBirth(new Date());
+    customer.setCreateTime(new Date());
+    customer.setEmail("guanlian2@qq.com");
+    customer.setLastName("#abc");
+    //设置关联关系
+    customer.getOrders().add(order1);
+    customer.getOrders().add(order2);
+    entityManager.persist(order1);
+    entityManager.persist(order2);
+    entityManager.persist(customer);
+}
+//默认使用懒加载异常
+//可以通过@OneToMany的fetch属性修改默认加载策略
+@Test
+public void testOneToManyFind() {
+    Customer customer = entityManager.find(Customer.class, 1);
+    System.out.println(customer.getLastName());
+    System.out.println(customer.getOrders().size());
+}
+//默认删除1端过后n端会置为空
+//可以通过@OneToMany的cascade属性修改删除策略
+@Test
+public void testOneToManyRemove() {
+    Customer customer = entityManager.find(Customer.class, 2);
+    entityManager.remove(customer);
+}
+@Test
+public void testOneToManyUptade() {
+    Customer customer = entityManager.find(Customer.class, 1);
+    customer.getOrders().iterator().next().setOrderName("$$$order");
+}</pre>
+                        </li>
+                        <li>映射双向多对一关联关系
+                            <img src="photo/jpa/jpa6.png" class="am-img-responsive">
+                            <pre>
+//在进行双向一对多关系时，建议使用n的一方来维护关联关系，1的一方不维护关联关系，这样会有效的减少sql
+@Test
+public void testOneToManyPersist2() {
+    Order order1 = new Order();
+    order1.setOrderName("order3");
+    Order order2 = new Order();
+    order2.setOrderName("order4");
+    Customer customer = new Customer();
+    customer.setAge(18);
+    customer.setBirth(new Date());
+    customer.setCreateTime(new Date());
+    customer.setEmail("guanlian2@qq.com");
+    customer.setLastName("#abc");
+    //设置关联关系
+    customer.getOrders().add(order1);
+    customer.getOrders().add(order2);
+    order1.setCustomer(customer);
+    order2.setCustomer(customer);
+    entityManager.persist(customer);
+    entityManager.persist(order1);
+    entityManager.persist(order2);
+}</pre>
+                        </li>
+                        <li>映射双向一对一关联关系
+                            <img src="photo/jpa/jpa7.png" class="am-img-responsive">
+                            <pre>
+//双向映射一对一保存操作，建议先保存不维护关联关系的一方
+@Test
+public void testOneToOnePersist() {
+    Manager manager = new Manager();
+    manager.setManagerName("manager1");
+    Department department = new Department();
+    department.setDepartmentName("department1");
+    //设置关联关系
+    manager.setDepartment(department);
+    department.setManager(manager);
+    entityManager.persist(manager);
+    entityManager.persist(department);
+}
+//获取维护关联关系的一方，默认使用做外连接的方式，可以通过@OneToOne的fetch属性来修改加载策略
+@Test
+public void testOneToOneFind1() {
+    Department department = entityManager.find(Department.class, 1);
+    System.out.println(department.getManager().getManagerName());
+}
+//获取非维护关系一方，默认也使用左外连接的方式，通过@OneToOne的fetch属性修改加载策略
+//但修改fetch属性为lazy后虽然不会使用做外连接，但会发送两条sql语句，性能会更差，所以不推荐非维护关系修改加载策略
+@Test
+public void testOneToOneFind2() {
+    Manager manager = entityManager.find(Manager.class, 1);
+    System.out.println(manager.getDepartment().getDepartmentName());
+}</pre>
+                        </li>
+                        <li>映射双向多对多关联关系
+                            <img src="photo/jpa/jpa8.png" class="am-img-responsive">
+                        </li>
+                    </ol>
+                    <h3 id="page6">6. 二级缓存</h3>
+                    <ol>
+                        <li>加入二级缓存实现jar包
+                            <br>Hibernate -> lib -> optional -> ehcache -> *.jar
+                        </li>
+                        <li>配置二级缓存
+                            <pre>
+&lt;property name="hibernate.cache.use_second_level_cache" value="true">&lt;/property>
+&lt;property name="hibernate.cache.region.factory_class"     value="org.hibernate.cache.ehcache.EhCacheRegionFactory"/>
+&lt;property name="hibernate.cache.use_query_cache" value="true"/></pre>
+                        </li>
+                        <li>设置二级缓存策略
+                            <pre>
+&lt;!-- 配置二级缓存的策略：必须配置在配置持久化类的下边 -->
+&lt;!-- 
+    ALL：所有实体类都被缓存
+    NONE：所有实体类都不被缓存
+    ENABLE_SELECTIVE：所有使用@Cacheable(true)的实体类被缓存
+    DISABLE_SELECTIVE：所有使用@Cacheable(false)的实体类不被缓存
+    UNSPECIFIED：默认值，JPA默认值将被使用
+-->
+&lt;shared-cache-mode>ENABLE_SELECTIVE&lt;/shared-cache-mode></pre>
+                        </li>
+                        <li>在对应的类中加上注解
+                            <pre>
+@Cacheable(true)
+@Table(name="JPA_CUSTOMERS")
+@Entity
+public class Customer {</pre>
+                        </li>
+                        <li>测试二级缓存
+                            <pre>
+@Test
+public void testSecondLevalCache() {
+    Customer customer = entityManager.find(Customer.class, 3);
+    entityTransaction.commit();
+    entityManager.close();
+    entityManager = entityManagerFactory.createEntityManager();
+    entityTransaction = entityManager.getTransaction();
+    entityTransaction.begin();
+    Customer customer2 = entityManager.find(Customer.class, 3);
+    System.out.println(customer);
+}</pre>
+                        </li>
+                    </ol>
+                    <h3 id="page7">7. JPQL</h3>
+                    <ol>
+                        <li>概述
+                            <ul>
+                                <li>JPQL：Java Persistence Query Language, JPA数据查询语言，是一种和sql非常类似的中间性和对象化的查询语言，它会最终编译成不同底层数据库的SQL查询，从而屏蔽不同数据库的差异</li>
+                                <li>JPQL可以是select，update，delete，它们都通过Query接口封装</li>
+                            </ul>
+                        </li>
+                        <li>javax.persistence.Query
+                            <ul>
+                                <li>Query接口封装了执行数据库查询的相关方法，调用EntityManager的createQuery，createNamedQuery，createNativeQuery方法可以得到查询对象，进而调用Query接口的相关方法来进行查询操作</li>
+                                <li>Query接口的主要方法
+                                    <ul>
+                                        <li>int executeUpdate() - 用于执行update和delete语句</li>
+                                        <li>List getSlingleResult() - 用于执行select语句并返回结果实体列表</li>
+                                        <li>Object getSlingResult() - 用于执行只返回单个结果实体的select语句</li>
+                                        <li>Query setFirstResult(int position) - 用于设置从哪个实体记录开始返回查询结果</li>
+                                        <li>Query setMaxResult(int maxResult) - 用于设置返回结果具体实体的最大数，与setFirstResult结合可以实现分页查询</li>
+                                        <li>Query setFlushMode(FlushModeType flushMode) - 设置查询对象的Flush模式，参数可以去两个枚举：FlushModeType.AUTO自动更新数据库；FlushModeType.COMMIT直到提交事务更新数据库记录</li>
+                                        <li>setHint(String hintName, Object value) - 设置于查询对象相关的特定供应商参数或提示信息，参数名及其取值需要参考特定JPA实现库提供商的文档，如果第二个参数无效将抛出IllegalArgumentException异常</li>
+                                        <li>setParameter(int position, Object value) - 为查询语言的指定位置参数赋值，position为指定参数序号，value为赋给参数的值</li>
+                                        <li>setParameter(int position, Date d, TemporalType type) - 为查询语句的指定位置参数赋值，position指定参数序号，Date为日期类型的value，temporalType取TempPoralType得三个枚举常量DATE,TIME,TIMESTAMP，用于将java的Date类型临时转换为数据库支持的数据类型</li>
+                                        <li>setParameter()重载方法 ...</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>JQPL查询语句
+                            <ul>
+                                <li>Query基本查询
+                                    <pre>
+@Test
+public void testJPQL() {
+    String jpql = "FROM Customer c where c.age > ?";
+    Query query = entityManager.createQuery(jpql);
+    //占位符索引
+    query.setParameter(1, 10);
+    List&lt;Customer> customers = query.getResultList();
+    System.out.println(customers.size());
+}</pre>
+                                </li>
+                                <li>Query部分查询
+                                    <pre>
+//部分查询-结果集类型为List&lt;Object []>
+@Test
+public void testJPQL2() {
+    String jpql = "SELECT c.lastName, c.age FROM Customer c where c.age > ?";
+    Query query = entityManager.createQuery(jpql);
+    query.setParameter(1, 10);
+    List&lt;Object[]> result = query.getResultList();
+    for (int i = 0; i < result.size(); ++i) {
+    System.out.println(result.get(i)[0]);
+    System.out.println(result.get(i)[1]);
+    }
+}
+//部分查询-结果集类型为List&lt;Object> (需要将对应的构造器在实体类中创建出来)
+@Test
+public void testJPQL3() {
+    String jpql = "SELECT new Customer(c.lastName, c.age) FROM Customer c where c.age > ?";
+    Query query = entityManager.createQuery(jpql);
+    query.setParameter(1, 10);
+    List&lt;Customer> result = query.getResultList();
+    for (int i = 0; i < result.size(); ++i) {
+    System.out.println(result.get(i).getLastName());
+    System.out.println(result.get(i).getAge());
+    }
+}
+                                    </pre>
+                                </li>
+                                <li>NamedQuery
+                                    <ul>
+                                        <li>使用时需要在实体类上方通过@NameQuery注解编写JPQL语句
+                                            <pre>
+@NamedQuery(name="testNamedQuery", query="SELECT c FROM Customer c WHERE c.id = ?")
+@Cacheable(true)
+@Table(name="JPA_CUSTOMERS")
+@Entity
+public class Customer {</pre>
+                                        </li>
+                                        <li>创建NamedQuery对象并使用注解中的语句进行查询操作
+                                            <pre>
+@Test
+public void testNamedQuery() {
+    Query query = entityManager.createNamedQuery("testNamedQuery").setParameter(1, 3);
+    Customer customer = (Customer) query.getSingleResult();
+    System.out.println(customer);
+}</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>NativeQuery - 使用标准sql语句进行查询
+                                    <pre>
+@Test
+public void testNativeQuery() {
+    String sql = "SELECT age FROM JPA_CUSTOMERS WHERE id = ?";
+    Query query = entityManager.createNativeQuery(sql);
+    query.setParameter(1, 3);
+    Object result = query.getSingleResult();
+    System.out.println(result);
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>查询缓存
+                            <ul>
+                                <li>在二级缓存中配置开启查询缓存
+                                    <br><code>&lt;property name="hibernate.cache.use_query_cache" value="true"/></code>
+                                </li>
+                                <li>
+                                    使用查询缓存
+                                    <pre>
+@Test
+public void testQueryCache() {
+    String jpql = "FROM Customer c where c.age > ?";
+    Query query = entityManager.createQuery(jpql).setHint(QueryHints.HINT_CACHEABLE, true);
+    query.setParameter(1, 10);
+    List&lt;Customer> customers = query.getResultList();
+    System.out.println(customers.size());
+    query.setParameter(1, 10);
+    customers = query.getResultList();
+    System.out.println(customers.size());
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>ORDER BY & GROUP BY
+                            <ul>
+                                <li>ORDER BY
+                                    <pre>
+@Test
+public void testOrderBy() {
+    String jpql = "FROM Customer c ORDER BY c.id DESC";
+    Query query = entityManager.createQuery(jpql).setHint(QueryHints.HINT_CACHEABLE, true);
+    List&lt;Customer> customers = query.getResultList();
+    System.out.println(customers.size());
+}</pre>
+                                </li>
+                                <li>GROUP BY
+                                    <pre>
+@Test
+public void testGroupBy() {
+    String jpql = "FROM Customer c GROUP BY c.age";
+entityManager.createQuery(jpql).getResultList();
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>关联查询
+                            <pre>
+@Test
+public void testLeftOuterJoinFetch() {
+String jpql = "FROM Customer c LEFT OUTER JOIN FETCH c.orders WHERE c.id = ?";
+    Customer customer = (Customer) 
+    entityManager.createQuery(jpql).setParameter(1, 3).getSingleResult();
+    System.out.println(customer.getOrders().size());
+}</pre>
+                        </li>
+                        <li>子查询
+                            <pre>
+@Test
+public void testSubQuery() {
+    //查询所有Customer中lastName为"#abc"的Order
+    String jpql = "SELECT o FROM Order o WHERE o.customer = ("
+    + "SELECT c FROM Customer c WHERE c.lastName = ?)";
+    Query query = entityManager.createQuery(jpql);
+    query.setParameter(1, "#abc");
+    List&lt;Order> orders = query.getResultList();
+    System.out.println(orders.size());
+}</pre>
+                        </li>
+                        <li>JPQL函数
+                            <ul>
+                                <li>JPQL提供了以下一些内建函数，包括字符串处理函数，算数函数和日期函数</li>
+                                <li>字符串处理函数
+                                    <ul>
+                                        <li>concat(String s1, String s2) - 字符串合并/连接函数</li>
+                                        <li>substring(String s, int start, int length) - 取字符串函数</li>
+                                        <li>trim([leading|trailing|both][char c] String s) - 从字符串中去掉首/尾指定的字符或空格</li>
+                                        <li>lower(String s) - 将字符串转换小写形式</li>
+                                        <li>upper(String s) - 将字符串转换成大写形式</li>
+                                        <li>length(String s) - 求字符串长度</li>
+                                        <li>locate(String s1, String s2[, int start]) - 从第一个字符串中查找第二个字符串出现的位置，若未找到则返回0</li>
+                                    </ul>
+                                </li>
+                                <li>日期处理函数：abc(), mod(), sqrt(), size()等</li>
+                                <li>日期处理函数：current_date(), current_time(), current_timestamp()，它们不需要参数，直接返回服务器上的日期,时间,时间戳</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3 id="page8">8. Spring整合JPA</h3>
+                    <ol>
+                        <li>整合方式
+                            <ul>
+                                <li>localEntityManagerFactoryBean：适用于仅使用JPA进行数据访问的项目，该FactoryBean将根据JPAPersistenceProvider自动检测配置文件进行工作，一般从"META-INF/persistence.xml"读取配置信息，这种方式最简单，但不能设置Spring中定义的DataSource，且不支持Spring声明式事务</li>
+                                <li>从JNDI中获取：用于从JavaEE服务器获取指定的EntityManagerFactory，这种方式在进行Spring事务管理时一般要使用JTA事务管理</li>
+                                <li>LocalContainerEntityManagerFactoryBean：适用于所有环境的FactoryBean，能全面控制EntityManagerFactory的配置</li>
+                            </ul>
+                        </li>
+                        <li>整合实例
+                            <ul>
+                                <li>加入需要的jar包
+                                    <ul>
+                                        <li>加入Hibernate-lib-required-*.jar</li>
+                                        <li>加入Hibernate-lib-jpa-*.jar</li>
+                                        <li>加入Hibernate-lib-optional-c3p0-*.jar</li>
+                                        <li>加入数据库驱动包</li>
+                                        <li>加入Spring-required-*.jar</li>
+                                    </ul>
+                                </li>
+                                <li>编写Spring配置文件
+                                    <img src="photo/jpa/jpa9.png" class="am-img-responsive">
+                                </li>
+                                <li>编写Entities层
+                                    <pre>
+@Repository
+public class PersonDao {
+    //通过@PersistenceContext注解标记事务管理器使其与当前事务绑定
+    @PersistenceContext
+    private EntityManager entityManager;
+    public void save(Person person) {
+        entityManager.persist(person);
+    }
+}</pre>
+                                </li>
+                                <li>编写Dao层
+                                    <pre>
+@Repository
+public class PersonDao {
+    //通过@PersistenceContext注解标记事务管理器使其与当前事务绑定
+    @PersistenceContext
+    private EntityManager entityManager;
+    public void save(Person person) {
+        entityManager.persist(person);
+    }
+}</pre>
+                                </li>
+                                <li>编写Service层
+                                    <pre>
+@Service
+public class PersonService {
+    @Autowired
+    private PersonDao personDao;
+    @Transactional
+    public void savePersons(Person p1, Person p2) {
+        personDao.save(p1);
+        personDao.save(p2);
+    }
+}</pre>
+                                </li>
+                                <li>编写Test层
+                                    <pre>
+public class JPATest {
+    private ApplicationContext applicationContext = null;
+    private PersonService personService = null;
+    {
+        applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        personService = applicationContext.getBean(PersonService.class);
+        }
+    //测试数据源连接
+    @Test
+    public void testDataSource() throws SQLException {
+        DataSource dataSource = applicationContext.getBean(DataSource.class);
+        System.out.println(dataSource.getConnection());
+    }
+    //测试业务逻辑层
+    @Test
+    public void testPersonService() {
+        Person p1 = new Person();
+        p1.setName("p7");
+        Person p2 = new Person();
+        p2.setName("p8");
+        System.out.println(personService.getClass().getName());
+        personService.savePersons(p1, p2);
+    }
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <!--文章]]-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+        <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+            <div class="am-offcanvas-bar">
+
+                <ul class="am-nav">
+                    <h1>JPA</h1>
+                    <!--导航[[-->
+                    <li><a href="#!" id="btn1">JPA概述</a></li>
+                    <li><a href="#!" id="btn2">JPA开发步骤与实例</a></li>
+                    <li><a href="#!" id="btn3">基本注解</a></li>
+                    <li><a href="#!" id="btn4">JPA API</a></li>
+                    <li><a href="#!" id="btn5">映射关联关系</a></li>
+                    <li><a href="#!" id="btn6">二级缓存</a></li>
+                    <li><a href="#!" id="btn7">JPQL</a></li>
+                    <li><a href="#!" id="btn8">Spring整合JPA</a></li>
+
+                </ul>
+                <!--导航]]-->
+            </div>
+        </div>
+    </div>
+    <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+        data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+<!--页脚[[-->
+<br><br><br>
+<div class="am-g">
+    <div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+        <br>
+        <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+        <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+    </div>
+</div>
+<br><br><br>
+<!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+    //加载进度条
+    var progress = $.AMUI.progress;
+    $(window).load(function() {
+        progress.done();
+    })
+    $(document).ready(function() {
+        progress.start();
+    })
+    //侧边栏平滑滚动
+    $(window).smoothScroll();
+    function navClick($btnObj, $pageObj) {
+        $btnObj.on("click", function() {
+            var $w = $(window);
+            $w.smoothScroll({position: $pageObj.offset().top});
+        })
+    }
+    navClick($("#btn1"), $("#page1"));
+    navClick($("#btn2"), $("#page2"));
+    navClick($("#btn3"), $("#page3"));
+    navClick($("#btn4"), $("#page4"));
+    navClick($("#btn5"), $("#page5"));
+    navClick($("#btn6"), $("#page6"));
+    navClick($("#btn7"), $("#page7"));
+    navClick($("#btn8"), $("#page8"));
+
+</script>
+</body>
+</html>
