@@ -46,7 +46,7 @@ JavaEE框架与组件
 
 + [SpringData JPA](http://yangyuhao.org/springDataJPA)
 
-+ [MyBatis](#)
++ [MyBatis](http://yangyuhao.org/mybatis)
 
 + [Shiro](http://yangyuhao.org/shiro)
 
@@ -64,8 +64,6 @@ Javascript部分
 + [Javascript OOP](http://yangyuhao.org/oop)
 
 + [Angular](#)
-
-+ [ECMAScript6](#)
 
 + [Express](http://yangyuhao.org/express)
 
