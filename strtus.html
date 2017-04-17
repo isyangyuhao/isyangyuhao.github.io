@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>杨宇昊的学习笔记-Struts2</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+    <!--Link Web Font-->
+    <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+    <!--代码高亮highlight.js-->
+    <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>-->
+    <!--Link Base Style-->
+    <link rel="stylesheet" type="text/css" href="css/base.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css"/>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<!--导航栏 [[-->
+<header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+        <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+</header>
+<!--导航栏 ]]-->
+<div class="am-g am-g-fixed">
+    <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+        <div class="am-g">
+            <div class="am-u-sm-11 am-u-sm-centered">
+                <div class="am-cf am-article am-scrollable-horizontal">
+
+                    <!--文章[[-->
+                    <h3>1. Struts基础</h3>
+                    <ol>
+                        <li>使用Filter作为控制器
+                            <ul>
+                                <li>好处：使用过滤器作为控制器，可以方便的在应用程序中对所有资源进行控制访问</li>
+                                <li>拦截资源并不是Servlet擅长的，Filter拥有Servlet所有功能的情况下还具备FilterChain</li>
+                                <li>e.g.
+                                    <pre>
+&lt;!--index.jsp-->
+&lt;a href="product-input.action">Product Input&lt;/a>
+&lt;!--WEB-INF/pages/input.jsp-->
+&lt;form action="product-save.action">
+    ProductName : &lt;input type="text" name="productName">
+    ProductDesc : &lt;input type="text" name="productDesc">
+    ProductPrice : &lt;input type="text" name="productPrice">
+    &lt;input type="submit" value="Submie">
+&lt;/form>
+//WEB-INF/pages/detais.jsp
+ProductId : ${requestScope.product.productId }
+ProductName : ${requestScope.product.productName }
+ProductDesc : ${requestScope.product.productDesc }
+ProductPrice : ${requestScope.product.productPrice }
+Product.java
+package org.yang.demo;
+public class Product {
+    private int productId;
+    private String productName;
+    private String productDesc;
+    private String productPrice;
+    public Product() {
+    }
+    public Product(String productName, String productDesc, String productPrice) {
+        this.productName = productName;
+        this.productDesc = productDesc;
+        this.productPrice = productPrice;
+    }
+    public void setProductDesc(String productDesc) {
+        this.productDesc = productDesc;
+    }
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+    public void setProductPrice(String productPrice) {
+        this.productPrice = productPrice;
+    }
+    public String getProductDesc() {
+        return productDesc;
+    }
+    public String getProductName() {
+        return productName;
+    }
+    public String getProductPrice() {
+        return productPrice;
+    }
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+    public int getProductId() {
+        return productId;
+    }
+}
+//FilterDispatcher.java
+@WebFilter(dispatcherTypes = {
+                DispatcherType.REQUEST,
+                DispatcherType.FORWARD,
+                DispatcherType.INCLUDE,
+                DispatcherType.ERROR
+        }
+                    , urlPatterns = { "*.action" })
+public class FilterDispatcher implements Filter {
+    public FilterDispatcher() {
+    }
+    public void destroy() {
+    }
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest req = (HttpServletRequest) request;
+        //存放转发路径
+        String path = null;
+        //1. 获取servletPath
+        String servletPath = req.getServletPath();
+        //2 判断servletPath是否等于"product-input.action"，等于则转发到/WEB-INF/pages/input.jsp
+        if ("/product-input.action".equals(servletPath)) {
+            path = "/WEB-INF/pages/input.jsp";
+        }
+        //3. 若其等于"/product-save.action"，则
+        if ("/product-save.action".equals(servletPath)) {
+            //-1 获取请求参数
+            String productName = request.getParameter("productName");
+            String productDesc = request.getParameter("productDesc");
+            String productPrice = request.getParameter("productPrice");
+            //-2 把请求信息封装为Product对象
+            Product product = new Product(productName, productDesc, productPrice);
+            //-3 执行保存操作
+            System.out.println("Save Product : " + productName);  //连接数据库略
+            product.setProductId(1001);
+            //-4 把Product对象保存到request中 ${param.productName} -> ${requestScope.product.productName}
+            request.setAttribute("product", product);
+            //-5 设置转发路径
+            path = "/WEB-INF/pages/detais.jsp";
+        }
+        //如果转发路径不为空，则转发
+        if (path != null) {
+            req.getRequestDispatcher(path).forward(request, response);
+            return ;
+        }
+        chain.doFilter(request, response);
+    }
+    public void init(FilterConfig fConfig) throws ServletException {
+        System.out.println("struts2-1 filter is init!");
+    }
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Struts2概述
+                            <ul>
+                                <li>Struts2是一个用来开发MVC应用程序的框架，提供了Web应用程序开发过程中一系列常见问题的解决方案
+                                    <ul>
+                                        <li>对于来自用户的输入数据进行合法性验证</li>
+                                        <li>同一的布局</li>
+                                        <li>可扩展性</li>
+                                        <li>国际化和本地化</li>
+                                        <li>Ajax</li>
+                                        <li>表单的重复提交</li>
+                                        <li>文件的上传下载</li>
+                                        <li>。。。</li>
+                                    </ul>
+                                </li>
+                                <li>Struts2和Struts1的对比
+                                    <ul>
+                                        <li>在体系结构上更优秀：类更少，更高效，更容易扩展</li>
+                                        <li>更容易测试：即使不使用浏览器，也可以对Struts2进行测试</li>
+                                    </ul>
+                                </li>
+                                <li>Struts2并不是由Struts1扩展而来，而是由WebWork演变而来</li>
+                            </ul>
+                        </li>
+                        <li>环境搭建
+                            <ul>
+                                <li>加入jar包：复制struts/apps/struts2-blank/WEB-INF/lib下的所有jar包到当前web应用下的lib目录下</li>
+                                <li>在web.xml中配置struts2：复制struts/apps/struts2-blank/WEB-INF/web.xml文件中的过滤器配置到web应用的web.xml文件中</li>
+                                <li>在当前web引用的classPath下添加strtus2的配置文件:
+                                    <br>复制struts1/apps/struts2-blank/WEB-INF/classes下的struts.xml到当前web应用的src目录下
+                                </li>
+                                <li>添加DTD约束
+                                    <ul>
+                                        <li>复制struts.xml中的DTD路径"http://struts.apache.org/dtds/struts-2.3.dtd"
+                                        </li>
+                                        <li>在Eclipse -> Window -> Preferences -> XML -> XML Catalog -> Add -> Location=struts-2.3.4-all\struts-2.3.4\src\core\src\main\resources, Key=DTD路径, KeyType=URI</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>使用Struts2修改1.1实例
+                            <ul>
+                                <li>使用Struts2实现与自实现的区别
+                                    <ul>
+                                        <li>需要搭建Struts2的开发环境</li>
+                                        <li>不需要显式的定义Filter,而是使用struts2的配置文件</li>
+                                        <li>details.jsp比先前简单 ${requestScope.product.productName} -> ${productName}</li>
+                                    </ul>
+                                </li>
+                                <li>步骤
+                                    <ul>
+                                        <li>由product-input.action转到/WEB-INF/pages/input.jsp
+                                            <pre>
+&lt;action name="product-input">
+    &lt;result>/WEB-INF/pages/input.jsp&lt;/result>
+&lt;/action></pre>
+                                        </li>
+                                        <li>由input.jsp页面的action:product-save.action到Prodect的save再到/WEB-INF/pages/details.jsp
+                                            <pre>
+&lt;action name="product-save" class="org.yang.demo.Product" method="save">
+    &lt;result name="details">/WEB-INF/pages/details.jsp &lt;/result>
+&lt;/action></pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>具体实现
+                                    <pre>
+&lt;!--index.jsp-->
+&lt;a href="product-input.action">Product Input&lt;/a>
+&lt;!--WEB-INF/pages/input.jsp-->
+&lt;form action="product-save.action">
+    ProductName : &lt;input type="text" name="productName">
+    ProductDesc : &lt;input type="text" name="productDesc">
+    ProductPrice : &lt;input type="text" name="productPrice">
+    &lt;input type="submit" value="Submie">
+&lt;/form>
+//WEB-INF/pages/detais.jsp
+ProductId : ${productId }
+ProductName : ${productName }
+ProductDesc : ${productDesc }
+ProductPrice : ${productPrice }Product.java
+package org.yang.demo;
+public class Product {
+    private int productId;
+    private String productName;
+    private String productDesc;
+    private String productPrice;
+    public Product() {
+    }
+    public void setProductDesc(String productDesc) {
+        this.productDesc = productDesc;
+    }
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+    public void setProductPrice(String productPrice) {
+        this.productPrice = productPrice;
+    }
+    public String getProductDesc() {
+        return productDesc;
+    }
+    public String getProductName() {
+        return productName;
+    }
+    public String getProductPrice() {
+        return productPrice;
+    }
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+    public int getProductId() {
+        return productId;
+    }
+    public String save() {
+        System.out.println("save : " + this);
+        return "details";
+    }
+}
+<img src="photo/struts/struts1.png" class="am-img-responsive"></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Action概述
+                            <ul>
+                                <li>action：应用程序可以完成的每一个操作，例如显示一个表单，将信息保存数据库等</li>
+                                <li>Action类：能够处理structs2请求的类
+                                    <ul>
+                                        <li>属性的名字必须遵守与javaBean属性名相同的命名规则：属性可以是任意类型，数据类型的转换可以自动发生</li>
+                                        <li>必须有一个不带参的构造器：通过反射创建javaBean，必须有无参构造器</li>
+                                        <li>至少有一个供struts2在执行action时调用的方法</li>
+                                        <li>同一个Action类可以包含多个action方法</li>
+                                        <li>Struts2会为每一个HTTP请求创建一个新的Action实例，不是单例的，是线程安全的</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3>2. 访问web资源</h3>
+                    <ol>
+                        <li>Web资源：HttpServletRequest, HttpSession, ServletContext等原生Servlet API</li>
+                        <li>访问方式
+                            <ul>
+                                <li>和Servlet API解耦的方式：只能访问有限的Servlet API对象，且只能访问其有限的方法(读取请求参数，读取域对象属性 …)
+                                    <ul>
+                                        <li>使用ActionContext(Action中只有一个方法时推荐使用)</li>
+                                        <li>实现XxxAware接口(Action中有多个方法时推荐使用)</li>
+                                    </ul>
+                                </li>
+                                <li>和ServletAPI耦合的方式：可以访问更多的Servlet API对象，且可以调用其原生方法
+                                    <ul>
+                                        <li>使用ServletActionContext</li>
+                                        <li>实现ServletXxxAware接口</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>使用ActionContext获取域对象的Map完成读取操作
+                            <pre>
+//TestActionContextAction.java
+public class TestActionContextAction {
+    public String execute() {
+        //0. 获取ActionContext对象
+        //ActionContext是Action的上下文对象，可以获取当前Action需要的一切信息
+        ActionContext actionContext = ActionContext.getContext();
+        //1. 获取application对应的Map, 并向其中添加一个属性
+        //-通过调用actionContext的getApplication()对象获取存放application的Map对象
+        Map&lt;String, Object> applicationMap = actionContext.getApplication();
+        //-设置属性
+        applicationMap.put("applicationKey", "applicationValue");
+        //-获取属性
+        Object date = applicationMap.get("date");
+        System.out.println("application date is " + date);
+        //2. session
+        Map&lt;String, Object> sessionMap = actionContext.getSession();
+        sessionMap.put("sessionKey", "sessionValue");
+        //可以将获取到的Map对象强转为SessionMap,调用SessionMap的invalidate()方法实现session的销毁
+        if (sessionMap instanceof SessionMap) {
+            SessionMap sMap = (SessionMap) sessionMap;
+            sMap.invalidate();
+        }
+        //3. request, 需要手工调用get()方法，传入request字符串来获取
+        Map&lt;String, Object> requestMap = (Map&lt;String, Object>) actionContext.get("request");
+        requestMap.put("requestKey", "requestValue");
+        //4. 获取请求参数对应的Map,并获取指定的参数值
+        //-键：请求参数的名字, 值：请求参数的字符串数组
+        //-parameters这个Map只能读不能写，但写了不会报错
+        Map&lt;String, Object> parameterMap = actionContext.getParameters();
+        System.out.println("name is " + ((String []) parameterMap.get("name"))[0]);
+        return "success";
+    }
+}
+&lt;!--struts.xml-->
+&lt;action name="TestActionContext"
+    class="org.yang.demo.action.TestActionContextAction">
+    &lt;result>/test-actionContext.jsp&lt;/result>
+&lt;/action></pre>
+                        </li>
+                        <li>实现XxxAware接口获取域对象的Map完成读取操作
+                            <pre>
+public class TestAwareAction implements ApplicationAware, SessionAware, RequestAware, ParameterAware {
+    private Map&lt;String, Object> application;
+    private Map&lt;String, Object> session;
+    private Map&lt;String, Object> request;
+    private Map&lt;String, String[]> parameter;
+    public String execute() {
+        //1. 向application加入属性
+        application.put("applicationKey2", "applicationValue2");
+        //2. 从application中读取属性
+        System.out.println(application.get("date"));
+        return "success";
+    }
+    @Override
+    public void setApplication(Map&lt;String, Object> application) {
+        this.application = application;
+    }
+    @Override
+    public void setRequest(Map&lt;String, Object> request) {
+        this.request = request;
+    }
+    @Override
+    public void setSession(Map&lt;String, Object> session) {
+        this.session = session;
+    }
+    @Override
+    public void setParameters(Map&lt;String, String[]> parameter) {
+        this.parameter = parameter;
+    }
+}</pre>
+                        </li>
+                        <li>通过ServletActionContext获得原生Servlet方法
+                            <ul>
+                                <li>获取HttpServletRequest : ServletActionContext.getRequest();</li>
+                                <li>获取HttpSession : ServletActionContext.getRequest().getSession();</li>
+                                <li>获取ServletContext : ServletActionContext.getServletContext();</li>
+                                <li>e.g.
+                                    <pre>
+public class TestServletActionContextAction {
+    public String execute() {
+        HttpServletRequest request = ServletActionContext.getRequest();
+        HttpSession session = request.getSession();
+        ServletContext servletContext = ServletActionContext.getServletContext();
+        System.out.println("execute ...");
+        return "success";
+    }
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>通过实现ServletXxxAware接口获得原生Servlet方法
+                            <ul>
+                                <li>ServletRequestAware : 注入HttpServletRequest对象</li>
+                                <li>ServletContextAware : 注入HttpServletContext对象</li>
+                                <li>ServletResponseAware : 注入HttpServletResponse对象</li>
+                                <li>e.g.
+                                    <pre>
+public class TestServletAwareAction implements ServletRequestAware, ServletContextAware, ServletResponseAware {
+    private ServletContext servletContext;
+    private ServletRequest request;
+    private ServletResponse response;
+    public String execute() {
+        System.out.println("execute ...");
+        return "success";
+    }
+    @Override
+    public void setServletRequest(HttpServletRequest request) {
+        this.request = request;
+    }
+    @Override
+    public void setServletResponse(HttpServletResponse response) {
+        this.response = response;
+    }
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3>3. 配置</h3>
+                    <ol>
+                        <li>Struts2常量配置
+                            <ul>
+                                <li>Struts2应用的一些常量配置在org.apache.struts2包下的default.properties</li>
+                                <li>struts.action.extension定义了当前可以接受的请求扩展名</li>
+                                <li>在struts.xml中以常量配置的方式修改default.properties中配置的常量</li>
+                                <li>修改请求的扩展名:
+                                    <br><code>&lt;constant name="struts.action.extension" value="action,do,">&lt;/constant></code>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>ActionSupport
+                            <ul>
+                                <li>ActionSupport是默认的Action类
+                                    <br>若某个action节点没有配置class属性，则ActionSupport即为待执行的Action类，execute方法为默认执行的方法
+                                </li>
+                                <li>public class ActionSupport implements Action, Validateable, ValidationAware, TextProvider, LocaleProvider {…}</li>
+                                <li>在手工完成字段验证，显示错误信息，国际化等情况下，推荐继承ActionSupport，否则需要手动实现一系列接口</li>
+                            </ul>
+                        </li>
+                        <li>result
+                            <ul>
+                                <li>result是action节点的子节点</li>
+                                <li>result代表action方法执行后可能去的目的地</li>
+                                <li>一个action节点可以配置多个result子节点</li>
+                                <li>result的name属性值对应action方法可能存在的返回值</li>
+                                <li>result的type属性表示结果的相应类型
+                                    <ul>
+                                        <li>在struts-default包result-types结点的name属性中定义</li>
+                                        <li>常用的类型
+                                            <ul>
+                                                <li>dispatcher(default) : 转发</li>
+                                                <li>redirect：重定向</li>
+                                                <li>redirectAction：重定向到Action
+                                                    <img src="photo/struts/struts2.png" class="am-img-responsive">
+                                                </li>
+                                                <li>chain：转发到Action
+                                                    <img src="photo/struts/struts3.png" class="am-img-responsive">
+                                                    不可以通过dispatcher方式实现chain功能！
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>通配符映射
+                            <ul>
+                                <li>一个web应用可能存在大量的action声明，利用通配符映射机制可以将彼此相似的映射关系简化为一个映射关系</li>
+                                <li>通配符映射规则
+                                    <ul>
+                                        <li>若好到多个匹配，则优选没有统配符的映射</li>
+                                        <li>若指定动作不存在，Struts将会尝试将这个URI与任何一个包含着通配符*的动作名进行匹配</li>
+                                        <li>将通配符匹配到URI字符串的字串可以用{1}{2}来引用，{1}匹配第一个字串，{2}匹配第二个字串</li>
+                                        <li>{0}匹配整个URI</li>
+                                        <li>若Struts找到带有通配符的匹配不止一个，将按照先后顺序进行匹配</li>
+                                        <li>*可以匹配零个或多个字符，但不包含/字符，如果想把/字符包括在内，需要使用**，如果需要对某个字符进行转义则使用\</li>
+                                    </ul>
+                                </li>
+                                <li>e.g.1
+                                    <pre>
+&lt;action name="*-add" class="org.yang.demo.Action" method="add">
+    &lt;result>/success.jsp&lt;/result>
+&lt;/action>
+//Book-add.action, User-add.action, -add.action, Author-add.action … 都可以调用上述控制器</pre>
+                                </li>
+                                <li>e.g.2
+                                    <pre>
+&lt;action name="*-add" class="org.yang.demo.{1}" method="add">
+    &lt;result>/{1}-success.jsp&lt;/result>
+&lt;/action></pre>
+                                </li>
+                                <li>e.g.3
+                                    <img src="photo/struts/struts4.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>动态方法调用
+                            <ul>
+                                <li>动态方法调用：通过url动态调用Action中的方法，不适用配置文件中配置的方法</li>
+                                <li>调用方法：将/struts-app/Product.action(默认调用execute方法)改写为/struts-app/Product!save.action(调用save方法)</li>
+                                <li>默认情况下，动态调用方法处在禁用状态
+                                    <br>开启方式:&lt;constant name="struts.enable.DynamicMethodInvocation" value="true">&lt;/constant>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>声明式异常处理
+                            <ul>
+                                <li>使用exception-mapping元素配置当前action的声明式异常处理
+                                    <ul>
+                                        <li>exception：指定需要捕获的异常类型</li>
+                                        <li>result：指定一个响应结果，该结果将在捕获到指定异常时被执行，既可以来自当前action声明，也可以来自global-results声明</li>
+                                        <li>e.g.
+                                            <pre>
+&lt;action name="product-save" class="org.yang.demo.Product" method="save">
+    &lt;exception-mapping result="error" exception="java.lang.Exception"/>
+    &lt;result name="details">/WEB-INF/pages/details.jsp&lt;/result>
+    &lt;result name="error">/WEB-INF/pages/error.jsp&lt;/result>
+&lt;/action></pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>通过global-exception-mappings元素可以为应用程序提供一个全局性捕获异常映射，但global-exception-mapping元素只能引用
+                                    global-result声明下的某个result元素
+                                    <pre>
+&lt;global-results>
+    &lt;result name="sqlException">/error.jsp&lt;/result>
+&lt;/global-results>
+&lt;global-exception-mappings>
+    &lt;exception-mapping result="sqlException" exception="java.sql.SQLExceptionption"/>
+&lt;/global-exception-mappings></pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3>4. 值栈</h3>
+                    <ol>
+                        <li>值栈
+                            <ul>
+                                <li>在jsp页面上使用{$productName}读取productName值，实际上该属性并不在request等域对象中，而是从值栈中获取</li>
+                                <li>值栈ValueStack
+                                    <ul>
+                                        <li>贯穿整个 Action 的生命周期(每个 Action 类的对象实例都拥有一个 ValueStack 对象). 相当于一个数据的中转站. 在其中保存当前 Action 对象和其他相关对象，可以从ActionContext中获取值栈对象</li>
+                                        <li>值栈分为两个逻辑部分
+                                            <ul>
+                                                <li>Map栈：实际上是一个OgnlContext类型，是一个Map，也是对ActionContext的一个引用，里边保存着各种Map:requestMap,sessionMap,applicationMap,parametersMap, attr …</li>
+                                                <li>对象栈：实际上是CompoundRoot类型，是一个使用ArrayList定义的栈，里边保存各种和当前Action实例相关的对象，是一个数据结构意义上的栈</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>OGNL
+                            <ul>
+                                <li>值栈中的属性值
+                                    <ul>
+                                        <li>对于对象栈：对象栈中某个对象的属性值</li>
+                                        <li>对于Map栈：读取request, session, application中的属性值或请求参数</li>
+                                    </ul>
+                                </li>
+                                <li>Struts2利用s:property标签和OGNL表达式来读取值栈中的属性值</li>
+                                <li>读取对象栈中的属性
+                                    <ul>
+                                        <li>若想要访问ObjectStack中某个对象的属性值，可以使用：
+                                            <br>object.propertyName or object['propertyName'] or object["property"]
+                                        </li>
+                                        <li>ObjectStack里的对象可以通过一个从0开始的下标来引用，以此类推;若希望得到站定对象的message的属性值，可以写为：
+                                            <br>[0].message or [0]['message'] or [0]["message"]  --->>>   栈顶元素可以省略下标</li>
+                                        <li>若在指定的对象里没有找到指定属性，则到指定对象的下一个对象继续搜索</li>
+                                        <li>默认情况下，Action对象会把Struts2自动放在值栈的栈顶</li>
+                                        <li>e.g.
+                                            <pre>
+//改写知识点4中Product类的save方法，向其中压入对象
+public String save() {
+    System.out.println("save : " + this);
+    //1. 获取值栈
+    ValueStack valueStack = ActionContext.getContext().getValueStack();
+    //2. 创建Test对象，并为其赋值
+    Test obj = new Test();
+    obj.setProductName("TestValueStack");
+    obj.setProductDesc("this is a test");
+    //3. 将Test对象压入栈顶
+    valueStack.push(obj);
+    return "details";
+}
+&lt;!-- 通过property标签输出值栈的属性值 -->
+ProductId : &lt;s:property value="[0].ProductId"/>
+ProductName : &lt;s:property value="[0].ProductName"/>
+ProductDesc : &lt;s:property value="[0].ProductDesc"/>
+ProductPrice : &lt;s:property value="[0].ProductPrice"/></pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>读取ContextMap中对象的值
+                                    <ul>
+                                        <li>若访问ContextMap里某个对象的值，可以使用
+                                            <br>#object.propertyName , #object['propertyName'] , #object["propertyName"]
+                                        </li>
+                                        <li>e.g. 使用property标签改写EL表达式
+                                            <pre>
+SessionProductName : ${sessionScope.product.productName }
+RequestProductName : ${requestScope.test.productName }
+改写为：
+SessionProductName2 : &lt;s:property value="#session.product.productName"/>
+RequestProductName2 : &lt;s:property value="#request.test.productName"/></pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>调用字段和方法
+                                    <ul>
+                                        <li>利用OGNL获取普通java类中公有的静态变量和方法
+                                            <ul>
+                                                <li>Struts默认不允许调用普通java类的公有的静态方法，需要打开对应权限
+                                                    <br>&lt;constant name="struts.ognl.allowStaticMethodAccess" value="true">&lt;/constant>
+                                                </li>
+                                                <li>调用普通java类中公有的静态变量
+                                                    <ul>
+                                                        <li>语法：@fullQualifiedClassName@fieldName</li>
+                                                        <li>e.g.  &lt;s:property value="@java.lang.Math@PI"/> </li>
+                                                    </ul>
+                                                </li>
+                                                <li>调用普通java类中公有的静态方法
+                                                    <ul>
+                                                        <li>语法：@fullyQualifiedClassName@methodName(argumentList)</li>
+                                                        <li>e.g. &lt;s:property value="@java.lang.Math@cos(0)"/></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>调用值栈中的属性和方法
+                                            <ul>
+                                                <li>e.g. &lt;s:property value="setProductName('test property')"/></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>访问数组类型的属性
+                                    <ul>
+                                        <li>可以像读取对象一样读取数组，下标用中括号表示</li>
+                                        <li>e.g.
+<%
+String [] names = new String[]{"a","b","c","d","e"};
+request.setAttribute("names", names);
+%>
+requestScope.names.length : &lt;s:property value="#request.names.length"/>
+requestScope.names.2 : &lt;s:property value="#request.names[1]"/></pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>访问List类型的属性
+                                    <ul>
+                                        <li>可以读取java.util.List类型的属性，可以通过下标访问List中的指定元素</li>
+                                        <li>通过调用其size方法或者专用关键字size查出给定的List长度：e.g. colors.size or colors.size()</li>
+                                        <li>通过使用isEmpty()方法或专用关键字isEmpty来得知给定的List是否为空：e.g. colors.isEmpty or colors.isEmpty()</li>
+                                        <li>使用ONGL表达式来创建List：和声明一个数组形式相同，e.g. {"red", "blue", "orange"}</li>
+                                    </ul>
+                                </li>
+                                <li>访问Map类型的属性
+                                    <ul>
+                                        <li>读取一个Map类型的属性将以{key-1=value-1, key-2=value-2, … key-n=value-n}的形式返回所有键值对</li>
+                                        <li>若希望检索某个Map的值，则需要按照map[key]的格式写出</li>
+                                        <li>可以使用size或size()得出某个给定Map是否为空</li>
+                                        <li>可以使用#{key-1:value-1, key-2:value-2, … key-n:value-n}的语法格式来创建Map</li>
+                                        <li>e.g.
+                                            <pre>
+<%
+    Map&lt;String, String> letters = new HashMap<>();
+    letters.put("AA", "aa");
+    letters.put("BB", "bb");
+    request.setAttribute("letters", letters);
+%>
+&lt;s:property value="#request.letters.size"/>
+&lt;s:property value="#request.letters" />
+&lt;s:property value="#request.letters['AA']"/></pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>使用EL访问值栈中对象的属性
+                                    <ul>
+                                        <li>&lt;s:property value="fieldName"> === ${fieldName}</li>
+                                        <li>原理：Struts2将包装HttpServletRequest对象后的org.apache.struts2.dispatcher.StrutsRequestWrapper对象传到页面上，这个类重写了getAttribute()方法</li>
+                                        <li>使用EL不可以获取值栈中属性的size, length等信息</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3>5. 标签</h3>
+                      <h4>- 5.1 通用标签</h4>
+                    <ol>
+                        <li>property
+                            <ul>
+                                <li>作用:用来输出值栈中的属性值</li>
+                                <li>属性:<img src="photo/struts/struts5.png" class="am-img-responsive"></li>
+                                <li>Struts2自动将Action对象放入值栈中
+                                    <br>放入的时间点：Struts2终将调用Action类的Action方法，在调取该方法之前
+                                    <ul>
+                                        <li>创建StrutsActionProxy对象</li>
+                                        <li>在创建StrutsActionProxy之后，对其进行初始化时，将Action对象放入值栈中</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>url
+                            <ul>
+                                <li>作用：用来动态创建一个URL</li>
+                                <li>属性:<img src="photo/struts/struts6.png" class="am-img-responsive"></li>
+                                <li>e.g.
+                                    <img src="photo/struts/struts20.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>param
+                            <ul>
+                                <li>作用：用来将一个参数传递给包含着它的那个标签</li>
+                                <li>属性:
+                                    <img src="photo/struts/struts7.png" class="am-img-responsive">
+                                </li>
+                                <li>默认会使用OGNL进行求值</li>
+                                <li>如果想传递字符串作为参数值，必须使用单引号括起来</li>
+                                <li>可以将value的属性值写在开始标签和结束标签之间，通过EL表达式来传递参数</li>
+                            </ul>
+                        </li>
+                        <li>set
+                            <ul>
+                                <li>作用：set 标签用来在以下 Map 对象里创建一个键值对
+                                    <ul>
+                                        <li>ValueStack类型的ContextMap对象</li>
+                                        <li>Map类型的session对象</li>
+                                        <li>Map类型的application对象</li>
+                                        <li>Map类型的request对象</li>
+                                        <li>Map类型的page对象</li>
+                                    </ul>
+                                </li>
+                                <li>属性
+                                    <img src="photo/struts/struts8.png" class="am-img-responsive">
+                                </li>
+                                <li>e.g.
+                                    <pre>
+&lt;s:set name="productName" value="productName" scope="request">&lt;/s:set>
+productName : ${requestScope.productName }</pre>
+                                </li>
+                                <li>同样对value的值进行OGNL解析</li>
+                            </ul>
+                        </li>
+                        <li>push
+                            <ul>
+                                <li>作用：在标签起始将对象压入ValueStack中的对象栈，在标签结束时将对象弹出栈</li>
+                                <li>属性
+                                    <img src="photo/struts/struts9.png" class="am-img-responsive">
+                                </li>
+                                <li>e.g.
+                                    <pre>
+<%
+    Person person = new Person();
+    person.setName("yang");
+    person.setAge(20);
+    request.setAttribute("person", person);
+%>
+&lt;s:push value="#request.person">
+    ${name }
+    &lt;s:property value="[0].age"/>
+&lt;/s:push>
+${name } &lt;!-- 获取不到 -->
+&lt;s:property value="[0].age"/> &lt;!-- 获取不到 --></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>if,else,elseif
+                            <ul>
+                                <li>作用：进行条件测试</li>
+                                <li>属性
+                                    <img src="photo/struts/struts10.png" class="am-img-responsive">
+                                </li>
+                                <li>e.g.
+                                    <pre>
+&lt;s:if test="productId < 1000">
+    Product Id 小于 1000
+&lt;/s:if>
+&lt;s:elseif test="productId > 1000 && productId < 5000">
+    Product Id 大于1000小于5000
+&lt;/s:elseif>
+&lt;s:else>
+    Product Id 大于5000
+&lt;/s:else></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>iterator
+                            <ul>
+                                <li>作用：遍历数组，Collection或者Map，并将这个可遍历对象中的每一个元素依次压入和弹出ValueStack</li>
+                                <li>属性
+                                    <img src="photo/struts/struts11.png" class="am-img-responsive">
+                                </li>
+                                <li>在开始执行时，iterator标签会把IteratorStatus类的一个实例压入ContextMap，并在每一次遍历循环时更新它；可以将一个指向IteratorStatus对象的变量赋给status属性</li>
+                                <li>iterator标签的status属性的属性值
+                                    <img src="photo/struts/struts12.png" class="am-img-responsive">
+                                </li>
+                                <li>e.g.
+                                    <pre>
+<%
+List&lt;Person> persons = new ArrayList<>();
+    persons.add(new Person("AA", 1));
+    persons.add(new Person("BB", 2));
+    persons.add(new Person("CC", 3));
+    persons.add(new Person("DD", 4));
+    persons.add(new Person("EE", 5));
+    request.setAttribute("persons", persons);
+%>
+    &lt;s:iterator value="#request.persons" status="status">
+        index : ${status.index } - ${name } - ${age }
+    &lt;/s:iterator></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>sort
+                            <ul>
+                                <li>作用：用来对一个可遍历对象里的元素进行排序</li>
+                                <li>属性
+                                    <img src="photo/struts/struts13.png" class="am-img-responsive">
+                                </li>
+                                <li>e.g.
+                                    <img src="photo/struts/struts21.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>date
+                            <ul>
+                                <li>作用：用来对Date对象进行排版</li>
+                                <li>属性
+                                    <img src="photo/struts/struts14.png" class="am-img-responsive">
+                                </li>
+                                <li>format属性的值必须是java.text.SimpleDateFormat类定义的日期/时间格式之一 </li>
+                                <li>e.g.
+                                    <pre>
+&lt;s:date name="#session.date" format="yyyy-MM-dd hh:mm:ss" var="date2"/>
+${date2 }
+                                    </pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>a
+                            <ul>
+                                <li>作用：a标签将呈现为一个HTML连接，这个标签可以接受HTML语言中a元素的所有属性</li>
+                                <li>使用%{}可以进行强制OGNL解析</li>
+                                <li>e.g.
+                                    <pre>
+&lt;s:iterator value="#request.persons">
+    &lt;s:a href="getPerson.action?name=%{name}"> ${name } &lt;/s:a>
+&lt;/s:iterator></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>action
+                            <ul>
+                                <li>作用：action 标签用在页面上来执行一个 action</li>
+                                <li>action 标签还会把当前 Action 对象压入 ValueStack 值栈的 ContextMap 子栈</li>
+                                <li>属性
+                                    <img src="photo/struts/struts15.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>bean
+                            <ul>
+                                <li>作用：bean标签将创建一个javaBean，并将其压入ValueStack值栈的ContextMap中，功能类似jsp中的useBean</li>
+                                <li>属性
+                                    <img src="photo/struts/struts16.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>include
+                            <ul>
+                                <li>作用：include 标签用来把一个 Servlet 或 JSP 页面的输出包含到当前页面里来</li>
+                                <li>属性
+                                    <img src="photo/struts/struts17.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>append, merge
+                            <ul>
+                                <li>append作用：用于合并两个可遍历的对象</li>
+                                <li>merge作用：用户交替合并两个可遍历的对象</li>
+                                <li>e.g.
+                                    <pre>
+&lt;s:append id="allStudentList">
+    &lt;s:param value="%{studentList1}">&lt;/s:param>
+    &lt;s:param value="%{studentList2}">&lt;/s:param>
+&lt;/s:append></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>generator
+                            <ul>
+                                <li>作用：用来生成一个可遍历对象并将其压入ValueStack</li>
+                                <li>属性
+                                    <img src="photo/struts/struts18.png" class="am-img-responsive">
+                                </li>
+                                <li>如果在一个generator标签中给出converter属性，新生成的可遍历对象中的每一个元素都会传递到该属性所指向的方法进行必要的转换</li>
+                                <li>e.g.
+                                    <pre>
+&lt;s:generator var="'aaa,bbb,ccc'" separator=",">
+    &lt;s:iterator>
+        &lt;s:property />
+        &lt;/siterator>
+&lt;/s:generator></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>subset
+                            <ul>
+                                <li>作用：用来创建一个可遍历集合的子集，通过decider属性来创建一个可遍历的子集</li>
+                                <li>属性
+                                    <img src="photo/struts/struts19.png" class="am-img-responsive">
+                                </li>
+                                <li>e.g.
+                                    <pre>
+&lt;s:generator id="computers" val="%{'aaa,bbb,ccc,ddd'}" separator=",">
+    &lt;/s:generator>
+&lt;s:subset source="#attr.computers" decider="myDecider"/></pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                      <h4>- 5.2 表单标签</h4>
+                    <ol>
+                        <li>概述
+                            <ul>
+                                <li>表单标签将在HTML文档被呈现为表单元素</li>
+                                <li>使用表单元素的优点：表单回显，对页面进行布局和排版等</li>
+                                <li>标签的属性可以被赋值为一个静态值或一个OGNL表达式，如果在赋值中使用OGNL表达式并把它用%{}括起来，则这个表达式会求值</li>
+                                <li>对表单提交的值进行回显 : 从栈顶对象开始匹配属性，并将匹配的属性赋值给对应的属性，如果没有找到属性，则依次向下寻找</li>
+                                <li>e.g.
+                                    <pre>
+&lt;s:form action="save">
+    &lt;s:hidden name="userId"><&lt;/s:hidden>
+    &lt;s:textfield name="userName" label="userName">&lt;/s:textfield>
+    &lt;s:password name="password" label="password">&lt;/s:password>
+    &lt;s:textarea name="desc" label="desc">&lt;/s:textarea>
+    &lt;s:checkbox name="married" label="Married">&lt;/s:checkbox>
+    &lt;s:submit><&lt;/s:submit>
+&lt;/s:form></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>表单共有属性
+                            <img src="photo/struts/struts22.emf" class="am-img-responsive">
+                        </li>
+                        <li>form
+                            <ul>
+                                <li>作用：呈现HTML语言中的表单元素</li>
+                                <li>默认状态下，form标签将被呈现为一个表格形式的HTML表单，嵌套在form标签里的输入字段被呈现为一个表格行，每隔表格行由两个字段组成，对应行标和输入元素，提交按钮将被呈现为一个横跨两列的单元格的行</li>
+                                <li>属性
+                                    <img src="photo/struts/struts23.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>textfield, password, hidden
+                            <ul>
+                                <li>作用：将被呈现为一个输入文本字段, password 标签将被呈现为一个口令字段, hidden 标签将被呈现为一个不可见字段</li>
+                                <li>属性
+                                    <img src="photo/struts/struts24.png" class="am-img-responsive">
+                                </li>
+                                <li>password 标签扩展自 textfield 标签, 多了一个 showPassword 属性. 该属性时布尔型. 默认值为 false, 它决定着在表单回显时是否显示输入的密码</li>
+                            </ul>
+                        </li>
+                        <li>submit
+                            <ul>
+                                <li>作用：呈现一个提交按钮，根据type值呈现 submit / button / image</li>
+                                <li>属性
+                                    <img src="photo/struts/struts25.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>textarea
+                            <ul>
+                                <li>作用：呈现一个HTML文本域元素</li>
+                                <li>属性
+                                    <img src="photo/struts/struts26.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>checkbox
+                            <ul>
+                                <li>作用：checkbox 标签将呈现为一个 HTML 复选框元素. 该复选框元素通常用于提交一个布尔值</li>
+                                <li>当包含着一个复选框的表单被提交时, 如果某个复选框被选中了, 它的值将为 true, 这个复选框在 HTTP 请求里增加一个请求参数.但如果该复选框未被选中, 在请求中就不会增加一个请求参数. </li>
+                                <li>fieldValue属性：该属性指定的值将在用户提交表单时作为被选中的单选框的实际值发送到服务器. 如果没有使用 fieldValue 属性, 单选框的值将为 true 或 false.</li>
+                            </ul>
+                        </li>
+                        <li>list, listKey, listValue
+                            <img src="photo/struts/struts27.emf" class="am-img-responsive">
+                            e.g.
+                            <pre>
+&lt;s:radio list="#{'1':'Male', '0':'Female' }" label="Gendre" name="gender">&lt;/s:radio>
+&lt;s:checkboxlist list="#request.cities"
+listKey="cityId" listValue="cityName" label="city:" name="">&lt;/s:checkboxlist></pre>
+                        </li>
+                        <li>radio
+                            <ul>
+                                <li>作用：radio 标签将呈现为一组单选按钮, 单选按钮的个数与程序员通过该标签的 list 属性提供的选项的个数相同.</li>
+                                <li>属性
+                                    <img src="photo/struts/struts28.png" class="am-img-responsive">
+                                </li>
+                                <li>e.g.
+                                    &lt;s:radio list="#{'1':'Male', '0':'Female' }" label="Gendre" name="gender">&lt;/s:radio>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>select
+                            <ul>
+                                <li>作用：呈现HTML语言的select元素</li>
+                                <li>属性
+                                    <img src="photo/struts/struts29.png" class="am-img-responsive">
+                                </li>
+                                <li>e.g.
+                                    <pre>
+&lt;s:select list="{11,12,13,14,15,16,17,18,19,20}" headerKey="" headerValue="请选择" name="age">
+    &lt;!-- s:outgroup可以用作s:select子标签，用于显示更多的下拉框，
+     必须有键值对，而不能是一个集合，让其值既做键又做值 -->
+    &lt;s:optgroup label="21-30" list="#{21:21, 222:333 }">&lt;/s:optgroup>
+&lt;/s:select></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>checkboxlist
+                            <ul>
+                                <li>作用：呈现一组多选框</li>
+                                <li>属性
+                                    <img src="photo/struts/struts30.png" class="am-img-responsive">
+                                </li>
+                                <li>checkbox 标签被映射到一个字符串数组或是一个基本类型的数组. 若它提供的多选框一个也没有被选中, 相应的属性将被赋值为一个空数组而不是空值. </li>
+                                <li>在对应javaBean中声明List&lt;String>类型变量承载多选框值</li>
+                                <li>e.g.
+                                    <pre>
+&lt;s:form action="save">
+    &lt;s:checkboxlist list="#request.cities" listKey="cityId" listValue="cityName" name="cities" label="city"></s:checkboxlist>
+    &lt;s:submit value="提交">&lt;/s:submit>
+&lt;/s:form></pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>主题
+                            <ul>
+                                <li>默认情况下，form标签将呈现为一个HTML语言form元素和table元素，每种输入标签都将呈现为带标号的输入元素，这个输入元素被包含在tr和td元素内部</li>
+                                <li>主题：为了让UI标签能够产生同样的视觉效果而归集到一起的一组模板，即风格相近的模板被打包成一个主题
+                                    <ul>
+                                        <li>simple：把UI标签翻译成最简单的 HTML 对应元素, 而且会忽视行标属性</li>
+                                        <li>xhtml：xhtml 是默认的主题. 这个主题的模板通过使用一个布局表格提供了一种自动化的排版机制. </li>
+                                        <li>css_xhtml: 这个主题里的模板与 xhtml 主题里的模板很相似, 但它们将使用 css 来进行布局和排版</li>
+                                        <li>ajax：这个主题里的模板以 xhtml 主题里德模板为基础, 但增加了一些 Ajax 功能. </li>
+                                    </ul>
+                                </li>
+                                <li>修改主题的方法
+                                    <ul>
+                                        <li>通过UI标签的theme属性</li>
+                                        <li>在一个表单里，如果没有给出某个UI的theme属性，则将使用这个表单的主题</li>
+                                        <li>在page, request, session, application中添加theme属性</li>
+                                        <li>修改struts.properties文件中的struts.ui.theme属性</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3>6. 常用拦截器与拦截器栈</h3>
+                    <ol>
+                        <li>ModelDriven,Preparable拦截器
+                            <ul>
+                                <li>Struts从浏览器到控制器阶段的时序图
+                                    <img src="photo/struts/struts31.png" class="am-img-responsive">
+                                </li>
+                                <li>Params拦截器：Parameters拦截器将表单字段映射到ValueStack的栈顶对象的各个属性之中</li>
+                                <li>ModelDriven拦截器：当用户出发请求时，ModelDriven拦截器将调用控制器中的getModel()方法，并将返回的模型压入值栈当中</li>
+                                <li>Action实现ModelDriven接口的运行流程
+                                    <ul>
+                                        <li>执行ModelDrivenInterceptor的intercept方法
+                                            <ul>
+                                                <li>获取Action对象(此时的Action对象已经实现了ModelDriven接口)</li>
+                                                <li>判断action是否是ModelDriven的实例</li>
+                                                <li>将getModel()方法的返回值压入到值栈的栈顶，实际上压入的是对象的成员变量</li>
+                                            </ul>
+                                        </li>
+                                        <li>执行ParametersInterceptor的intercept方法：将请求参数赋值给值栈对象对应的属性，若栈顶对象没有对应的属性，则查询值栈中的下一个对象的对象属性</li>
+                                    </ul>
+                                </li>
+                                <li>模型与控制器分离
+                                    <ul>
+                                        <li>在使用Struts作为前端的企业级应用程序时把Action和Model清晰地隔离开是有必要的:
+                                            有些Action类不代表任何Model对象,它们的功能仅限于提供显示服务
+                                        </li>
+                                        <li>分离方法：实现ModelDriven
+                                            &lt;T>接口，重写getModel()方法
+                                        </li>
+                                        <li>e.g.
+                                            <pre>
+public class StudentAction implements RequestAware, ModelDriven&lt;Student> {
+    private Map&lt;String, Object> request;
+    private Dao dao = new Dao();
+    private Student student;
+    public String list() {
+        request.put("students", dao.getAllStudents());
+        return "list";
+    }
+    public String delete() {
+        dao.delete(student.getId());
+        return "delete";
+    }
+    public String save() {
+        dao.save(student);
+        return "save";
+    }
+    @Override
+    public void setRequest(Map&lt;String, Object> arg0) {
+        this.request = arg0;
+    }
+    @Override
+    public Student getModel() {
+        student = new Student();
+        return student;
+    }
+}</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>paramsPrepareParamsStack拦截器栈
+                            <ul>
+                                <li>使用该拦截器需要在strtus.xml中声明包对应的默认拦截器为paramsPrepareParamsStack
+                                    <br>&lt;default-interceptor-ref name="paramsPrepareParamsStack">&lt;/default-interceptor-ref>
+                                </li>
+                                <li>该拦截器栈的调用顺序是：params -> prepare -> modelDriven -> params</li>
+                                <li>使用paramsPrepareParamsStack的目的在于Struts2设计要求modelDriven在params之前调用，但业务中prepare要负责准备model,准备model又需要用到参数，就需要在prepare运行之前运行params设置相关参数</li>
+                                <li>业务流程
+                                    <ul>
+                                        <li>params拦截器首先给action中的相关参数赋值，如id</li>
+                                        <li>prepare拦截器执行prepare方法，prepare方法会根据参数去调用业务逻辑，设置model对象</li>
+                                        <li>modelDriven拦截器将model对象压入valueStack</li>
+                                        <li>params拦截器将参数复制给model对象</li>
+                                        <li>action的业务逻辑执行</li>
+                                    </ul>
+                                </li>
+                                <li>e.g.
+                                    <pre>
+public String edit() {
+/*        不使用paramsPrepareParamsStack
+      Student stu = dao.get(student.getId());
+    student.setName(stu.getName());
+    student.setHeight(stu.getHeight());
+    student.setAge(stu.getAge());*/
+    return "edit";
+}
+@Override
+public Student getModel() {
+    //使用paramsPrepareParamsStack
+    /*
+     * 判断是Create还是Edit方法
+     * 若为Create，则Student = new Student()
+     * 若为Edit，则Student = dao.get(id)
+     * 判断的标准为是否有请求参数id，通过id来判断必须在modelDriven拦截器执行前执行params拦截器
+     * */
+    if (id == null)
+        student = new Student();
+    else
+        student = dao.get(id);
+    return student;
+}</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>prepareInterceptor拦截器
+                            <ul>
+                                <li>使用方法：Action实现Preparable接口，实现prepare()方法</li>
+                                <li>prepareInterceptor执行过程</li>
+                                <li>功能：可以为每一个ActionMethod方法准备prepare[ActionMethodName]方法，而抛弃掉原来的prepare()方法</li>
+                                <li>e.g.
+                                    <pre>
+public class StudentAction implements RequestAware, ModelDrivenStudent>, Preparable {
+    private MapString, Object> request;
+    private Dao dao = new Dao();
+    private Student student;
+    public String list() {
+        request.put("students", dao.getAllStudents());
+        return "list";
+    }
+    public String delete() {
+        dao.delete(id);
+        return "delete";
+    }
+    public String save() {
+        dao.save(student);
+        return "save";
+    }
+    public void prepareSave() {
+        student = new Student();
+    }
+    public String edit() {
+        return "edit";
+    }
+    public void prepareEdit() {
+        student = dao.get(id);
+    }
+    public String update() {
+        dao.update(student);
+        return "update";
+    }
+    public void prepareUpdate() {
+        student = new Student();
+    }
+    @Override
+    public void setRequest(MapString, Object> arg0) {
+        this.request = arg0;
+    }
+    private Integer id;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    public Integer getId() {
+        return id;
+    }
+    @Override
+    public Student getModel() {
+        return student;
+    }
+    @Override
+    public void prepare() throws Exception {}
+}
+&lt;!-- 配置使用 paramsPrepareParamsStack 作为默认的拦截器栈 -->
+&lt;!-- 修改 PrepareInterceptor 拦截器的 alwaysInvokePrepare 属性值为 false -->
+&lt;interceptors>
+    &lt;interceptor-stack name="atguigustack">
+        &lt;interceptor-ref name="paramsPrepareParamsStack">
+        &lt;param name="prepare.alwaysInvokePrepare">false&lt;/param>
+        &lt;/interceptor-ref>
+    &lt;/interceptor-stack>
+&lt;/interceptors>
+&lt;!-- 使用新的拦截器栈 -->
+&lt;default-interceptor-ref name="myStack">&lt;/default-interceptor-ref></pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <h3>7. 数据类型转换与国际化</h3>
+                    <ol>
+                        <li>数据类型转换
+                            <ul>
+                                <li>概述
+                                    <ul>
+                                        <li>从一个HTML表单到一个Action对象，类型转换时从字符串到非字符串的过程</li>
+                                        <li>HTTP没有类型的概念，每一项表单输入只可能是一个字符串或一个字符串数组，在服务端需要将String转换为特定的数据类型</li>
+                                        <li>在Struts2中，把请求参数映射到Action属性的工作由Parameters拦截器负责，它是默认的defaultStack中的一员，Parameters拦截器可以自动完成字符串和基本数据类型的转换</li>
+                                    </ul>
+                                </li>
+                                <li>类型转换错误
+                                    <ul>
+                                        <li>ConversionError拦截器负责添加与类型转换有关的错误信息和保存各请求参数值
+                                            <br>(前提：Action类实现ValidationAware接口,ActionSupport已实现该接口)
+                                        </li>
+                                        <li>在strtus.xml中配置name属性为input的result元素值指定验证类型转换错误后通往的路径</li>
+                                        <li>若字段标签使用的不是simple主题且错误页面指向自身，则类型转化错误后页面上会呈现出非法字段出错提示信息</li>
+                                        <li>覆盖默认出错信息
+                                            <ul>
+                                                <li>对应的Action类所在包中新建ActionClassName.properties文件</li>
+                                                <li>在该属性文件中添加对应键值对：invalid.fieldvalue.fieldName = (Custom error message)</li>
+                                            </ul>
+                                        </li>
+                                        <li>如果是simple主题，不会自动显示错误信息，手动显示错误信息的方法
+                                            <ul>
+                                                <li>错误信息会自动放在值栈当中，通过EL/OGNL可以获取到对应的错误信息
+                                                    <br><code>&lt;s:property value="fieldErrors.age[0]"/></code>
+                                                </li>
+                                                <li>通过s:fielderror标签来显示，通过fieldName属性来指定字段错误
+                                                    <br><code>&lt;s:fielderror fieldName="age">&lt;/s:fielderror></code>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>若是simple主题，且使用&lt;s:fielderror fieldName="age"/>来显示错误信息，则消息在一个ul,li,span中，去除的方法 :
+                                            在template.simple下边的fielderror.ftl定义了simple主题，s:fielderror标签显示错误消息的样式修改该配置文件即可，
+                                            在src下新建template.simple包，新建fielderror.ftl文件，把原生内容复制到文件中，然后去除ul,li,span
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>定制类型转换器
+                                    <ul>
+                                        <li>定制类型转换器的目的：因为Struts不能自动完成从字符串到引用类型的转换</li>
+                                        <li>定义类型转换器的方法
+                                            <ul>
+                                                <li>开发类型转换器的类：扩展StrutsTypeConverter类</li>
+                                                <li>配置类型转换器
+                                                    <ul>
+                                                        <li>基于字段的配置
+                                                            <ul>
+                                                                <li>在字段所在Model(Action,
+                                                                    JavaBean)的包下，新建ModelClassName-conversion.properties
+                                                                </li>
+                                                                <li>在该文件中输入键值对：fieldName = (类型转换器的全类名)</li>
+                                                                <li>在第一次使用该转换器时创建实例</li>
+                                                            </ul>
+                                                        </li>
+                                                        <li>基于类型的配置
+                                                            <ul>
+                                                                <li>在src下新建xwork-conversion.properties</li>
+                                                                <li>键入：待转换类型 = 类型转换器全类名键入：待转换类型 = 类型转换器全类名</li>
+                                                                <li>在当前Struts2应用被加载时创建实例</li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>e.g. 创建日期类型转换器
+                                            <pre>
+public class DateConverter extends StrutsTypeConverter {
+    private DateFormat dateformat;
+    public DateConverter() {
+        //dateformat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        System.out.println("DateConverter execute ...");
+    }
+    //必须在使用类型转换器时在获取初始化参数，否则在使用基于类型配置时会无法获取参数，因此不能在构造器中获取初始化参数
+    public DateFormat getDateFormat() {
+        ServletContext servletContext = ServletActionContext.getServletContext();
+        //(web.xml)pattern -> yyyy-MM-dd hh:mm:ss
+        String pattern = servletContext.getInitParameter("pattern");
+        dateformat = new SimpleDateFormat(pattern);
+        return dateformat;
+    }
+    @Override
+    public Object convertFromString(Map context, String[] values, Class toClass) {
+        System.out.println(" to date ...");
+        if (toClass == Date.class) {
+            if (values != null && values.length > 0) {
+                String value = values[0];
+                try {
+                    return getDateFormat().parseObject(value);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        //若没有转换成功则返回values
+        return values;
+    }
+    @Override
+    public String convertToString(Map context, Object o) {
+        System.out.println("to string");
+        if (o instanceof Date) {
+            Date date = (Date) o;
+            return getDateFormat().format(date);
+        }
+        //若转换失败返回null
+        return null;
+    }
+}
+# (org.yang.demo) ConversionAction-conversion.properties
+birth = org.yang.demo.converters.DateConverter
+# (src/) xwork-conversion.properties
+java.util.Date = org.yang.demo.converters.DateConverter</pre>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>类型转换与复杂属性配合使用
+                                    <ul>
+                                        <li>表单标签的name属性可以被映射为一个属性的属性
+                                            <pre>
+Student -> private int id; private String name;
+UserAction -> private Student stu;
+form.jsp -> &lt;s:textfield name="stu.id" label="StudentId">&lt;s:textfield name="stu.name" label="StudentName">
+                                            </pre>
+                                        </li>
+                                        <li>表单标签可以与Collection配合使用：常用与需要快速录入批量数据
+                                            <pre>
+Student -> private int id; private String name;
+UserAction -> private Collection&lt;Student> stu;
+form.jsp -> &lt;s:textfield name="stu[0].id"> &lt;s:textfield name="stu[0].name"> &lt;s:textfield name="stu[1].id"> …</pre>
+                                        </li>
+                                        <li>复杂类型的成员变量依然可以被类型转换器识别转换</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>资源国际化</li>
+                    </ol>
+                    <h3>8. 数据验证</h3>
+                    <h3>9. 文件上传与下载</h3>
+                    <h3>10. 拦截器总结与自定义拦截器</h3>
+                    <h3>11. Struts2对Ajax的支持</h3>
+                    <!--文章]]-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+        <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+            <div class="am-offcanvas-bar">
+
+                <ul class="am-nav">
+                    <h1>Struts2</h1>
+                    <!--导航[[-->
+                    <li><a href="#!" id="btn1">Struts基础</a></li>
+                    <li><a href="#!" id="btn2">访问web资源</a></li>
+                    <li><a href="#!" id="btn3">配置</a></li>
+                    <li><a href="#!" id="btn4">值栈</a></li>
+                    <li><a href="#!" id="btn5">标签</a></li>
+                    <li><a href="#!" id="btn6">常用拦截器与拦截器栈</a></li>
+                    <li><a href="#!" id="btn7">数据类型转换与国际化</a></li>
+                    <li><a href="#!" id="btn8">数据验证</a></li>
+                    <li><a href="#!" id="btn9">文件上传与下载</a></li>
+                    <li><a href="#!" id="btn10">拦截器总结与自定义拦截器</a></li>
+                    <li><a href="#!" id="btn11">Struts2对Ajax的支持</a></li>
+
+
+                </ul>
+                <!--导航]]-->
+            </div>
+        </div>
+    </div>
+    <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+        data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+<!--页脚[[-->
+<br><br><br>
+<div class="am-g">
+    <div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+        <br>
+        <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+        <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+    </div>
+</div>
+<br><br><br>
+<!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+    //加载进度条
+    var progress = $.AMUI.progress;
+    $(window).load(function() {
+        progress.done();
+    })
+    $(document).ready(function() {
+        progress.start();
+    })
+    //侧边栏平滑滚动
+    $(window).smoothScroll();
+    function navClick($btnObj, $pageObj) {
+        $btnObj.on("click", function() {
+            var $w = $(window);
+            $w.smoothScroll({position: $pageObj.offset().top});
+        })
+    }
+    navClick($("#btn1"), $("#page1"));
+    navClick($("#btn2"), $("#page2"));
+    navClick($("#btn3"), $("#page3"));
+    navClick($("#btn4"), $("#page4"));
+    navClick($("#btn5"), $("#page5"));
+    navClick($("#btn6"), $("#page6"));
+    navClick($("#btn7"), $("#page7"));
+    navClick($("#btn8"), $("#page8"));
+
+</script>
+</body>
+</html>
