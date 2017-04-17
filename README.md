@@ -34,7 +34,7 @@ JavaWeb部分
 JavaEE框架与组件
 --------------------
 
-+ [Strtus2](#)
++ [Strtus2](http://yangyuhao.org/struts)
 
 + [Hibernate](http://yangyuhao.org/hibernate)
 
