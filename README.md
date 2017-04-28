@@ -67,7 +67,7 @@ Javascript部分
 
 + [Express](http://yangyuhao.org/express)
 
-+ [React](#)
++ [React](http://yangyuhao.org/react)
 
 其他
 --------------------
@@ -76,4 +76,4 @@ Javascript部分
 
 + [Markdown](http://yangyuhao.org/markdown)
 
-+ [Maven](#)
++ [Maven](http://yangyuhao.org/maven)

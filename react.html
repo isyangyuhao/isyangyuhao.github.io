@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>杨宇昊的学习笔记-React</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+  <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+  <!--Link Web Font-->
+  <link href='//cdn.webfont.youziku.com/webfonts/nomal/21641/47115/58916519f629d80de474e740.css' rel='stylesheet' type='text/css' />
+  <!--代码高亮highlight.js-->
+  <!--<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+  <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>-->
+  <!--Link Base Style-->
+  <link rel="stylesheet" type="text/css" href="css/base.css">
+  <link rel="stylesheet" type="text/css" href="css/page.css"/>
+  <style type="text/css">
+  </style>
+</head>
+<body>
+  <!--导航栏 [[-->
+  <header class="am-topbar" >
+    <h1 class="am-topbar-brand css89d1c34bc5489">
+      <a href="index.html" class="am-center" style="margin: 0 auto;">杨宇昊的学习笔记 <small>yangyuhao.org</small></a>
+    </h1>
+  </header>
+  <!--导航栏 ]]-->
+  <div class="am-g am-g-fixed">
+  <div class="am-u-md-9 am-u-md-push-3" id="pageContent">
+    <div class="am-g">
+      <div class="am-u-sm-11 am-u-sm-centered">
+        <div class="am-cf am-article am-scrollable-horizontal">
+
+         <!--文章[[-->
+            <h3 id="page1">第一章 React初步使用</h3>
+            <ol>
+                <li>环境搭建
+                    <ul>
+                        <li>引入react核心库
+                            <br><code>&lt;script src="//cdn.bootcss.com/react/15.4.2/react.min.js">&lt;/script></code>
+                        </li>
+                        <li>引入渲染react虚拟DOM
+                            <br><code>&lt;script src="//cdn.bootcss.com/react/15.4.2/react-dom.min.js">&lt;/script></code>
+                        </li>
+                        <li>引入babel
+                            <br><code>&lt;script src="//cdn.bootcss.com/babel-core/5.8.24/browser.min.js">&lt;/script></code>
+                        </li>
+                        <li>e.g.
+                            <img src="photo/react/react1.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>将普通组件转换为react组件
+                    <ul>
+                        <li>使用ReactDOM.render()方法进行组件渲染,第一个参数为渲染的组件,第二个参数为承载组件的DOM</li>
+                        <li>渲染的组件只能存在一个根节点，不可以多个节点同级</li>
+                        <li>需要将"class"改写为"className"</li>
+                        <li>e.g.
+                            <img src="photo/react/react2.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>划分组件
+                    <ul>
+                        <li>通过React.createClass方法创建类,该类代表了组件标签</li>
+                        <li>组件中可以通过组件标签包含其他组件，实现了将一个组件划分为多个子组件的需求</li>
+                        <li>e.g.
+                            <img src="photo/react/react3.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>传递参数替代固化数据
+                    <ul>
+                        <li>通过value方式传值
+                            <img src="photo/react/react4.png" class="am-img-responsive">
+                        </li>
+                        <li>通过children方式传值
+                            <img src="photo/react/react5.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>内部状态数据
+                    <ul>
+                        <li>通过getInitialState()方法获取当前组件内部状态数据,可以将变量绑定到内部状态数据中</li>
+                        <li>通过this.state.xxx方式操作内部状态数据中绑定的变量</li>
+                        <li>e.g. 点击按钮添加ItemEditor控件
+                            <img src="photo/react/react6.png" class="am-img-responsive">
+                        </li>
+                        <li>e.g. 点击按钮删除控件
+                            <img src="photo/react/react7.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+            <h3 id="page2">第二章 JSX</h3>
+            <ol>
+                <li>createElement
+                    <ul>
+                        <li>使用createElement方法可以创建节点;第一个参数为创建的节点,第二个参数为节点属性,第三个参数为子节点</li>
+                        <li>e.g.
+                            <img src="photo/react/react8.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>JSX实质: 使用JSX来替代常规的JavaScript，JSX经过Babel编译后转化为Javascript
+                    <img src="photo/react/react9.png" class="am-img-responsive">
+                </li>
+                <li>属性与行内样式
+                    <img src="photo/react/react10.png" class="am-img-responsive">
+                </li>
+                <li>三元运算符
+                    <img src="photo/react/react11.png" class="am-img-responsive">
+                </li>
+            </ol>
+            <h3 id="page3">第三章 组件</h3>
+            <ol>
+                <li>Component&Element关系
+                    <ul>
+                        <li>Element: 负责描述输出的结果,是组件的输出结果</li>
+                        <li>Component: 是真正的组件,用于内部的实现</li>
+                    </ul>
+                </li>
+                <li>创建组件
+                    <ul>
+                        <li>通过createClass方式创建组件
+                            <img src="photo/react/react12.png" class="am-img-responsive">
+                        </li>
+                        <li>通过ES6语法创建组件
+                            <img src="photo/react/react13.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>组件生命周期
+                    <ul>
+                        <li>初始化阶段init
+                            <ul>
+                                <li>初始化defaultProps (静态变量,针对类) -> getDefaultProps() {return {}} -> React.createClass()</li>
+                                <li>初始化state(普通变量,针对实例) -> getInitialState() {return {}} / constrcutor() {this.state={}} -> new Component()</li>
+                                <li>e.g.
+                                    <img src="photo/react/react14.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>装载阶段mount
+                            <ul>
+                                <li>willMount - 准备装载,在此阶段可以对组件的state和props进行进一步更改</li>
+                                <li>render - 渲染组件</li>
+                                <li>didMount - 装载结束,再次阶段组件将会被渲染为DOM,可以对组件进行DOM操作</li>
+                                <li>相关方法
+                                    <img src="photo/react/react15.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>更新阶段update
+                            <ul>
+                                <li>will - 准备更新,在该阶段可以获取更新后的props和state,可以获取旧DOM</li>
+                                <li>render - 渲染组件</li>
+                                <li>did - 完成更新,在该阶段可以获取更新前的props和state,可以获取新DOM</li>
+                                <li>相关方法
+                                    <img src="photo/react/react16.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>卸载阶段unmount
+                            <ul>
+                                <li>willUnmount - 准备卸载</li>
+                                <li>相关方法
+                                    <img src="photo/react/react17.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>表单
+                    <ul>
+                        <li>直接指定表单控件的value属性的值后,用户将无法对其进行更改,需要通过state传值,在监听器中进行动态修改并强制刷新渲染</li>
+                        <li>e.g.
+                            <img src="photo/react/react18.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>refs属性
+                    <ul>
+                        <li>通过refs获取虚拟DOM的真实DOM对象
+                            <img src="photo/react/react19.png" class="am-img-responsive">
+                        </li>
+                        <li>通过ref属性自动执行操作当前dom的方法
+                            <img src="photo/react/react20.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>事件
+                    <ul>
+                        <li>键盘事件实例: 监听鼠标实现div移动
+                            <img src="photo/react/react21.png" class="am-img-responsive">
+                        </li>
+                        <li>自定义事件
+                            <img src="photo/react/react22.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>组件的通信
+                    <ul>
+                        <li>父组件与子组件的通信
+                            <ul>
+                                <li>通过属性向下传递</li>
+                                <li>e.g.
+                                    <img src="photo/react/react23.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>子组件与父组件的通信
+                            <ul>
+                                <li>子组件可以调用父组件的属性与方法</li>
+                                <li>e.g.
+                                    <img src="photo/react/react24.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                        <li>事件总线通信 : 通过EventEmitter
+                            <ul>
+                                <li>需要安装EventEmitter: pmg install EventEmitter</li>
+                                <li>通过new EventEmitter()获取event实例</li>
+                                <li>通过event.on()方法创建监听方法</li>
+                                <li>通过event.emit()方法触发监听方法</li>
+                                <li>e.g.
+                                    <img src="photo/react/react25.png" class="am-img-responsive">
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+            <h3 id="page4">第四章 常用工具</h3>
+            <ol>
+                <li>动画
+                    <ul>
+                        <li>导入react工具库的js引用
+                            <pre>
+&lt;!--react工具库,需要放在react引用下方,不可以放在react-dom引用下方-->
+&lt;script src="//cdn.bootcss.com/react/15.4.2/react-with-addons.js">&lt;/script></pre>
+                        </li>
+                        <li>官网样例
+                            <img src="photo/react/react26.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>双向数据绑定
+                    <ul>
+                        <li>单向数据绑定
+                            <img src="photo/react/react27.png" class="am-img-responsive">
+                        </li>
+                        <li>双向数据绑定
+                            <img src="photo/react/react28.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>模块化开发
+                    <ul>
+                        <li>创建项目文件夹</li>
+                        <li>初始化工程: npm init</li>
+                        <li>安装react: npm i react --save</li>
+                        <li>安装react-dom: npm i react-dom --save</li>
+                        <li>安装browserify: npm i browserify --save</li>
+                        <li>安装babelify: npm i babelify --save</li>
+                        <li>安装browserify: npm i --save-dev babel-preset-es2015 babel-preset-react</li>
+                        <li>修改package.json,添加npm start命令
+                            <pre>
+{
+"name":"react9-model",
+"version":"1.0.0",
+"description":"",
+"main":"index.js",
+"scripts":{
+"test":"echo\"Error:notestspecified\"&&exit1",
+"start":"browserifymain.js>build.js-t[babelify--presets[es2015react]]"
+},
+"author":"",
+"license":"ISC",
+"dependencies":{
+"babelify":"^7.3.0",
+"browserify":"^14.0.0",
+"react":"^15.4.2",
+"react-dom":"^15.4.2"
+},
+"devDependencies":{
+"babel-preset-es2015":"^6.22.0",
+"babel-preset-react":"^6.22.0"
+}
+}</pre>
+                        </li>
+                        <li>进行模块化开发</li>
+                        <li>e.g.
+                            <img src="photo/react/react29.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+            <h3 id="page5">第五章 flux</h3>
+            <ol>
+                <li>架构概述
+                    <img src="photo/react/react30.png" class="am-img-responsive">
+                    <ul>
+                        <li>Dispatcher: 事件调度中心，flux模型的中心枢纽，管理着Flux应用中的所有数据流</li>
+                        <li>Store: 负责封装应用的业务逻辑跟数据的交互</li>
+                        <li>View: 由应用的顶层容器充当，负责从store中获取数据并将数据传递到子组件中</li>
+                        <li>Action Creators: dispatcher的辅助函数，作为语法上的辅助函数以action的形式使得dispatcher传递数据更为便利</li>
+                    </ul>
+                </li>
+                <li>实现flux架构
+                    <ul>
+                        <li>项目搭建
+                            <ul>
+                                <li>npm init</li>
+                                <li>npm i react react-dom --save</li>
+                                <li>npm i browserify babelify babel-cli babel-preset-es2015 babel-preset-react --save-dev</li>
+                                <li>package.json
+                                    <pre>
+"compile":"babel-t--presetsreact,es2015src-ddest",
+"browser":"browserifysrc/main.js-obuild.js-t[babelify--presets[reactes2015]]"</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>View
+                            <pre>
+const React = require("react");
+const Store = require("./Store");
+const Actions = require("./Actions");
+const actions = new Actions();
+const store = new Store();
+class List extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+          list: []
+        };
+    }
+    add() {
+        //store._add(this.refs.nameInput.value);
+        actions.add(this.refs.nameInput.value);
+    }
+    componentDidMount() {
+        actions.getAll();
+        store.on("change", list=>{
+            this.setState({list});
+        });
+    }
+    render() {
+        return &lt;ul>
+            {this.state.list.map(item=>&lt;li>{item}&lt;/li>)}
+                &lt;input ref="nameInput" />&lt;button onClick={this.add.bind(this)}>add&lt;/button>
+        &lt;/ul>;
+    }
+}
+module.exports = List;
+                            </pre>
+                        </li>
+                        <li>Store
+                            <pre>
+const EventEmitter = require("events").EventEmitter;
+const Dispatcher = require("./Dispatcher");
+class Store extends EventEmitter {
+    constructor() {
+        super();
+        this._list = [];
+        Dispatcher.register(action=> {
+            switch (action.actionType) {
+                case "add":
+                    this._add(action.name);
+                    break;
+                case "list":
+                    this._list = action.list;
+                    this.emit("change", this.list);
+                    break;
+            }
+        });
+    }
+    _add(item) {
+        this._list.push(item);
+        this.emit("change", this._list);  //触发事件
+    }
+    get list() {
+        return this._list;
+    }
+}
+module.exports = Store;</pre>
+                        </li>
+                        <li>Actions
+                            <pre>
+const EventEmitter = require("events").EventEmitter;
+const Dispatcher = require("./Dispatcher");
+const WebAPI = require("./WebAPI");
+class Actions {
+    add(name) {
+        var action = {
+            actionType: "add",
+            name
+        };
+        Dispatcher.dispatch(action);
+    }
+    getAll() {
+        //server
+        var action = {
+            actionType: "list",
+            list: WebAPI.getAll()
+        };
+        Dispatcher.dispatch(action);
+    }
+}
+module.exports = Actions;
+module.exports=Actions;</pre>
+                        </li>
+                        <li>Dispatcher
+                            <pre>
+const storeCallBackList = [];
+module.exports = {
+    register(storeCallBack) {
+        storeCallBackList.push(storeCallBack);
+    },
+    dispatch(action) {
+        this._dispatch(action);
+    },
+    _dispatch(action) {
+        for(let callback of storeCallBackList) {
+            callback(action);
+        }
+    }
+}</pre>
+                        </li>
+                        <li>WebAPI
+                            <pre>
+module.exports={
+    getAll(){
+        return["aaa","bbb","ccc"];
+    }
+};</pre>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+            <h3 id="page6">第六章 Reflux</h3>
+            <ol>
+                <li>Reflux与flux区别
+                    <ul>
+                        <li>Reflux去掉了Dispatcher</li>
+                        <li>Reflux通过统一的事件订阅方式进行组件沟通</li>
+                        <li>Reflux提供封装好的API</li>
+                        <li>Reflux简化后的架构模型</li>
+                        <img src="photo/react/react31.png" class="am-img-responsive">
+                    </ul>
+                </li>
+                <li>Action
+                    <ul>
+                        <li>编写Action的步骤
+                            <ul>
+                                <li>创建action实例: var action = Reflux.createAction();</li>
+                                <li>action监听事件: action.listen(data=>console.log(data));</li>
+                                <li>触发action监听事件: action.trigger("test");</li>
+                                <li>e.g.
+                                    <pre>
+constReflux=require("reflux");
+constaction=Reflux.createAction();
+action.listen(data=>console.log("listener1,datais",data));
+action.listen(data=>console.log("listener2,datais",data));
+action.trigger("test");</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>触发Action的方式
+                            <ul>
+                                <li>action.trigger(data);  //同步触发</li>
+                                <li>action.triggerAsync(data);  //异步触发</li>
+                                <li>action(data);  //默认action.sync = false异步触发</li>
+                                <li>自定义方法触发</li>
+                                <li>e.g.
+                                    <pre>
+const Reflux = require("reflux");
+const action = Reflux.createAction({
+    click() {
+        this.trigger("自定义click()触发函数 [同步]");
+        this.triggerAsync("自定义click()触发函数 [异步]");
+    }
+});
+action.listen(data=> console.log("listen1: ", data));
+action.listen(data=> console.log("listen2: ", data));
+setTimeout(()=>action.trigger("setTimeout(()=>action.trigger())异步调用"));
+action.trigger("action.trigger()同步调用");
+action.triggerAsync("action.triggerAsync()异步调用");
+action.click();
+console.log("---end---");</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Action hooks
+                            <ul>
+                                <li>preEmit(data): 在触发事件前进行数据处理</li>
+                                <li>shouleEmit(data): 是否触发事件</li>
+                                <li>e.g.
+                                    <pre>
+const Reflux = require("reflux");
+const action = Reflux.createAction({
+    //数据预处理
+    preEmit(data) {
+        return "修改后的数据";
+    },
+    //允许触发事件
+    shouldEmit() {
+        return true;
+    }
+});
+action.listen(data=> console.log(data));
+action("触发事件时的数据");</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>异步结果
+                            <ul>
+                                <li>异步结果通过children actions的completed和failed实现</li>
+                                <li>action.trigger() -> action.conpleted() or action.failed()</li>
+                                <li>e.g.
+                                    <pre>
+const Reflux = require("reflux");
+const action = Reflux.createAction({children: ['completed', 'failed']});
+action.completed.listen(function() {
+    console.log("completed");
+});
+action.listen(function(data) {
+    console.log("listen");
+    setTimeout(function() {
+        this.completed();
+    }.bind(this));
+});
+action.trigger();</pre>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>一次创建多个Action
+                            <ul>
+                                <li>Reflux.createActions(['action1', 'action2', ...])</li>
+                                <li>Reflux.createActions({action1:{}, action2:{}, ...})</li>
+                                <li>e.g.
+                                    <pre>
+const Reflux = require("reflux");
+const actions = Reflux.createActions(['action1','action2']);
+actions.action1.listen(data=>console.log("action1:",data));
+actions.action2.listen(data=>console.log("action2:",data));
+actions.action1("firsh_action");
+actions.action2("second_action");</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>store
+                    <ul>
+                        <li>编写store的步骤
+                            <pre>
+const Reflux = require("reflux");
+const action = Reflux.createAction();
+const store = Reflux.createStore({
+    data: {num: 0},
+    init() {
+        this.listenTo(action, function() {
+            ++this.data.num;
+            this.trigger(this.data);
+        });
+    }
+});
+store.listen(function(state) {
+    console.log(state);
+});
+action();action();action();</pre>
+                        </li>
+                        <li>store监听action的方式
+                            <ul>
+                                <li>listenTo(action, handleMethod);  //监听一个action</li>
+                                <li>listenToMany(actions);  //监听多个action</li>
+                                <li>listenables: actions  //设置listenables属性实现多action监听</li>
+                                <li>e.g.
+                                    <pre>
+const Reflux = require("reflux");
+const actions = Reflux.createActions({
+    action1: {asyncResult: true},
+    action2: {asyncResult: true}
+});
+const store = Reflux.createStore({
+    //第二种方式实现多action快捷注册
+    //listenables: actions,
+    init() {
+        //this.listenTo(actions.action1, this.onAction1);
+        //this.listenTo(actions.action2, this.onAction2);
+        this.listenToMany(actions);
+    },
+    onAction1() {
+        console.log("onAction1...");
+    },
+    onAction1Completed() {
+        console.log("action1 completed...");
+    },
+    onAction2() {
+        console.log("onAction2...");
+    }
+});
+actions.action1();
+actions.action1.completed();
+actions.action2();</pre>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>react结合reflux
+                    <ul>
+                        <li>环境搭建
+                            <pre>
+npm i browserify react react-dom reflux --save
+npm i browserify babelify babel-preset-es2015 babel-preset-react --save-dev
+"build":"browserifysrc.js-obuild.js-t[babelify--presets[es2015react]]"</pre>
+                        </li>
+                        <li>src
+                            <pre>
+import {createAction, createStore} from "reflux";
+import React from "react";
+import ReactDOM from "react-dom";
+const action = createAction();
+const store = createStore({
+    init() {
+        this.num = 0;
+        this.listenTo(action, this.onClick);
+    },
+    onClick() {
+        this.trigger(++this.num);
+    }
+});
+var UI = React.createClass({
+    getInitialState: function() {
+        return {num: 0};
+    },
+    componentDidMount: function() {
+        this.unsubsrcibe = store.listen(num => this.setState({num}));  //监听函数返回关闭监听方法
+    },
+    componentWillUnmount: function() {
+        this.unsubsrcibe();  //组件卸载后将监听方法关闭
+    },
+    render: function() {
+        return &lt;div>
+            {this.state.num}
+            &lt;button onClick={action}>ADD&lt;/button>
+        &lt;/div>;
+    }
+});
+ReactDOM.render(&lt;UI />, document.body);</pre>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+            <h3 id="page7">第七章 Redux</h3>
+            <ol>
+                <li>Redux与Flux、Reflux区别
+                    <ul>
+                        <li>Flux
+                            <img src="photo/react/react32.png" class="am-img-responsive">
+                        </li>
+                        <li>Reflux
+                            <img src="photo/react/react33.png" class="am-img-responsive">
+                        </li>
+                        <li>Redux
+                            <img src="photo/react/react34.png" class="am-img-responsive">
+                        </li>
+                    </ul>
+                </li>
+                <li>解决状态过多问题
+                    <ul>
+                        <li>唯一状态对象</li>
+                        <li>状态对象只读</li>
+                        <li>通过纯函数更改状态对象: 通过函数返回的状态对象只能是原state或新state
+                            e.g.
+                            <pre>
+//正确
+function pureFunction(state) {
+    let newState = ++state.num;
+    return {
+        newState
+    }
+}
+//错误
+function pureFunction(state) {
+    ++state.num;
+    return state;
+}</pre>
+                        </li>
+                        <li>修改状态对象的方式
+                            <pre>
+"use strict";
+let state  = {
+    aaa: {name: "aName"},
+    bbb: {name: "bName"}
+}
+function update(updaters, state) {
+    let newState = {};
+    const keys = Object.keys(updaters);
+    keys.forEach(key => {
+        let updater = updaters[key];  //update pure function.
+        let value = state[key];
+        let newSubState = updater(value);
+    });
+    return Object.assign({}, state, newState);
+
+}
+function aaaUpdater(subState) {
+    return {name: "newAName"};
+}
+
+function bbbUpdater(subState) {
+    return {name: "newBName"};
+}
+let result = update({
+    aaa: aaaUpdater,
+    bbb: bbbUpdater
+}, state);</pre>
+                        </li>
+                    </ul>
+                </li>
+                <li>自实现redux部分功能
+                    <pre>
+const EventEmitter = require("events").EventEmitter;
+class Store {
+    constructor(state) {
+        this._state = state || {};
+        this._updates = {};
+        this._emitter = new EventEmitter;
+    }
+    get state() {
+        return JSON.parse(JSON.stringify(this._state));
+    }
+    //fns - function or object
+    setUpdates(fns) {
+        this._updates = fns;
+    }
+    //action
+    dispatch(action) {
+        if (typeof this._updates === "function") {
+            this._state = this._updates(this.state, action);  //return new State;
+        } else {
+            let newState = {};
+            const keys = Object.keys(updaters);
+            keys.forEach(key => {
+                let updater = this._updaters[key];  //update pure function.
+                let value = this.state[key];
+                let newSubState = updater(value);
+            });
+            this._state = Object.assign({}, this.state, newState);
+        }
+        this._emitter.emit("change");
+    }
+
+    //add listener
+    listen(listener) {
+        this._emitter.on("change", listener);
+    }
+}
+const sto = new Store({name: "dafauleNmae", number: 5});
+function numberUpdater(oldNum, action) {
+    let num;
+    switch(action.type) {
+        case "+":
+            return ++oldNum;
+        case "-":
+            return --oldNum;
+        default:
+            return oldNum;
+    }
+}
+function nameUpdater(oldName, action) {
+    if (action.type === "changeName") {
+        return action.name;
+    }
+    return oldName;
+}
+sto.setUpdates({
+    name: nameUpdater,
+    number: numberUpdater
+});
+sto.listen(() => {
+    console.log(sto.state);
+});
+const action1 = {
+    type: "+"
+}
+const action2 = {
+    type: "changeName",
+    name: "$yang"
+}
+sto.dispatch(action1);
+sto.dispatch(action2);</pre>
+                </li>
+                <li>Redux的基本使用方式
+                    <pre>
+const Redux = require("redux");
+const reducer = function(state, action) {
+    if (action.type === "changeName") {
+        return {name: action.name};
+    } else {
+        return state;
+    }
+};
+const store = Redux.createStore(reducer, {name: "yang"});
+store.subscribe(() => console.log(store.getState()));
+
+const action = {
+    type: "changeName",
+    name: "$yang"
+};
+store.dispatch(action);</pre>
+                </li>
+                <li>拆分Reducers
+                    <pre>
+"use strict";
+const Redux = require("redux");
+const createStore = Redux.createStore;
+const combineReducers = Redux.combineReducers;
+//actionA -> {type, data(string)}
+//state -> {a:[], b:[]}
+//const reducers = {a:function(state, action) {}, b:function(state, action) {}};
+
+function aReducer(state, action) {
+    if (typeof state === "undefined") return [];
+    switch (action.type) {
+        case "a":
+    return state.concat([action.data]);
+    default:
+        return state;
+    }
+}
+function bReducer(state, action) {
+    if (typeof state === "undefined") return [];
+    switch (action.type) {
+        case "b":
+            return state.concat([action.data]);
+        default:
+            return state;
+    }}
+function cReducer(state, action) {
+    if (typeof state === "undefined") return {};
+    if (action.type === "c") {
+        return {name: action.name};
+    } else {
+        return {};
+    }
+}
+//合并reducer
+const reducer = combineReducers({aReducer, bReducer, cReducer});
+//创建store
+const store = createStore(reducer, {a:[], b:[], c:{}});
+//监听store
+store.subscribe(function() {
+    console.log(store.getState());
+});
+//创建action
+let actionA = {
+    type: "a",
+    data: "yang"
+};
+let actionB = {
+    type: "b",
+    data: "wang"
+};
+let actionC = {
+    type: "c",
+    name: "name is yang"
+};
+//调用方法
+store.dispatch(actionA);
+store.dispatch(actionB);
+store.dispatch(actionC);</pre>
+                </li>
+                <li>创建action的方式
+                    <pre>
+"use strict";
+const Redux = require("redux");
+
+const store = Redux.createStore(function reducer(state, action) {
+
+    if (typeof state === "undefined") return {};
+
+    switch (action.type) {
+        case "changeName":
+            return Object.assign({}, state, {name: action.name});
+        default:
+            return {};
+    }
+
+});
+//*创建action的第一种方式
+//action1 = {
+//    type: "changeName",
+//    name: "wang"
+//};
+//action2 = {
+//    type: "changeName",
+//    name: "wang"
+////};
+//store.dispatch(action1);
+//store.dispatch(action2);
+//------------------------------------------------
+//*创建action的第二种方式
+//function actionCreator(name) {
+//    return {
+//        name,
+//        type: "changeName"
+//    }
+//}
+//store.dispatch(actionCreator("yang"));
+//store.dispatch(actionCreator("wang"));
+//------------------------------------------------
+//*创建action的第四种方式
+//function createAction(action, dispatch) {
+//    return function(opt) {
+//        action = Object.assign({}, action, opt, {type: action.type});
+//        dispatch(action);
+//    }
+//}
+//var action = createAction({type:"changeName", name:"yang"}, store.dispatch);
+//action();
+//action({name: "wang"});
+//------------------------------------------------
+//*创建action的第五种方式
+//function createActions(actions) {
+//    function createAction(action, dispatch) {
+//        return function(opt) {
+//            action = Object.assign({}, action, opt, {type: action.type});
+//            dispatch(action);
+//        };
+//    }
+//    if (typeof actions === "function") {
+//        return createAction(actions, dispatch);
+//    } else {
+//        let result = {};
+//        for (var k in actions) {
+//            result[k] = createAction(actions[k], dispatch);
+//        }
+//        return result;
+//    }
+//}
+//let actionA = {type:"a"};
+//let actionB = {type:"b"};
+//let actionC = {type:"c"};
+//let actions = createActions({actionA, actionB, actionC}, store.dispatch);
+//actions.actionA();
+//actions.actionB();
+//actions.actionC();
+//------------------------------------------------
+function actionA(opt) {
+    return {
+        type: "changeName",
+        name: opt.name
+    }
+}
+function actionB(opt) {
+    return {
+        type: "changeName",
+        name: opt.name
+    }
+}
+let actions = Redux.bindActionCreators({actionA, actionB}, store.dispatch);
+actions.actionA({name: "yang"});</pre>
+                </li>
+                <li>编写中间件
+                    <pre>
+"use strict";
+const Redux = require("redux");
+const applyMiddleware = Redux.applyMiddleware;
+//记录日志方法
+const logger = store => nextDispatch => action => {
+    console.log("start", action.type);
+    let result = nextDispatch(action);
+    console.log("end", action.type);
+    return result;
+};
+const createStore = applyMiddleware(logger)(Redux.createStore);
+const reducer = function(state, action) {
+    if (typeof state === "undefined") return {name: ""};
+    if (action.type == "changeName") {
+        return {name: action.name};
+    } else {
+        return state;
+    }
+};
+const store = createStore(reducer, {name: ""});
+store.subscribe(() => console.log(store.getState()));
+store.dispatch({type:"changeName", name:"yang"});</pre>
+                </li>
+                <li>redux-thunk
+                    <pre>
+"use strict";
+const redux = require("redux");
+const thunk = require("redux-thunk").default;
+function reducer(state, action) {
+    if (typeof state === "undefined") return {};
+    switch (action.type) {
+        case "changeName":
+            return {name: action.name};
+        default: return state;
+    }
+}
+const store = redux.createStore(reducer, redux.applyMiddleware(thunk));
+let action = {
+    type: "changeName",
+    name: "yang"
+};
+
+let asyncAction = function() {
+  return dispatch => {
+      setTimeout(() => {
+          dispatch(action);
+      }, 1000)
+  }
+};
+store.dispatch(asyncAction());
+store.subscribe(() => {
+    console.log((store.getState()));
+});</pre>
+                </li>
+                <li>react与redux结合
+                    <pre>
+"use strict";
+const React = require("react");
+const ReactDOM = require("react-dom");
+function reducer(state, action) {
+    if (typeof state === "undefined") return {name: "", num: 0};
+    switch (action.type) {
+        case "changeName":
+            return Object.assign({}, state, action.payload);
+        case "access":
+            return Object.assign({}, state, {num: 1+state.num});
+        default:
+            return state;
+    }
+}
+const store = Redux.createStore(reducer);
+let actions = {
+    changeName(name) {
+        return {
+            type: "changeName",
+            payload: {name}
+        }
+    },
+    access() {
+        return {
+            type: "access"
+        }
+    }
+};
+actions = Redux.bindActionCreators(actions, store.dispatch);
+//----------------------------------------------
+const UI = React.createClass({
+
+    render() {
+        return &lt;div>
+            &lt;p>{this.props.name}&lt;/p>
+            &lt;p>{this.props.num}&lt;/p>
+            &lt;input onChange={event=>this.props.changeName(event.target.value)} />
+            &lt;button onClick={event=>this.props.access()}>access&lt;/button>
+        &lt;/div>;
+    }
+
+});
+
+function render() {
+    let state = store.getState();
+    ReactDOM.render(&lt;UI changeName={actions.changeName()} access={actions.access()} name={state.name} num={state.num}/>, document.body);
+    store.subscribe(render);
+    }
+    render();</pre>
+                </li>
+                <li>使用react-redux将UI和store相结合
+                    <pre>
+"use strict";
+const React = require("react");
+const ReactDOM = require("react-dom");
+const Redux = require("redux");
+const {connect, Provide} = require("react-redux");
+function reducer(state, action) {
+    if (typeof state === "undefined") return {name: "", num: 0};
+    switch (action.type) {
+        case "changeName":
+            return Object.assign({}, state, action.payload);
+        case "access":
+            return Object.assign({}, state, {num: 1+state.num});
+        default:
+            return state;
+    }
+}
+const store = Redux.createStore(reducer);
+let actions = {
+    changeName(name) {
+        return {
+            type: "changeName",
+            payload: {name}
+        }
+    },
+    access() {
+        return {
+            type: "access"
+        }
+    }
+};
+actions = Redux.bindActionCreators(actions, store.dispatch);
+//----------------------------------------------
+let UI = React.createClass({
+    render() {
+        return &lt;div>
+            &lt;p>{this.props.name}&lt;/p>
+            &lt;p>{this.props.num}&lt;/p>
+            &lt;input onChange={event=>this.props.changeName(event.target.value)} />
+            &lt;button onClick={event=>this.props.access()}>access&lt;/button>
+        &lt;/div>;
+    }
+
+});
+function getState(state) {
+    return state;
+}
+
+function getActions() {
+    return actions;
+}
+UI = connect(getState, getActions)(UI);
+ReactDOM.render(&lt;Provider store={store}>&lt;UI />&lt;/Provider>, document.body);</pre>
+                </li>
+            </ol>
+            <h3 id="page8">第八章 react-router</h3>
+            <ol>
+                <li>react-router作用与适用条件
+                    <ul>
+                        <li>大颗粒布局</li>
+                        <li>浏览器历史功能</li>
+                    </ul>
+                </li>
+                <li>原始的路由方式
+                    <pre>
+export default connect(state => state, actions)(React.createClass({
+    getCurrentPage() {
+        switch (this.props.linkName) {
+            case "nav1":
+                return &lt;Nav1 />;
+            case "nav2":
+                return &lt;Nav2 />;
+            default return &lt;Login />;
+        }
+    },
+    render() {
+        return &lt;div>
+            &lt;NavBar />
+            {this.getCurrentPage()}
+        &lt;/div>
+    }
+}));</pre>
+                </li>
+                <li>react-router用法
+                    <pre>
+import {Router, Route, Link} from "react-router";
+import React from "react";
+import {render} from "react-dom";
+const App = React.createClass({
+    render() {
+        return &lt;div>
+                    &lt;Link to="/aaa">A&lt;/Link>
+                    &lt;Link to="/bbb">B&lt;/Link>
+                    &lt;Link to="/ccc">C&lt;/Link>
+                    &lt;hr />
+                    &lt;div>{this.props.children}&lt;/div>
+                &lt;/div>
+    }
+});
+
+const A = React.createClass({
+    render() {
+        return &lt;h2>A Title&lt;/h2>
+    }
+});
+const B = React.createClass({
+    render() {
+        return &lt;div>
+                    &lt;h2>B Title&lt;/h2>
+                    &lt;Link to="/bbb/b1">b1&lt;/Link>
+                    &lt;Link to="/bbb/b2">b2&lt;/Link>
+                    &lt;div>{this.props.children}&lt;/div>
+                &lt;/div>
+    }
+});
+const B1 = React.createClasss({
+    render() {
+        return &lt;h3>B1 Title&lt;/h3>
+    }
+});
+const B2 = React.createClasss({
+    render() {
+        return &lt;h3>B2 Title&lt;/h3>
+    }
+});
+const C = React.createClass({
+    render() {
+        return &lt;h2>C Title&lt;/h2>
+    }
+});
+render(
+    &lt;Router>
+        &lt;Route path="/" component={App}>
+            &lt;Route path="aaa" component={A}/>
+                &lt;Route path="bbb" component={B}>
+                    &lt;Route path="/bbb/b1" compent={B1}/>
+                        &lt;Route path="/bbb/b2" compent={B2}/>
+                        &lt;/Route>
+                        &lt;Route path="ccc" component={C}/>
+                        &lt;/Route>
+    &lt;/Router>
+);</pre>
+                </li>
+                <li>路径通配符
+                    <ul>
+                        <li>&lt;Route path="aaa/*.html" component={A}/></li>
+                        <li>&lt;Route path="bbb/:name" component={A}/>
+                            <br>
+                            通过该方式可以在组件中通过this.props.params.name属性获取到路径中的值
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+         <!--文章]]-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="am-u-md-3 am-u-md-pull-9 my-sidebar" id="pageDesc">
+    <div class="am-offcanvas" id="sidebar" data-am-sticky="{top:51}">
+      <div class="am-offcanvas-bar">
+
+        <ul class="am-nav">
+        	<h1>React</h1>
+        	<!--导航[[-->
+          <li><a href="#!" id="btn1">第一章 React初步使用</a></li>
+          <li><a href="#!" id="btn2">第二章 JSX</a></li>
+          <li><a href="#!" id="btn3">第三章 组件</a></li>
+          <li><a href="#!" id="btn4">第四章 常用工具</a></li>
+          <li><a href="#!" id="btn5">第五章 flux</a></li>
+          <li><a href="#!" id="btn6">第六章 Reflux</a></li>
+          <li><a href="#!" id="btn7">第七章 Redux</a></li>
+          <li><a href="#!" id="btn8">第八章 react-router</a></li>
+
+        </ul>
+        <!--导航]]-->
+      </div>
+    </div>
+  </div>
+  <!--<a href="#sidebar" class="am-btn am-btn-sm am-btn-success am-icon-bars am-show-sm-only my-button"
+  	data-am-offcanvas style="background-color: rgb(248,248,248); margin: 6px; border: 0; color: #666; font-size: 20px; z-index: 999;"><span class="am-sr-only">侧栏导航</span></a>-->
+</div>
+
+  <!--页脚[[-->
+  <br><br><br>
+  <div class="am-g">
+  	<div class="am-u-lg-10 am-u-lg-offset-1" id="footer">
+  	  <br>
+  	  <span class="am-fl">Copyright © 2016-2017 yangyuhao</span>
+  	  <span class="am-fr">联系我： QQ:1101632336 | Email:isyangyuhao@gmail.com | <a href="http://github.com/isyangyuhao">GitHub</a></span>
+  	</div>
+  </div>
+  <br><br><br>
+  <!--页脚]]-->
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="assets/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="assets/js/amazeui.min.js"></script>
+<script type="text/javascript">
+	//加载进度条
+	var progress = $.AMUI.progress;
+	$(window).load(function() {
+		progress.done();
+	})
+	$(document).ready(function() {
+		progress.start();
+	})
+	//侧边栏平滑滚动
+	$(window).smoothScroll();
+	function navClick($btnObj, $pageObj) {
+		$btnObj.on("click", function() {
+			var $w = $(window);
+			$w.smoothScroll({position: $pageObj.offset().top});
+		})
+	}
+	navClick($("#btn1"), $("#page1"));
+	navClick($("#btn2"), $("#page2"));
+	navClick($("#btn3"), $("#page3"));
+	navClick($("#btn4"), $("#page4"));
+	navClick($("#btn5"), $("#page5"));
+	navClick($("#btn6"), $("#page6"));
+  navClick($("#btn7"), $("#page7"));
+  navClick($("#btn8"), $("#page8"));
+
+</script>
+</body>
+</html>
